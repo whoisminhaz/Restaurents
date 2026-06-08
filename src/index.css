@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --crm-dark: #faf7f2;
+    --crm-card: #ffffff;
+    --crm-border: #e5e7eb;
+    --crm-text: #111827;
+    --crm-accent: #B5602A;
+  }
+
+  :root.dark {
+    --crm-dark: #121212;
+    --crm-card: #1E1E1E;
+    --crm-border: #2C2C2C;
+    --crm-text: #E0E0E0;
+  }
+
+  /* Fix for date picker calendar icon in dark mode */
+  .dark input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+  }
+
+  @media print {
+    html, body {
+      background: white !important;
+      color: black !important;
+      height: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    body * {
+      visibility: hidden;
+    }
+    .print\:block, .print\:block * {
+      visibility: visible;
+    }
+    .print\:block {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      background: white !important;
+    }
+  }
+
+  body {
+    background-color: var(--crm-dark);
+    color: var(--crm-text);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
