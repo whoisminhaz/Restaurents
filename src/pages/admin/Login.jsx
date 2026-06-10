@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
-import { auth } from '../../config/firebase';
+import { auth, db } from '../../config/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
@@ -17,10 +18,20 @@ const Login = () => {
 
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const allowedEmails = import.meta.env.VITE_ADMIN_EMAILS ? import.meta.env.VITE_ADMIN_EMAILS.split(',') : [];
-      if (allowedEmails.length > 0 && !allowedEmails.includes(userCredential.user.email)) {
+      const userEmail = userCredential.user.email;
+      const superAdmins = import.meta.env.VITE_ADMIN_EMAILS ? import.meta.env.VITE_ADMIN_EMAILS.split(',') : [];
+      let authorized = superAdmins.includes(userEmail);
+      
+      const adminSnap = await getDoc(doc(db, 'settings', 'adminConfig'));
+      if (adminSnap.exists()) {
+        const adminData = adminSnap.data();
+        if (adminData.ownerEmail === userEmail) authorized = true;
+        if (adminData.allowedEmails && adminData.allowedEmails.includes(userEmail)) authorized = true;
+      }
+
+      if (!authorized && superAdmins.length > 0) {
         await signOut(auth);
-        setError('Unauthorized access. This email is not registered as an admin.');
+        setError('Unauthorized access. This email is not registered as an admin or staff member.');
         setLoading(false);
         return;
       }
@@ -40,10 +51,20 @@ const Login = () => {
     const provider = new GoogleAuthProvider();
     try {
       const userCredential = await signInWithPopup(auth, provider);
-      const allowedEmails = import.meta.env.VITE_ADMIN_EMAILS ? import.meta.env.VITE_ADMIN_EMAILS.split(',') : [];
-      if (allowedEmails.length > 0 && !allowedEmails.includes(userCredential.user.email)) {
+      const userEmail = userCredential.user.email;
+      const superAdmins = import.meta.env.VITE_ADMIN_EMAILS ? import.meta.env.VITE_ADMIN_EMAILS.split(',') : [];
+      let authorized = superAdmins.includes(userEmail);
+      
+      const adminSnap = await getDoc(doc(db, 'settings', 'adminConfig'));
+      if (adminSnap.exists()) {
+        const adminData = adminSnap.data();
+        if (adminData.ownerEmail === userEmail) authorized = true;
+        if (adminData.allowedEmails && adminData.allowedEmails.includes(userEmail)) authorized = true;
+      }
+
+      if (!authorized && superAdmins.length > 0) {
         await signOut(auth);
-        setError('Unauthorized access. This email is not registered as an admin.');
+        setError('Unauthorized access. This email is not registered as an admin or staff member.');
         setLoading(false);
         return;
       }
