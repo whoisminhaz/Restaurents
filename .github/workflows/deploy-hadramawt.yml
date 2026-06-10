@@ -26,6 +26,7 @@ jobs:
           echo "VITE_FIREBASE_MEASUREMENT_ID=${{ secrets.HADRAMAWT_FIREBASE_MEASUREMENT_ID }}" >> .env
           echo "VITE_ADMIN_EMAILS=${{ secrets.HADRAMAWT_ADMIN_EMAILS }}" >> .env
           echo "VITE_SENTRY_DSN=${{ secrets.HADRAMAWT_SENTRY_DSN }}" >> .env
+          echo "VITE_FIREBASE_DATABASE_ID=default" >> .env
 
       - name: Build Project
         run: npm run build
