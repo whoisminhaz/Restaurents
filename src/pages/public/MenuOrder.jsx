@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { ShoppingBag, Plus, Minus, ArrowLeft, Moon, Sun } from 'lucide-react';
+import LanguageDropdown from '../../components/LanguageDropdown';
 import { useNavigate } from 'react-router-dom';
 import { t } from '../../utils/translations';
 import LoadingScreen from '../../components/LoadingScreen';
@@ -106,9 +107,12 @@ const MenuOrder = () => {
           <h1 className="font-bold text-gray-900 dark:text-white text-lg leading-tight">{settings.restaurantName}</h1>
           <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{orderMode === 'takeaway' ? t(userLang, 'takeaway') : t(userLang, 'dineIn')} {tableNum ? `- ${t(userLang, 'tableNumber')} ${tableNum}` : ''}</p>
         </div>
-        <button onClick={() => setIsDark(!isDark)} className="p-2 -mr-2 text-gray-600 dark:text-gray-300 hover:opacity-70 transition-opacity">
-          {isDark ? <Sun size={22} /> : <Moon size={22} />}
-        </button>
+        <div className="flex items-center gap-1">
+          <LanguageDropdown />
+          <button onClick={() => setIsDark(!isDark)} className="p-2 -mr-2 text-gray-600 dark:text-gray-300 hover:opacity-70 transition-opacity">
+            {isDark ? <Sun size={22} /> : <Moon size={22} />}
+          </button>
+        </div>
       </header>
 
       {/* Categories */}

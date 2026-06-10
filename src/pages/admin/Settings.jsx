@@ -24,6 +24,7 @@ const Settings = () => {
   const [ownerLang, setOwnerLang] = useState(localStorage.getItem('ownerLang') || 'en');
   
   // Employee Management State
+  const [ownerEmail, setOwnerEmail] = useState('');
   const [employeeEmails, setEmployeeEmails] = useState([]);
   const [newEmployeeEmail, setNewEmployeeEmail] = useState('');
   const [addingEmployee, setAddingEmployee] = useState(false);
@@ -51,10 +52,12 @@ const Settings = () => {
 
         const adminDocRef = doc(db, 'settings', 'adminConfig');
         const adminSnap = await getDoc(adminDocRef);
-        if (adminSnap.exists() && adminSnap.data().allowedEmails) {
-          setEmployeeEmails(adminSnap.data().allowedEmails);
+        if (adminSnap.exists()) {
+          if (adminSnap.data().allowedEmails) setEmployeeEmails(adminSnap.data().allowedEmails);
+          if (adminSnap.data().ownerEmail) setOwnerEmail(adminSnap.data().ownerEmail);
         } else {
           setEmployeeEmails([]);
+          setOwnerEmail('');
         }
 
         const menuSnap = await getDocs(query(collection(db, 'menu')));
@@ -197,9 +200,23 @@ const Settings = () => {
       setTimeout(() => setToast(false), 3000);
     } catch (error) {
       console.error("Error adding employee:", error);
-      alert("Failed to add employee. You might not have permission.");
+      alert("Failed to add employee.");
     } finally {
       setAddingEmployee(false);
+    }
+  };
+
+  const handleUpdateOwner = async (e) => {
+    e.preventDefault();
+    try {
+      await setDoc(doc(db, 'settings', 'adminConfig'), {
+        ownerEmail: ownerEmail.trim().toLowerCase()
+      }, { merge: true });
+      setToast(true);
+      setTimeout(() => setToast(false), 3000);
+    } catch (error) {
+      console.error("Error updating owner:", error);
+      alert("Failed to update owner email.");
     }
   };
 
@@ -715,14 +732,22 @@ const Settings = () => {
           </form>
 
           <div className="space-y-3">
-            <h3 className="text-sm font-medium text-gray-300 mb-2">Authorized Accounts</h3>
+            <h3 className="text-sm font-medium text-gray-300 mb-2 mt-4">Authorized Accounts</h3>
             
             <div className="flex items-center justify-between bg-crmDark/50 border border-crmBorder p-4 rounded-xl">
-              <div>
-                <p className="font-medium text-crmText">minhazuddin7827@gmail.com</p>
-                <p className="text-xs text-gray-500 mt-1">Super Admin (System Owner)</p>
+              <div className="w-full">
+                <p className="text-xs text-gray-500 mb-2">Restaurant Owner Email (Full Settings Access)</p>
+                <div className="flex gap-3">
+                  <input
+                    type="email"
+                    value={ownerEmail}
+                    onChange={(e) => setOwnerEmail(e.target.value)}
+                    placeholder="owner@restaurant.com"
+                    className="flex-1 bg-crmDark border border-crmBorder text-crmText px-4 py-2 rounded-lg focus:outline-none focus:border-crmAccent"
+                  />
+                  <button onClick={handleUpdateOwner} className="bg-crmAccent hover:bg-[#964d20] text-white px-4 py-2 rounded-lg transition-colors font-medium">Save Owner</button>
+                </div>
               </div>
-              <span className="text-xs bg-crmAccent/20 text-crmAccent px-3 py-1 rounded-full border border-crmAccent/30">Permanent</span>
             </div>
 
             {employeeEmails.map((email) => (

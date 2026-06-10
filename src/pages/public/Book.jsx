@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { collection, addDoc, serverTimestamp, doc, getDoc, updateDoc, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { ArrowLeft, CheckCircle2, Moon, Sun, CalendarDays, Search, XCircle, Clock, Download } from 'lucide-react';
+import LanguageDropdown from '../../components/LanguageDropdown';
 import { useNavigate } from 'react-router-dom';
 import { t } from '../../utils/translations';
 
@@ -359,9 +360,12 @@ const Book = () => {
           <h1 className="font-bold text-gray-900 dark:text-white text-lg leading-tight">{settings.restaurantName}</h1>
           <p className="text-xs text-gray-500 dark:text-gray-400">Reservations</p>
         </div>
-        <button onClick={() => setIsDark(!isDark)} className="p-2 -mr-2 text-gray-600 dark:text-gray-300">
-          {isDark ? <Sun size={22} /> : <Moon size={22} />}
-        </button>
+        <div className="flex items-center gap-1">
+          <LanguageDropdown />
+          <button onClick={() => setIsDark(!isDark)} className="p-2 -mr-2 text-gray-600 dark:text-gray-300">
+            {isDark ? <Sun size={22} /> : <Moon size={22} />}
+          </button>
+        </div>
       </header>
 
       <div className="p-4 max-w-md mx-auto space-y-6 mt-4">

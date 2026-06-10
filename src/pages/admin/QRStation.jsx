@@ -27,11 +27,14 @@ const QRStation = () => {
   };
 
   // Generate an array of tables based on the count
-  const tables = Array.from({ length: tableCount }, (_, i) => i + 1);
-
   const handlePrint = () => {
     window.print();
   };
+
+  const formattedBaseUrl = baseUrl.startsWith('http') ? baseUrl : `https://${baseUrl}`;
+
+  // Generate an array of tables based on the count
+  const tables = Array.from({ length: tableCount }, (_, i) => i + 1);
 
   return (
     <div className="p-6 md:p-10 max-w-6xl mx-auto">
@@ -84,7 +87,7 @@ const QRStation = () => {
           <p className="text-sm text-gray-600 mb-6 uppercase tracking-wider">Scan to Order</p>
           <div className="bg-white p-2 rounded-xl shadow-sm">
             <QRCodeSVG 
-              value={`${baseUrl}/order?type=takeaway`} 
+              value={`${formattedBaseUrl}/order?type=takeaway`} 
               size={160}
               level="H"
               includeMargin={false}
@@ -103,7 +106,7 @@ const QRStation = () => {
             <p className="text-sm text-gray-600 mb-6 uppercase tracking-wider">Scan to Order</p>
             <div className="bg-white p-2 rounded-xl shadow-sm">
               <QRCodeSVG 
-                value={`${baseUrl}/order?table=${num}`} 
+                value={`${formattedBaseUrl}/order?table=${num}`} 
                 size={160}
                 level="H"
                 includeMargin={false}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { collection, addDoc, serverTimestamp, doc, getDoc, setDoc, updateDoc, query, getDocs, where, Timestamp, runTransaction } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { ArrowLeft, CheckCircle2, Moon, Sun, Download } from 'lucide-react';
+import LanguageDropdown from '../../components/LanguageDropdown';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { t } from '../../utils/translations';
 
@@ -86,8 +87,12 @@ const Checkout = () => {
       const pendingResStr = localStorage.getItem('pendingReservation');
       const isPreOrder = !!pendingResStr;
       
-      const finalOrderMode = isPreOrder ? 'dineIn' : orderMode;
-      const finalTable = isPreOrder ? 'Pending Table' : (orderMode === 'takeaway' ? 'Takeaway' : tableNum);
+      const finalOrderMode = isPreOrder ? 'dineIn' : (tableNum ? 'dineIn' : orderMode);
+      const finalTable = isPreOrder ? 'Pending Table' : (tableNum ? tableNum : 'Takeaway');
+      
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('en-GB');
+      const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
       const orderData = {
         orderNumber,
@@ -104,6 +109,8 @@ const Checkout = () => {
         total: grandTotal,
         items: cart,
         status: isPreOrder ? 'scheduled' : 'pending',
+        dateStr,
+        timeStr,
         timestamp: serverTimestamp()
       };
 
@@ -329,9 +336,12 @@ const Checkout = () => {
           <h1 className="font-bold text-gray-900 dark:text-white text-lg leading-tight">{t(userLang, 'checkout')}</h1>
           <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{orderMode === 'takeaway' ? t(userLang, 'takeaway') : t(userLang, 'dineIn')} {tableNum ? `- ${t(userLang, 'tableNumber')} ${tableNum}` : ''}</p>
         </div>
-        <button onClick={() => setIsDark(!isDark)} className="p-2 -mr-2 text-gray-600 dark:text-gray-300">
-          {isDark ? <Sun size={22} /> : <Moon size={22} />}
-        </button>
+        <div className="flex items-center gap-1">
+          <LanguageDropdown />
+          <button onClick={() => setIsDark(!isDark)} className="p-2 -mr-2 text-gray-600 dark:text-gray-300">
+            {isDark ? <Sun size={22} /> : <Moon size={22} />}
+          </button>
+        </div>
       </header>
 
       <form onSubmit={handleSubmit} className="p-4 max-w-md mx-auto space-y-6">

@@ -19,6 +19,7 @@ const DashboardLayout = () => {
   const [pendingCount, setPendingCount] = useState(0);
   const [processingCount, setProcessingCount] = useState(0);
   const [resCount, setResCount] = useState(0);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -44,6 +45,23 @@ const DashboardLayout = () => {
           document.documentElement.style.setProperty('--crm-accent', data.themePrimary);
         }
         if (data.dashboardBg) setDashboardBg(data.dashboardBg);
+      }
+      
+      const adminSnap = await getDoc(doc(db, 'settings', 'adminConfig'));
+      if (adminSnap.exists()) {
+        const adminData = adminSnap.data();
+        const userEmail = auth.currentUser?.email;
+        const isSuper = import.meta.env.VITE_ADMIN_EMAILS ? import.meta.env.VITE_ADMIN_EMAILS.split(',').includes(userEmail) : false;
+        const isOwner = userEmail === adminData.ownerEmail;
+        if (isSuper || isOwner) {
+          setIsAdmin(true);
+        }
+      } else {
+        // Fallback for Super Admin if adminConfig doesn't exist
+        const userEmail = auth.currentUser?.email;
+        if (import.meta.env.VITE_ADMIN_EMAILS && import.meta.env.VITE_ADMIN_EMAILS.split(',').includes(userEmail)) {
+          setIsAdmin(true);
+        }
       }
     };
     fetchSettings();
@@ -75,13 +93,13 @@ const DashboardLayout = () => {
   };
 
   const navLinks = [
-    { name: t(ownerLang, 'liveOrders'), path: '/dashboard/live-orders', icon: LayoutDashboard, pendingCount, processingCount },
-    { name: t(ownerLang, 'cashierPos'), path: '/dashboard/pos', icon: ShoppingCart },
-    { name: t(ownerLang, 'menuManager'), path: '/dashboard/menu', icon: MenuIcon },
-    { name: t(ownerLang, 'analytics'), path: '/dashboard/analytics', icon: Activity },
-    { name: t(ownerLang, 'reservations'), path: '/dashboard/reservations', icon: CalendarDays, count: resCount },
-    { name: t(ownerLang, 'qrStation'), path: '/dashboard/qr', icon: QrCode },
-    { name: t(ownerLang, 'settingsTheme'), path: '/dashboard/settings', icon: Settings },
+    { name: t(ownerLang, 'liveOrders'), path: '/dashboard/live-orders', icon: LayoutDashboard, pendingCount, processingCount, adminOnly: false },
+    { name: t(ownerLang, 'cashierPos'), path: '/dashboard/pos', icon: ShoppingCart, adminOnly: false },
+    { name: t(ownerLang, 'reservations'), path: '/dashboard/reservations', icon: CalendarDays, count: resCount, adminOnly: false },
+    { name: t(ownerLang, 'menuManager'), path: '/dashboard/menu', icon: MenuIcon, adminOnly: false },
+    { name: t(ownerLang, 'analytics'), path: '/dashboard/analytics', icon: Activity, adminOnly: false },
+    { name: t(ownerLang, 'qrStation'), path: '/dashboard/qr', icon: QrCode, adminOnly: false },
+    { name: t(ownerLang, 'settingsTheme'), path: '/dashboard/settings', icon: Settings, adminOnly: true },
   ];
 
   const renderSidebarContent = () => (
@@ -91,7 +109,7 @@ const DashboardLayout = () => {
         <h2 className="text-xl font-bold tracking-tight">Restaurant OS</h2>
       </div>
       <nav className="flex-1 py-6 px-4 space-y-2">
-        {navLinks.map((link) => {
+        {navLinks.filter(link => !link.adminOnly || isAdmin).map((link) => {
           const Icon = link.icon;
           const isActive = location.pathname === link.path;
           return (
