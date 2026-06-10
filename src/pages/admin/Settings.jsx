@@ -22,7 +22,11 @@ const Settings = () => {
   const [isDiscountDropdownOpen, setIsDiscountDropdownOpen] = useState(false);
   
   const [ownerLang, setOwnerLang] = useState(localStorage.getItem('ownerLang') || 'en');
-
+  
+  // Employee Management State
+  const [employeeEmails, setEmployeeEmails] = useState([]);
+  const [newEmployeeEmail, setNewEmployeeEmail] = useState('');
+  const [addingEmployee, setAddingEmployee] = useState(false);
   const [settings, setSettings] = useState({
     restaurantName: 'Cafe Bella',
     themePrimary: '#b5602a',
@@ -43,6 +47,14 @@ const Settings = () => {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setSettings(prev => ({ ...prev, ...docSnap.data() }));
+        }
+
+        const adminDocRef = doc(db, 'settings', 'adminConfig');
+        const adminSnap = await getDoc(adminDocRef);
+        if (adminSnap.exists() && adminSnap.data().allowedEmails) {
+          setEmployeeEmails(adminSnap.data().allowedEmails);
+        } else {
+          setEmployeeEmails([]);
         }
 
         const menuSnap = await getDocs(query(collection(db, 'menu')));
@@ -166,6 +178,47 @@ const Settings = () => {
       img.src = event.target.result;
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleAddEmployee = async (e) => {
+    e.preventDefault();
+    if (!newEmployeeEmail || !newEmployeeEmail.includes('@')) return;
+    
+    setAddingEmployee(true);
+    try {
+      const updatedEmails = [...employeeEmails, newEmployeeEmail.trim().toLowerCase()];
+      await setDoc(doc(db, 'settings', 'adminConfig'), {
+        allowedEmails: updatedEmails
+      }, { merge: true });
+      
+      setEmployeeEmails(updatedEmails);
+      setNewEmployeeEmail('');
+      setToast(true);
+      setTimeout(() => setToast(false), 3000);
+    } catch (error) {
+      console.error("Error adding employee:", error);
+      alert("Failed to add employee. You might not have permission.");
+    } finally {
+      setAddingEmployee(false);
+    }
+  };
+
+  const handleRemoveEmployee = async (emailToRemove) => {
+    if (!window.confirm(`Revoke access for ${emailToRemove}?`)) return;
+    
+    try {
+      const updatedEmails = employeeEmails.filter(email => email !== emailToRemove);
+      await setDoc(doc(db, 'settings', 'adminConfig'), {
+        allowedEmails: updatedEmails
+      }, { merge: true });
+      
+      setEmployeeEmails(updatedEmails);
+      setToast(true);
+      setTimeout(() => setToast(false), 3000);
+    } catch (error) {
+      console.error("Error removing employee:", error);
+      alert("Failed to remove employee.");
+    }
   };
 
   const handleSave = async () => {
@@ -635,7 +688,65 @@ const Settings = () => {
           </div>
         </div>
 
-        {/* 8. Database Cleanup */}
+        {/* 8. Employee Management */}
+        <div className="bg-crmCard border border-crmBorder rounded-2xl p-6 shadow-xl mb-6">
+          <div className="flex items-center gap-3 mb-2">
+            <h2 className="text-xl font-semibold text-crmText">Employee Access Management</h2>
+            <span className="bg-green-500/20 text-green-500 text-xs px-2 py-1 rounded border border-green-500/30">Live Sync</span>
+          </div>
+          <p className="text-sm text-gray-400 mb-6">Add an employee's Google email address here to instantly grant them full access to the admin dashboard.</p>
+          
+          <form onSubmit={handleAddEmployee} className="flex flex-col sm:flex-row gap-3 mb-6">
+            <input
+              type="email"
+              placeholder="employee@gmail.com"
+              value={newEmployeeEmail}
+              onChange={(e) => setNewEmployeeEmail(e.target.value)}
+              className="flex-1 bg-crmDark border border-crmBorder text-crmText px-4 py-3 rounded-xl focus:outline-none focus:border-crmAccent"
+              required
+            />
+            <button 
+              type="submit"
+              disabled={addingEmployee || !newEmployeeEmail}
+              className="bg-crmDark hover:bg-crmBorder text-crmText px-6 py-3 rounded-xl border border-crmBorder font-bold transition-colors disabled:opacity-50 whitespace-nowrap"
+            >
+              {addingEmployee ? 'Adding...' : 'Add Employee'}
+            </button>
+          </form>
+
+          <div className="space-y-3">
+            <h3 className="text-sm font-medium text-gray-300 mb-2">Authorized Accounts</h3>
+            
+            <div className="flex items-center justify-between bg-crmDark/50 border border-crmBorder p-4 rounded-xl">
+              <div>
+                <p className="font-medium text-crmText">minhazuddin7827@gmail.com</p>
+                <p className="text-xs text-gray-500 mt-1">Super Admin (System Owner)</p>
+              </div>
+              <span className="text-xs bg-crmAccent/20 text-crmAccent px-3 py-1 rounded-full border border-crmAccent/30">Permanent</span>
+            </div>
+
+            {employeeEmails.map((email) => (
+              <div key={email} className="flex items-center justify-between bg-crmDark border border-crmBorder p-4 rounded-xl group">
+                <div>
+                  <p className="font-medium text-crmText">{email}</p>
+                  <p className="text-xs text-gray-500 mt-1">Staff Access</p>
+                </div>
+                <button 
+                  onClick={() => handleRemoveEmployee(email)}
+                  className="text-red-500 hover:bg-red-500/10 p-2 rounded-lg opacity-0 md:group-hover:opacity-100 transition-all flex items-center gap-2 text-sm font-medium"
+                >
+                  <X size={16} /> Revoke
+                </button>
+              </div>
+            ))}
+            
+            {employeeEmails.length === 0 && (
+              <p className="text-sm text-gray-500 text-center py-4 italic">No additional employees added yet.</p>
+            )}
+          </div>
+        </div>
+
+        {/* 9. Database Cleanup */}
         <div className="bg-crmCard border border-red-500/30 rounded-2xl p-6 shadow-xl mb-12 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full blur-3xl"></div>
           <h2 className="text-xl font-semibold text-red-500 mb-2">Data Management</h2>
