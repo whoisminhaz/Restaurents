@@ -35,7 +35,7 @@ if (typeof window !== 'undefined' && import.meta.env.VITE_RECAPTCHA_SITE_KEY) {
 const auth = getAuth(app);
 const db = initializeFirestore(app, {
   experimentalForceLongPolling: true,
-}, "default");
+});
 const storage = getStorage(app);
 
 // Set persistence to LOCAL so the owner stays logged in even if the browser closes
