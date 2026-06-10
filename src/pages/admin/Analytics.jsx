@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { collection, query, getDocs } from 'firebase/firestore';
 import { db } from '../../config/firebase';
-import { TrendingUp, ShoppingBag, Utensils, CreditCard, Activity } from 'lucide-react';
+import { TrendingUp, ShoppingBag, Utensils, CreditCard, Activity, Download } from 'lucide-react';
 import LoadingScreen from '../../components/LoadingScreen';
 import { t } from '../../utils/translations';
 
@@ -15,6 +15,7 @@ const Analytics = () => {
     takeawayCount: 0,
     dineInCount: 0,
     topItems: [],
+    rawOrders: [],
     loading: true
   });
 
@@ -78,6 +79,7 @@ const Analytics = () => {
         let takeaway = 0;
         let dineIn = 0;
         const itemCounts = {};
+        const matchedOrders = [];
 
         querySnapshot.forEach(doc => {
           const data = doc.data();
@@ -94,6 +96,7 @@ const Analytics = () => {
               const name = (item.names && item.names['en']) || item.name || 'Unknown';
               itemCounts[name] = (itemCounts[name] || 0) + (item.qty || 1);
             });
+            matchedOrders.push(data);
           }
         });
 
@@ -108,6 +111,7 @@ const Analytics = () => {
           takeawayCount: takeaway,
           dineInCount: dineIn,
           topItems: sortedItems,
+          rawOrders: matchedOrders,
           loading: false
         });
       } catch (error) {
@@ -118,6 +122,43 @@ const Analytics = () => {
 
     fetchAnalytics();
   }, [timeRange, customStart, customEnd]);
+
+  const handleExportCSV = () => {
+    if (!stats.rawOrders || stats.rawOrders.length === 0) {
+      alert("No data available to export for this date range.");
+      return;
+    }
+
+    const headers = ["Order Number", "Date", "Customer Name", "Phone", "Order Mode", "Payment Method", "Status", "SubTotal", "Tax", "Total", "Items"];
+    
+    const rows = stats.rawOrders.map(order => {
+      const orderDate = order.timestamp ? order.timestamp.toDate().toLocaleString() : 'N/A';
+      const itemsStr = (order.items || []).map(i => `${i.qty}x ${(i.names && i.names['en']) || i.name}`).join('; ');
+      
+      return [
+        order.orderNumber || '',
+        `"${orderDate}"`,
+        `"${order.customerName || 'N/A'}"`,
+        `"${order.phone || 'N/A'}"`,
+        order.orderMode || 'N/A',
+        order.paymentMethod || 'N/A',
+        order.status || 'N/A',
+        order.subTotal || 0,
+        order.taxAmount || 0,
+        order.total || 0,
+        `"${itemsStr}"`
+      ].join(',');
+    });
+
+    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(','), ...rows].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `analytics_export_${timeRange}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   if (stats.loading) return <LoadingScreen message="Loading analytics..." />;
 
@@ -170,9 +211,13 @@ const Analytics = () => {
             <option value="all">All Time</option>
             <option value="custom">Custom Date Range</option>
           </select>
-          <div className="bg-crmCard p-2.5 rounded-xl shadow-sm border border-crmBorder text-crmAccent h-[42px] flex items-center justify-center">
-            <Activity size={20} />
-          </div>
+          <button 
+            onClick={handleExportCSV}
+            className="bg-crmCard hover:bg-crmDark p-2.5 rounded-xl shadow-sm border border-crmBorder text-crmAccent h-[42px] flex items-center justify-center transition-colors group"
+            title="Download CSV"
+          >
+            <Download size={20} className="group-hover:-translate-y-0.5 transition-transform" />
+          </button>
         </div>
       </div>
 

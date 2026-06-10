@@ -17,12 +17,14 @@ const Login = () => {
 
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      if (!userCredential.user.emailVerified) {
+      const allowedEmails = import.meta.env.VITE_ADMIN_EMAILS ? import.meta.env.VITE_ADMIN_EMAILS.split(',') : [];
+      if (allowedEmails.length > 0 && !allowedEmails.includes(userCredential.user.email)) {
         await signOut(auth);
-        setError('Please verify your email address before logging in. Check your inbox.');
+        setError('Unauthorized access. This email is not registered as an admin.');
         setLoading(false);
         return;
       }
+
       navigate('/dashboard');
     } catch (err) {
       console.error(err);
@@ -38,12 +40,14 @@ const Login = () => {
     const provider = new GoogleAuthProvider();
     try {
       const userCredential = await signInWithPopup(auth, provider);
-      if (!userCredential.user.emailVerified) {
+      const allowedEmails = import.meta.env.VITE_ADMIN_EMAILS ? import.meta.env.VITE_ADMIN_EMAILS.split(',') : [];
+      if (allowedEmails.length > 0 && !allowedEmails.includes(userCredential.user.email)) {
         await signOut(auth);
-        setError('Please verify your Google email address first.');
+        setError('Unauthorized access. This email is not registered as an admin.');
         setLoading(false);
         return;
       }
+
       navigate('/dashboard');
     } catch (err) {
       console.error(err);

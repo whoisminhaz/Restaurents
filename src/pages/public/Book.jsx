@@ -8,6 +8,7 @@ import { t } from '../../utils/translations';
 const Book = () => {
   const navigate = useNavigate();
   const [settings, setSettings] = useState(null);
+  const [error, setError] = useState(null);
   
   const [tab, setTab] = useState('book'); // 'book' | 'manage'
   
@@ -43,8 +44,17 @@ const Book = () => {
 
   useEffect(() => {
     const fetchSettings = async () => {
-      const snap = await getDoc(doc(db, 'settings', 'master'));
-      if (snap.exists()) setSettings(snap.data());
+      try {
+        const snap = await getDoc(doc(db, 'settings', 'master'));
+        if (snap.exists()) {
+          setSettings(snap.data());
+        } else {
+          setError("Settings document not found. Please create 'settings/master' in Firestore.");
+        }
+      } catch (err) {
+        console.error(err);
+        setError("Error loading settings: " + (err.message || "Unknown error"));
+      }
     };
     fetchSettings();
   }, []);
@@ -212,7 +222,22 @@ const Book = () => {
     }
   };
 
-  if (!settings) return null;
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0a0a0a] flex flex-col items-center justify-center p-6 text-center">
+        <h1 className="text-3xl font-bold text-red-500 mb-2">System Error</h1>
+        <p className="text-gray-500 dark:text-gray-400">{error}</p>
+      </div>
+    );
+  }
+
+  if (!settings) {
+    return (
+      <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0a0a0a] flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-gray-300 dark:border-gray-700 border-t-gray-800 dark:border-t-white rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   if (settings.bookingEnabled === false) {
     return (

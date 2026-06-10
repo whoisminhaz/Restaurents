@@ -53,7 +53,12 @@ const Landing = () => {
           });
         }
       } catch (error) {
-        setSettings({ restaurantName: 'Error Loading', themePrimary: '#ff0000', languages: ['en'] });
+        console.error("Firestore Error:", error);
+        setSettings({ 
+          restaurantName: 'Error: ' + (error.message || 'Unknown'), 
+          themePrimary: '#ff0000', 
+          languages: ['en'] 
+        });
       }
     };
     fetchSettings();
