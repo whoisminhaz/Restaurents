@@ -1,44 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import '../../assets/landing.css';
-import LanguageDropdown from '../../components/LanguageDropdown';
-import { getDoc, doc } from 'firebase/firestore';
-import { db } from '../../config/firebase';
 
-const Landing = () => {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const tableNum = searchParams.get('table');
-
-  useEffect(() => {
-    if (tableNum) {
-      localStorage.setItem('tableNum', tableNum);
-      localStorage.setItem('orderMode', 'dineIn');
-      navigate('/order');
-    }
-  }, [tableNum, navigate]);
-
-  useEffect(() => {
-    // Load lucide script dynamically for the <i> tags
-    const script = document.createElement('script');
-    script.src = 'https://unpkg.com/lucide@latest';
-    script.onload = () => {
-      if (window.lucide) {
-        window.lucide.createIcons();
-      }
-    };
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
-
-  return (
-    <div className="landing-wrapper relative">
-      <div className="absolute top-4 right-4 z-[100] flex items-center gap-2">
-        <LanguageDropdown />
-      </div>
-      
 
 
 <div id="lang-splash">
@@ -47,7 +7,7 @@ const Landing = () => {
   <div className="splash-divider"></div>
   <div className="splash-prompt" id="splash-prompt">Choose Your Language</div>
   <div className="lang-btns">
-    <button className="lang-btn" id="btn-en" onClick={() => setLang('en')}>🇬🇧 English</button>
+    <button className="lang-btn" id="btn-en" onclick="setLang('en')">🇬🇧 English</button>
     <button className="lang-btn" id="btn-my" onclick="setLang('my')">🇲🇾 Bahasa Melayu</button>
   </div>
 </div>
@@ -409,10 +369,4 @@ const Landing = () => {
   </svg>
 </a>
 
-
-
-    </div>
-  );
-};
-
-export default Landing;
+<script src="script.js"></script>

@@ -1,89 +1,405 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to Firebase Hosting</title>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Mosty Kitchen – Western dan Shellout terbaik di Kuala Kangsar, Perak. Nikmati Grilled Lamb Chop, Shell Out Adinda, Pasta, dan lebih lagi. Open Tue–Sun 4PM–11:30PM. Rated 4.7★ on Foodpanda.">
+<meta name="keywords" content="Mosty Kitchen, Kuala Kangsar, restoran western, shellout Kuala Kangsar, lamb chop, pasta, nasi goreng, makanan sedap Perak, halal restaurant, best restaurant Kuala Kangsar">
+<meta property="og:title" content="Mosty Kitchen | Western & Shellout Kuala Kangsar">
+<meta property="og:description" content="Restoran makan malam terbaik di Kuala Kangsar – Western grill, shellout seafood, pasta, dan lebih. Halal. Buka Selasa–Ahad 4PM–11:30PM.">
+<meta property="og:type" content="restaurant">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://mostykitchen.my/">
+<title>Mosty Kitchen | Western & Shellout – Kuala Kangsar, Perak</title>
+<link rel="stylesheet" href="style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Restaurant",
+  "name": "Mosty Kitchen",
+  "address": {"@type":"PostalAddress","streetAddress":"5E, Jalan Daeng Selili, Kampung Penaga","addressLocality":"Kuala Kangsar","addressRegion":"Perak","postalCode":"33000","addressCountry":"MY"},
+  "telephone": "+601126118673",
+  "email": "mostykitchen@gmail.com",
+  "servesCuisine": ["Western","Malaysian","Seafood","Korean"],
+  "priceRange": "RM13–RM68",
+  "openingHours": ["Tu-Su 16:00-23:30"],
+  "aggregateRating": {"@type":"AggregateRating","ratingValue":"4.7","reviewCount":"200+","bestRating":"5"},
+  "hasMap": "https://maps.google.com/?q=Mosty+Kitchen+Kuala+Kangsar"
+}
+</script>
+</head>
+<body>
 
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/12.14.0/firebase-app-compat.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/12.14.0/firebase-auth-compat.js"></script>
-    <script defer src="/__/firebase/12.14.0/firebase-database-compat.js"></script>
-    <script defer src="/__/firebase/12.14.0/firebase-firestore-compat.js"></script>
-    <script defer src="/__/firebase/12.14.0/firebase-functions-compat.js"></script>
-    <script defer src="/__/firebase/12.14.0/firebase-messaging-compat.js"></script>
-    <script defer src="/__/firebase/12.14.0/firebase-storage-compat.js"></script>
-    <script defer src="/__/firebase/12.14.0/firebase-analytics-compat.js"></script>
-    <script defer src="/__/firebase/12.14.0/firebase-remote-config-compat.js"></script>
-    <script defer src="/__/firebase/12.14.0/firebase-performance-compat.js"></script>
-    <!-- 
-      initialize the SDK after all desired features are loaded, set useEmulator to false
-      to avoid connecting the SDK to running emulators.
-    -->
-    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+<!-- LANGUAGE SPLASH -->
+<div id="lang-splash">
+  <div class="splash-logo">MOSTY KITCHEN</div>
+  <div class="splash-tagline">Western &amp; Shellout · Kuala Kangsar</div>
+  <div class="splash-divider"></div>
+  <div class="splash-prompt" id="splash-prompt">Choose Your Language</div>
+  <div class="lang-btns">
+    <button class="lang-btn" id="btn-en" onclick="setLang('en')">🇬🇧 English</button>
+    <button class="lang-btn" id="btn-my" onclick="setLang('my')">🇲🇾 Bahasa Melayu</button>
+  </div>
+</div>
 
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
-      }
-    </style>
-  </head>
-  <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">MOSTY</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="#about" data-i18n="nav_about">About</a></li>
+    <li><a href="#menu" data-i18n="nav_menu">Menu</a></li>
+    <li><a href="#gallery" data-i18n="nav_gallery">Gallery</a></li>
+    <li><a href="#reviews" data-i18n="nav_reviews">Reviews</a></li>
+    <li><a href="#location" data-i18n="nav_location">Location</a></li>
+  </ul>
+  <button class="nav-lang-btn" id="nav-lang-toggle" onclick="toggleLang()">MY | EN</button>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-badge" data-i18n="hero_badge">★ Kuala Kangsar's Finest ★</div>
+    <h1 class="hero-title">MOSTY<br>KITCHEN</h1>
+    <p class="hero-subtitle" data-i18n="hero_subtitle">Western &amp; Shellout · Kuala Kangsar, Perak</p>
+    <p class="hero-desc" data-i18n="hero_desc">Where bold flavours meet the royal town. Grilled to perfection. Shellout to remember. Open for dinner – every night but Monday.</p>
+    <div class="hero-cta">
+      <a href="#menu" class="btn-gold" data-i18n="hero_cta1">Explore Menu</a>
+      <a href="/book" class="btn-gold">📅 Reserve a Table</a>
+      <a href="https://www.foodpanda.my/restaurant/xfx4/mosty-kitchen-kuala-kangsar" target="_blank" class="btn-outline">🛵 Order on Foodpanda</a>
     </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
+  </div>
+  <div class="hero-scroll"><span data-i18n="scroll">Scroll</span></div>
+</section>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const loadEl = document.querySelector('#load');
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.firestore().doc('/foo/bar').get().then(() => { });
-        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        // firebase.analytics(); // call to activate
-        // firebase.analytics().logEvent('tutorial_completed');
-        // firebase.performance(); // call to activate
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+<!-- STATS -->
+<div id="stats">
+  <div class="stat-item reveal">
+    <div class="stat-number">4.7★</div>
+    <div class="stat-label" data-i18n="stat1">Foodpanda Rating</div>
+  </div>
+  <div class="stat-item reveal reveal-delay-1">
+    <div class="stat-number">30+</div>
+    <div class="stat-label" data-i18n="stat2">Menu Items</div>
+  </div>
+  <div class="stat-item reveal reveal-delay-2">
+    <div class="stat-number">2000+</div>
+    <div class="stat-label" data-i18n="stat3">Happy Customers</div>
+  </div>
+  <div class="stat-item reveal reveal-delay-3">
+    <div class="stat-number">6+</div>
+    <div class="stat-label" data-i18n="stat4">Menu Categories</div>
+  </div>
+</div>
 
-        try {
-          let app = firebase.app();
-          let features = [
-            'auth', 
-            'database', 
-            'firestore',
-            'functions',
-            'messaging', 
-            'storage', 
-            'analytics', 
-            'remoteConfig',
-            'performance',
-          ].filter(feature => typeof app[feature] === 'function');
-          loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
-        }
-      });
-    </script>
-  </body>
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-grid">
+    <div class="about-img-wrap reveal">
+      <img src="images/restaurant-ambiance.png" alt="Mosty Kitchen restaurant interior ambiance" class="about-img" loading="lazy">
+      <div class="about-img-accent"></div>
+    </div>
+    <div class="reveal reveal-delay-1">
+      <span class="section-label" data-i18n="about_label">Our Story</span>
+      <h2 class="section-title" data-i18n="about_title">Bold Flavours in the <span>Royal Town</span></h2>
+      <div class="section-line"></div>
+      <p style="color:var(--gray);line-height:1.8;margin-bottom:1rem;" data-i18n="about_p1">
+        Mosty Kitchen is Kuala Kangsar's most talked-about late-night dining destination. Born from a passion for bold, unapologetic flavours, we serve Western grills, dramatic shellout seafood feasts, and hearty Malaysian classics — all under one roof.
+      </p>
+      <p style="color:var(--gray);line-height:1.8;margin-bottom:2rem;" data-i18n="about_p2">
+        Nestled in the heart of Perak's royal town — just minutes from the iconic Ubudiah Mosque and Istana Kenangan — we're the spot where families, food bloggers, and late-night crews come together. Always packed. Always alive. 🖤
+      </p>
+      <div class="about-badges">
+        <span class="badge" data-i18n="badge1">✦ Halal Certified</span>
+        <span class="badge" data-i18n="badge2">✦ Malay Owned</span>
+        <span class="badge" data-i18n="badge3">✦ Dine-in &amp; Delivery</span>
+        <span class="badge" data-i18n="badge4">✦ Food Blogger Favourite</span>
+        <span class="badge" data-i18n="badge5">✦ Open Late Nights</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MENU -->
+<section id="menu">
+  <div style="max-width:1200px;margin:0 auto;">
+    <span class="section-label" data-i18n="menu_label">What We Serve</span>
+    <h2 class="section-title reveal" data-i18n="menu_title">Our <span>Signature</span> Menu</h2>
+    <div class="section-line"></div>
+    <div class="menu-tabs" id="menu-tabs">
+      <button class="menu-tab active" data-tab="western" data-i18n="tab_western">Western</button>
+      <button class="menu-tab" data-tab="shellout" data-i18n="tab_shellout">Shell Out</button>
+      <button class="menu-tab" data-tab="pasta" data-i18n="tab_pasta">Pasta Mania</button>
+      <button class="menu-tab" data-tab="mozacheese" data-i18n="tab_moza">Mozacheese</button>
+      <button class="menu-tab" data-tab="nasigoreng" data-i18n="tab_nasi">Nasi Goreng</button>
+      <button class="menu-tab" data-tab="nasiputih" data-i18n="tab_nasiputih">Set Nasi Putih</button>
+      <button class="menu-tab" data-tab="malaysian" data-i18n="tab_malaysian">Malaysian</button>
+      <button class="menu-tab" data-tab="sup" data-i18n="tab_sup">Sup</button>
+    </div>
+
+    <!-- Western -->
+    <div class="menu-panel active" id="panel-western">
+      <div class="menu-card reveal"><img src="images/western-lamb.png" alt="Grilled Lamb Chop" class="menu-card-img"><div class="menu-card-badge" data-i18n="bestseller">Best Seller</div><div class="menu-card-body"><div class="menu-card-name">Grilled Lamb Chop</div><div class="menu-card-desc" data-i18n="lamb_desc">Tender grilled lamb with house sauce, served with sides</div><div class="menu-card-price">RM 41.90</div></div></div>
+      <div class="menu-card reveal reveal-delay-1"><img src="images/restaurant-ambiance.png" alt="Grilled Chicken Chop" class="menu-card-img"><div class="menu-card-body"><div class="menu-card-name">Grilled Chicken Chop</div><div class="menu-card-desc" data-i18n="grill_chk_desc">Juicy grilled chicken with pepper sauce &amp; sides</div><div class="menu-card-price">RM 29.90</div></div></div>
+      <div class="menu-card reveal reveal-delay-2"><img src="images/western-lamb.png" alt="Fried Chicken Chop" class="menu-card-img"><div class="menu-card-body"><div class="menu-card-name">Fried Chicken Chop</div><div class="menu-card-desc" data-i18n="fried_chk_desc">Crispy golden fried chicken chop with sauce &amp; sides</div><div class="menu-card-price">RM 26.90</div></div></div>
+      <div class="menu-card reveal reveal-delay-3"><img src="images/western-lamb.png" alt="Combo Grilled" class="menu-card-img"><div class="menu-card-badge" data-i18n="popular">Popular</div><div class="menu-card-body"><div class="menu-card-name">Combo Grilled</div><div class="menu-card-desc" data-i18n="combo_desc">Lamb &amp; chicken combo platter – the ultimate feast</div><div class="menu-card-price">RM 47.90</div></div></div>
+    </div>
+
+    <!-- Shellout -->
+    <div class="menu-panel" id="panel-shellout">
+      <div class="menu-card reveal"><img src="images/hero-shellout.png" alt="Shell Out Adinda" class="menu-card-img"><div class="menu-card-badge" data-i18n="signature">Signature</div><div class="menu-card-body"><div class="menu-card-name">Shell Out Adinda</div><div class="menu-card-desc" data-i18n="shell_desc">Epic shellout for 2–3 pax. Prawns, mussels, clams, corn, sausage &amp; 2 cups rice</div><div class="menu-card-price">RM 67.00</div></div></div>
+    </div>
+
+    <!-- Pasta -->
+    <div class="menu-panel" id="panel-pasta">
+      <div class="menu-card reveal"><img src="images/pasta-carbonara.png" alt="Carbonara" class="menu-card-img"><div class="menu-card-body"><div class="menu-card-name">Carbonara</div><div class="menu-card-desc" data-i18n="carb_desc">Creamy classic carbonara with bacon &amp; parmesan</div><div class="menu-card-price">RM 23.90</div></div></div>
+      <div class="menu-card reveal reveal-delay-1"><img src="images/pasta-carbonara.png" alt="Aglio Olio" class="menu-card-img"><div class="menu-card-body"><div class="menu-card-name">Aglio Olio</div><div class="menu-card-desc" data-i18n="aglio_desc">Classic garlic olive oil pasta with herbs</div><div class="menu-card-price">RM 23.90</div></div></div>
+      <div class="menu-card reveal reveal-delay-2"><img src="images/pasta-carbonara.png" alt="Beef Bolognese" class="menu-card-img"><div class="menu-card-body"><div class="menu-card-name">Beef Bolognese</div><div class="menu-card-desc" data-i18n="bolo_desc">Rich slow-cooked beef bolognese sauce</div><div class="menu-card-price">RM 23.90</div></div></div>
+      <div class="menu-card reveal reveal-delay-3"><img src="images/pasta-carbonara.png" alt="Seafood Aglio Olio" class="menu-card-img"><div class="menu-card-body"><div class="menu-card-name">Seafood Aglio Olio</div><div class="menu-card-desc" data-i18n="sfaglio_desc">Garlic pasta loaded with fresh seafood</div><div class="menu-card-price">RM 33.90</div></div></div>
+      <div class="menu-card reveal"><img src="images/pasta-carbonara.png" alt="Creamy Tomyam Seafood" class="menu-card-img"><div class="menu-card-body"><div class="menu-card-name">Creamy Tomyam Seafood</div><div class="menu-card-desc" data-i18n="tomyam_desc">Spicy creamy tomyam pasta with seafood</div><div class="menu-card-price">RM 33.90</div></div></div>
+      <div class="menu-card reveal reveal-delay-1"><img src="images/pasta-carbonara.png" alt="Chicken Crispy Carbonara" class="menu-card-img"><div class="menu-card-body"><div class="menu-card-name">Chicken Crispy Carbonara</div><div class="menu-card-desc" data-i18n="crkcarb_desc">Carbonara topped with crispy chicken bits</div><div class="menu-card-price">RM 27.90</div></div></div>
+      <div class="menu-card reveal reveal-delay-2"><img src="images/pasta-carbonara.png" alt="Napolitana" class="menu-card-img"><div class="menu-card-body"><div class="menu-card-name">Napolitana</div><div class="menu-card-desc" data-i18n="napo_desc">Classic tomato-based Napolitana pasta</div><div class="menu-card-price">RM 27.90</div></div></div>
+    </div>
+
+    <!-- Mozacheese -->
+    <div class="menu-panel" id="panel-mozacheese">
+      <div class="menu-card reveal"><img src="images/mozacheese-korean.png" alt="Ramen Chicken Popcorn" class="menu-card-img"><div class="menu-card-badge" data-i18n="trending">Trending</div><div class="menu-card-body"><div class="menu-card-name">Ramen Chicken Popcorn</div><div class="menu-card-desc" data-i18n="rpop_desc">Korean-style popcorn chicken with ramen &amp; mozz cheese pull</div><div class="menu-card-price">RM 37.90</div></div></div>
+      <div class="menu-card reveal reveal-delay-1"><img src="images/mozacheese-korean.png" alt="Korean Chicken" class="menu-card-img"><div class="menu-card-body"><div class="menu-card-name">Korean Chicken</div><div class="menu-card-desc" data-i18n="kchk_desc">Korean fried chicken with mozzarella cheese (no ramen)</div><div class="menu-card-price">RM 39.00</div></div></div>
+      <div class="menu-card reveal reveal-delay-2"><img src="images/mozacheese-korean.png" alt="Ramen Meatball Chicken Wing" class="menu-card-img"><div class="menu-card-body"><div class="menu-card-name">Ramen Meatball Chicken Wing</div><div class="menu-card-desc" data-i18n="rmcw_desc">Ultimate combo: ramen, meatball &amp; chicken wings in mozz sauce</div><div class="menu-card-price">RM 54.90</div></div></div>
+    </div>
+
+    <!-- Nasi Goreng -->
+    <div class="menu-panel" id="panel-nasigoreng">
+      <div class="menu-card reveal"><img src="images/nasi-goreng.png" alt="Nasi Goreng Sotong" class="menu-card-img"><div class="menu-card-body"><div class="menu-card-name">Nasi Goreng Sotong</div><div class="menu-card-desc" data-i18n="ngsotong_desc">Wok-fired squid fried rice</div><div class="menu-card-price">RM 22.90</div></div></div>
+      <div class="menu-card reveal reveal-delay-1"><img src="images/nasi-goreng.png" alt="Nasi Goreng Udang" class="menu-card-img"><div class="menu-card-body"><div class="menu-card-name">Nasi Goreng Udang</div><div class="menu-card-desc" data-i18n="ngudang_desc">Wok-fired prawn fried rice</div><div class="menu-card-price">RM 22.90</div></div></div>
+      <div class="menu-card reveal reveal-delay-2"><img src="images/nasi-goreng.png" alt="Nasi Goreng Daging" class="menu-card-img"><div class="menu-card-body"><div class="menu-card-name">Nasi Goreng Daging</div><div class="menu-card-desc" data-i18n="ngdaging_desc">Wok-fired beef fried rice</div><div class="menu-card-price">RM 13.90</div></div></div>
+      <div class="menu-card reveal reveal-delay-3"><img src="images/nasi-goreng.png" alt="Nasi Goreng Kampung" class="menu-card-img"><div class="menu-card-body"><div class="menu-card-name">Nasi Goreng Kampung</div><div class="menu-card-desc" data-i18n="ngkampung_desc">Traditional village-style fried rice</div><div class="menu-card-price">RM 13.90</div></div></div>
+    </div>
+
+    <!-- Set Nasi Putih -->
+    <div class="menu-panel" id="panel-nasiputih">
+      <div class="menu-card reveal"><img src="images/nasi-goreng.png" alt="Set Daging Merah" class="menu-card-img"><div class="menu-card-body"><div class="menu-card-name">Set Daging Merah</div><div class="menu-card-desc" data-i18n="sdm_desc">Steamed rice with spicy red beef</div><div class="menu-card-price">RM 15.90</div></div></div>
+      <div class="menu-card reveal reveal-delay-1"><img src="images/nasi-goreng.png" alt="Set Nasi Udang Special" class="menu-card-img"><div class="menu-card-body"><div class="menu-card-name">Set Nasi Udang Special</div><div class="menu-card-desc" data-i18n="snus_desc">Rice with special prawn dish</div><div class="menu-card-price">RM 22.90</div></div></div>
+      <div class="menu-card reveal reveal-delay-2"><img src="images/nasi-goreng.png" alt="Set Ayam Kunyit" class="menu-card-img"><div class="menu-card-body"><div class="menu-card-name">Set Ayam Kunyit</div><div class="menu-card-desc" data-i18n="sak_desc">Rice with turmeric chicken</div><div class="menu-card-price">RM 13.90</div></div></div>
+      <div class="menu-card reveal reveal-delay-3"><img src="images/nasi-goreng.png" alt="Set Paprik Ayam" class="menu-card-img"><div class="menu-card-body"><div class="menu-card-name">Set Paprik Ayam</div><div class="menu-card-desc" data-i18n="spa_desc">Rice with stir-fried chicken paprik</div><div class="menu-card-price">RM 15.90</div></div></div>
+    </div>
+
+    <!-- Malaysian -->
+    <div class="menu-panel" id="panel-malaysian">
+      <div class="menu-card reveal"><img src="images/nasi-goreng.png" alt="Ikan Siakap 3 Rasa" class="menu-card-img"><div class="menu-card-badge" data-i18n="special">Special</div><div class="menu-card-body"><div class="menu-card-name">Ikan Siakap 3 Rasa</div><div class="menu-card-desc" data-i18n="ikan_desc">Whole sea bass in three-flavour sauce — sweet, sour &amp; spicy</div><div class="menu-card-price">RM 63.00</div></div></div>
+      <div class="menu-card reveal reveal-delay-1"><img src="images/nasi-goreng.png" alt="Kuey Teow Goreng Special" class="menu-card-img"><div class="menu-card-body"><div class="menu-card-name">Kuey Teow Goreng Special</div><div class="menu-card-desc" data-i18n="kt_desc">Wok-fired flat rice noodles with special mix</div><div class="menu-card-price">RM 22.90</div></div></div>
+    </div>
+
+    <!-- Sup -->
+    <div class="menu-panel" id="panel-sup">
+      <div class="menu-card reveal"><img src="images/restaurant-ambiance.png" alt="Sup Premium" class="menu-card-img"><div class="menu-card-body"><div class="menu-card-name" data-i18n="sup_premium">Sup Premium</div><div class="menu-card-desc" data-i18n="supP_desc">Rich, hearty premium bone soup</div><div class="menu-card-price">RM 26.90</div></div></div>
+      <div class="menu-card reveal reveal-delay-1"><img src="images/restaurant-ambiance.png" alt="Sup Madani" class="menu-card-img"><div class="menu-card-body"><div class="menu-card-name">Sup Madani</div><div class="menu-card-desc" data-i18n="supM_desc">Classic comforting Madani soup</div><div class="menu-card-price">RM 18.00</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <div style="max-width:1200px;margin:0 auto;">
+    <span class="section-label" data-i18n="gallery_label">Food &amp; Vibes</span>
+    <h2 class="section-title reveal" data-i18n="gallery_title">The <span>Experience</span></h2>
+    <div class="section-line"></div>
+    <div class="gallery-grid">
+      <div class="gallery-item reveal"><img src="images/hero-shellout.png" alt="Shell Out feast at Mosty Kitchen"><div class="overlay"></div></div>
+      <div class="gallery-item reveal reveal-delay-1"><img src="images/western-lamb.png" alt="Grilled Lamb Chop"><div class="overlay"></div></div>
+      <div class="gallery-item reveal reveal-delay-2"><img src="images/mozacheese-korean.png" alt="Korean Mozacheese set"><div class="overlay"></div></div>
+      <div class="gallery-item reveal reveal-delay-1"><img src="images/pasta-carbonara.png" alt="Creamy Carbonara pasta"><div class="overlay"></div></div>
+      <div class="gallery-item reveal reveal-delay-2"><img src="images/nasi-goreng.png" alt="Nasi Goreng Udang"><div class="overlay"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section id="reviews">
+  <div style="max-width:1200px;margin:0 auto;">
+    <span class="section-label" data-i18n="reviews_label">What They Say</span>
+    <h2 class="section-title reveal" data-i18n="reviews_title">Guest <span>Reviews</span></h2>
+    <div class="section-line"></div>
+    <div class="reviews-grid">
+      <div class="review-card reveal">
+        <div class="quote-icon">"</div>
+        <div class="review-stars">★★★★☆</div>
+        <p class="review-text">"Quite surprised to see the large crowd. Even when we were about to leave at 10pm, people were still coming in. Shellout for 6 pax only cost RM130 — definitely a steal."</p>
+        <div class="review-author">Sazali M Salleh</div>
+        <div class="review-platform">Google Review</div>
+      </div>
+      <div class="review-card reveal reveal-delay-1">
+        <div class="quote-icon">"</div>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Everything that we have tried was absolutely amazing. Great staff, wonderful atmosphere. Will definitely be coming back again and again!"</p>
+        <div class="review-author">Asyraf Basyir</div>
+        <div class="review-platform">Google Review</div>
+      </div>
+      <div class="review-card reveal reveal-delay-2">
+        <div class="quote-icon">"</div>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Love with the meals. Lamb best... Terrrrbaikkk!! Wajib datang kalau kat Kuala Kangsar. Harga pun berbaloi!"</p>
+        <div class="review-author">Local Food Lover</div>
+        <div class="review-platform">Facebook Review</div>
+      </div>
+      <div class="review-card reveal">
+        <div class="quote-icon">"</div>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Makanan sedap.... suasana menarik, kedai bersih. Staffs friendly. Highly recommended untuk makan malam bersama keluarga!"</p>
+        <div class="review-author">Pelanggan Setia</div>
+        <div class="review-platform">Google Review</div>
+      </div>
+      <div class="review-card reveal reveal-delay-1">
+        <div class="quote-icon">"</div>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Shellout sedap... Wajib cuba! Portion besar, harga reasonable. Best makan ramai-ramai. Atmosphere happening sangat!"</p>
+        <div class="review-author">TikTok Food Blogger</div>
+        <div class="review-platform">TikTok Review</div>
+      </div>
+      <div class="review-card reveal reveal-delay-2">
+        <div class="quote-icon">"</div>
+        <div class="review-stars">★★★★☆</div>
+        <p class="review-text">"Great food and affordable price! The pasta and grilled lamb chop are must-tries. Cozy ambiance for family dinner. Highly recommended!"</p>
+        <div class="review-author">Foodpanda Customer</div>
+        <div class="review-platform">Foodpanda 4.7★</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOCATION -->
+<section id="location">
+  <div style="max-width:1200px;margin:0 auto;">
+    <span class="section-label" data-i18n="location_label">Find Us</span>
+    <h2 class="section-title reveal" data-i18n="location_title">Visit <span>Mosty Kitchen</span></h2>
+    <div class="section-line"></div>
+    <div class="location-grid">
+      <div class="reveal">
+        <ul class="info-list">
+          <li class="info-item">
+            <span class="info-icon">📍</span>
+            <div>
+              <div class="info-label" data-i18n="addr_label">Address</div>
+              <div class="info-value">5E, Jalan Daeng Selili, Kampung Penaga,<br>33000 Kuala Kangsar, Perak</div>
+            </div>
+          </li>
+          <li class="info-item">
+            <span class="info-icon">📞</span>
+            <div>
+              <div class="info-label" data-i18n="phone_label">Phone</div>
+              <div class="info-value"><a href="tel:+601126118673">+60 11-2611 8673</a></div>
+            </div>
+          </li>
+          <li class="info-item">
+            <span class="info-icon">✉️</span>
+            <div>
+              <div class="info-label" data-i18n="email_label">Email</div>
+              <div class="info-value"><a href="mailto:mostykitchen@gmail.com">mostykitchen@gmail.com</a></div>
+            </div>
+          </li>
+          <li class="info-item">
+            <span class="info-icon">🕐</span>
+            <div>
+              <div class="info-label" data-i18n="hours_label">Opening Hours</div>
+              <div class="info-value">
+                <div class="hours-row closed"><span data-i18n="monday">Monday</span><span data-i18n="closed">Closed</span></div>
+                <div class="hours-row open"><span data-i18n="tues_sun">Tuesday – Sunday</span><span class="hours-time">4:00 PM – 11:30 PM</span></div>
+              </div>
+            </div>
+          </li>
+          <li class="info-item">
+            <span class="info-icon">🛵</span>
+            <div>
+              <div class="info-label" data-i18n="delivery_label">Delivery</div>
+              <div class="info-value"><a href="https://www.foodpanda.my" target="_blank" style="color:var(--gold)">Order via Foodpanda ★ 4.7</a></div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="reveal reveal-delay-1">
+        <iframe class="map-embed" title="Mosty Kitchen Location Map"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3975.0!2d100.9377!3d4.7739!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31caad0b0b0b0b0b%3A0x0!2sMosty+Kitchen%2C+Kuala+Kangsar!5e0!3m2!1sen!2smy!4v1"
+          allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+        <p style="font-size:0.75rem;color:var(--gray);margin-top:0.75rem;text-align:center;" data-i18n="kk_note">📍 Located in Kuala Kangsar – Perak's Royal Town, just 25km from Ipoh</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ORDER CTA -->
+<section id="order-cta">
+  <h2 class="cta-title" data-i18n="cta_title">READY TO DIG IN?</h2>
+  <p class="cta-sub" data-i18n="cta_sub">Come hungry. Leave happy. Reserve a table or order online — we've got you covered.</p>
+  <div class="cta-btns">
+    <a href="/book" class="btn-gold">📅 Reserve a Table</a>
+    <a href="https://www.foodpanda.my/restaurant/xfx4/mosty-kitchen-kuala-kangsar" target="_blank" class="btn-outline">🛵 Order on Foodpanda</a>
+    <a href="https://wa.me/601126118673" target="_blank" class="btn-outline" data-i18n="cta_wa">💬 WhatsApp Us</a>
+  </div>
+</section>
+
+<!-- SOCIAL -->
+<section id="social">
+  <div style="max-width:800px;margin:0 auto;">
+    <span class="section-label" data-i18n="social_label">Follow Us</span>
+    <h2 class="section-title reveal" data-i18n="social_title">Stay <span>Connected</span></h2>
+    <div class="section-line" style="margin:0 auto 2rem;"></div>
+    <p style="color:var(--gray);margin-bottom:2rem;" data-i18n="social_desc">Follow our journey on social media for daily specials, behind-the-scenes, and more 🖤</p>
+    <div class="social-links">
+      <a href="https://www.facebook.com/mostykitchen" target="_blank" class="social-link"><span class="social-icon">📘</span><span>Facebook <span style="color:var(--gray);font-size:0.75rem;">Follow Us</span></span></a>
+      <a href="https://www.tiktok.com/@mostykitchen" target="_blank" class="social-link"><span class="social-icon">🎵</span><span>TikTok <span style="color:var(--gray);font-size:0.75rem;">@mostykitchen</span></span></a>
+      <a href="https://www.foodpanda.my" target="_blank" class="social-link"><span class="social-icon">🐼</span><span>Foodpanda <span style="color:var(--gold);font-size:0.75rem;">★ 4.7</span></span></a>
+      <a href="mailto:mostykitchen@gmail.com" class="social-link"><span class="social-icon">✉️</span><span>Email Us</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo">MOSTY KITCHEN</div>
+      <p class="footer-desc" data-i18n="footer_desc">Western dan Shellout terbaik di Kuala Kangsar, Perak. Halal. Malay-owned. Open for dinner Tuesday to Sunday. 🖤</p>
+    </div>
+    <div>
+      <div class="footer-heading" data-i18n="footer_explore">Explore</div>
+      <ul class="footer-links">
+        <li><a href="#about" data-i18n="nav_about">About Us</a></li>
+        <li><a href="#menu" data-i18n="nav_menu">Menu</a></li>
+        <li><a href="#gallery" data-i18n="nav_gallery">Gallery</a></li>
+        <li><a href="#reviews" data-i18n="nav_reviews">Reviews</a></li>
+        <li><a href="#location" data-i18n="nav_location">Location</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-heading" data-i18n="footer_contact">Contact</div>
+      <ul class="footer-links">
+        <li><a href="tel:+601126118673">+60 11-2611 8673</a></li>
+        <li><a href="mailto:mostykitchen@gmail.com">mostykitchen@gmail.com</a></li>
+        <li><a href="https://wa.me/601126118673" target="_blank">WhatsApp</a></li>
+        <li><a href="https://www.facebook.com/mostykitchen" target="_blank">Facebook</a></li>
+        <li><a href="https://www.tiktok.com/@mostykitchen" target="_blank">TikTok</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy" data-i18n="footer_copy">© 2025 Mosty Kitchen. All rights reserved. · 5E, Jalan Daeng Selili, Kuala Kangsar, Perak</div>
+    <div class="halal-badge"><div class="halal-circle">HALAL</div><span data-i18n="halal_text">Certified Halal · Malay Owned</span></div>
+  </div>
+</footer>
+
+<!-- WHATSAPP FLOATING BUTTON -->
+<a href="https://wa.me/601126118673" target="_blank" rel="noopener noreferrer" class="wa-fab" aria-label="Chat on WhatsApp">
+  <span class="wa-fab-tooltip" data-i18n="wa_tooltip">Chat with us!</span>
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+<script src="script.js"></script>
+</body>
 </html>
