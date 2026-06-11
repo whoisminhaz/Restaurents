@@ -47,7 +47,7 @@ const Landing = () => {
   <div className="splash-divider"></div>
   <div className="splash-prompt" id="splash-prompt">Choose Your Language</div>
   <div className="lang-btns">
-    <button className="lang-btn" id="btn-en" onclick="setLang('en')">🇬🇧 English</button>
+    <button className="lang-btn" id="btn-en" onClick={() => setLang('en')}>🇬🇧 English</button>
     <button className="lang-btn" id="btn-my" onclick="setLang('my')">🇲🇾 Bahasa Melayu</button>
   </div>
 </div>
