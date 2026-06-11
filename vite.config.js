@@ -30,7 +30,16 @@ export default defineConfig({
             purpose: 'any maskable'
           }
         ]
+      },
+      workbox: {
+        navigateFallback: '/app.html',
+        navigateFallbackAllowlist: [/^\/dashboard/, /^\/book/, /^\/order/, /^\/checkout/, /^\/login/]
       }
     })
   ],
+  build: {
+    rollupOptions: {
+      input: 'app.html'
+    }
+  }
 })
