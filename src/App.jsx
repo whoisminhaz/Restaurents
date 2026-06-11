@@ -11,7 +11,6 @@ import CashierPOS from './pages/admin/CashierPOS';
 import Analytics from './pages/admin/Analytics';
 
 // Public Phase 4 Imports
-import Landing from './pages/public/Landing';
 import MenuOrder from './pages/public/MenuOrder';
 import Checkout from './pages/public/Checkout';
 
@@ -31,15 +30,16 @@ const Placeholder = ({ title }) => (
 
 import Book from './pages/public/Book';
 import Reservations from './pages/admin/Reservations';
+import LanguageGate from './components/LanguageGate';
 
 function AppRoutes() {
   return (
     <Routes>
       {/* Public Customer Routes */}
-      <Route path="/" element={<Landing />} />
-      <Route path="/order" element={<MenuOrder />} />
-      <Route path="/checkout" element={<Checkout />} />
-      <Route path="/book" element={<Book />} />
+      <Route path="/order" element={<LanguageGate><MenuOrder /></LanguageGate>} />
+      <Route path="/checkout" element={<LanguageGate><Checkout /></LanguageGate>} />
+      <Route path="/book" element={<LanguageGate><Book /></LanguageGate>} />
+      <Route path="/" element={<Navigate to="/book" replace />} />
       
       {/* Admin CRM Routes */}
       <Route path="/login" element={<Login />} />
