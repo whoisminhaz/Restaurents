@@ -22,7 +22,7 @@ jobs:
           echo "VITE_FIREBASE_STORAGE_BUCKET=hadramawth-f58ba.appspot.com" >> .env
           echo "VITE_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.HADRAMAWT_FIREBASE_MESSAGING_SENDER_ID }}" >> .env
           echo "VITE_FIREBASE_APP_ID=${{ secrets.HADRAMAWT_FIREBASE_APP_ID }}" >> .env
-          echo "VITE_RECAPTCHA_SITE_KEY=${{ secrets.HADRAMAWT_RECAPTCHA_SITE_KEY }}" >> .env
+          echo "VITE_RECAPTCHA_SITE_KEY=" >> .env
           echo "VITE_FIREBASE_MEASUREMENT_ID=${{ secrets.HADRAMAWT_FIREBASE_MEASUREMENT_ID }}" >> .env
           echo "VITE_ADMIN_EMAILS=${{ secrets.HADRAMAWT_ADMIN_EMAILS }}" >> .env
           echo "VITE_SENTRY_DSN=${{ secrets.HADRAMAWT_SENTRY_DSN }}" >> .env
