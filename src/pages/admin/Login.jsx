@@ -19,7 +19,8 @@ const Login = () => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const userEmail = userCredential.user.email;
-      const superAdmins = import.meta.env.VITE_ADMIN_EMAILS ? import.meta.env.VITE_ADMIN_EMAILS.split(',') : [];
+      const adminEnv = import.meta.env.VITE_ADMIN_EMAILS;
+      const superAdmins = adminEnv ? adminEnv.split(',').filter(e => e.trim() !== '') : [];
       let authorized = superAdmins.includes(userEmail);
       
       const adminSnap = await getDoc(doc(db, 'settings', 'adminConfig'));
@@ -52,7 +53,8 @@ const Login = () => {
     try {
       const userCredential = await signInWithPopup(auth, provider);
       const userEmail = userCredential.user.email;
-      const superAdmins = import.meta.env.VITE_ADMIN_EMAILS ? import.meta.env.VITE_ADMIN_EMAILS.split(',') : [];
+      const adminEnv = import.meta.env.VITE_ADMIN_EMAILS;
+      const superAdmins = adminEnv ? adminEnv.split(',').filter(e => e.trim() !== '') : [];
       let authorized = superAdmins.includes(userEmail);
       
       const adminSnap = await getDoc(doc(db, 'settings', 'adminConfig'));
