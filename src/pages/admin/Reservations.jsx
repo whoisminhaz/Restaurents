@@ -30,7 +30,8 @@ const ReservationCard = React.memo(({ r, totalTables, onUpdateStatus, onDelete }
           }`}>
             {r.status}
           </span>
-          <h3 className="font-bold text-crmText text-base mt-1.5 line-clamp-1">{r.name}</h3>
+          <p className="text-crmAccent text-xs font-bold mt-1 font-mono tracking-wide">ID: {r.id}</p>
+          <h3 className="font-bold text-crmText text-base mt-0.5 line-clamp-1">{r.name}</h3>
           <p className="text-gray-400 text-xs mt-0.5">{r.phone}</p>
         </div>
         <div className="text-right flex flex-col items-end gap-1.5">

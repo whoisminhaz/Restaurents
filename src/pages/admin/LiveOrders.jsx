@@ -58,9 +58,19 @@ const LiveOrders = () => {
 
   const updateOrderStatus = async (orderId, newStatus, fullOrder = null) => {
     try {
-      await updateDoc(doc(db, 'orders', orderId), { status: newStatus });
-      
       const orderData = fullOrder || selectedOrder;
+      
+      // Handle cancellation tickets — skip the normal flow, just mark everything completed
+      if (orderData?.type === 'cancellation' && (newStatus === 'completed' || newStatus === 'processing')) {
+        if (orderData.reservationId) {
+          await updateDoc(doc(db, 'reservations', orderData.reservationId), { status: 'completed' });
+        }
+        await updateDoc(doc(db, 'orders', orderId), { status: 'completed' });
+        setSelectedOrder(null);
+        return;
+      }
+      
+      await updateDoc(doc(db, 'orders', orderId), { status: newStatus });
       
       if (newStatus === 'processing' && settings?.telegramWebhook && orderData) {
         try {
@@ -127,11 +137,25 @@ const LiveOrders = () => {
     }
   };
 
+  const parseTime = (timeStr) => {
+    const timeParts = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+    let hours = 0, mins = 0;
+    if (timeParts) {
+      hours = parseInt(timeParts[1], 10);
+      mins = parseInt(timeParts[2], 10);
+      if (timeParts[3].toUpperCase() === 'PM' && hours !== 12) hours += 12;
+      if (timeParts[3].toUpperCase() === 'AM' && hours === 12) hours = 0;
+    }
+    return { hours, mins };
+  };
+
   // Calculate upcoming reservations for the "New Orders" section
   const upcomingReservations = reservations.filter(r => {
     if (r.status !== 'confirmed' || r.alertSent || !r.date || !r.time) return false;
     if (r.linkedOrderId) return false; // Hide here, the Order card handles it!
-    const arrival = new Date(`${r.date}T${r.time}`);
+    const { hours, mins } = parseTime(r.time);
+    const arrival = new Date(r.date);
+    arrival.setHours(hours, mins, 0, 0);
     const diffMinutes = (arrival - currentTime) / (1000 * 60);
     return diffMinutes > 0 && diffMinutes <= 60;
   });
@@ -142,7 +166,9 @@ const LiveOrders = () => {
       if (o.status === 'scheduled') {
         const res = reservations.find(r => r.linkedOrderId === o.orderNumber);
         if (res && res.status === 'confirmed' && res.date && res.time) {
-          const arrival = new Date(`${res.date}T${res.time}`);
+          const { hours, mins } = parseTime(res.time);
+          const arrival = new Date(res.date);
+          arrival.setHours(hours, mins, 0, 0);
           const diffMinutes = (arrival - currentTime) / (1000 * 60);
           if (diffMinutes <= 60) return true;
         }
@@ -251,15 +277,20 @@ const LiveOrders = () => {
                 >
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      {order.status === 'scheduled' && (
+                      {order.type === 'cancellation' && (
+                        <div className="bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg mb-2 w-fit uppercase">
+                          Booking Cancellation
+                        </div>
+                      )}
+                      {order.status === 'scheduled' && order.type !== 'cancellation' && (
                         <div className="bg-purple-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg mb-2 animate-pulse w-fit uppercase">
                           Reservations at {reservations.find(r => r.linkedOrderId === order.orderNumber)?.time}
                         </div>
                       )}
                       <span className="text-xs font-bold text-crmAccent tracking-wider bg-crmAccent/10 px-2 py-1 rounded-md">
-                        {order.orderNumber ? `#${order.orderNumber}` : order.orderMode.toUpperCase()}
+                        {order.orderNumber ? `#${order.orderNumber}` : order.orderMode?.toUpperCase()}
                       </span>
-                      <h3 className="font-bold text-crmText text-xl mt-2">{order.table !== 'Takeaway' ? `Table ${order.table}` : 'Takeaway'}</h3>
+                      <h3 className="font-bold text-crmText text-xl mt-2">{order.type === 'cancellation' ? 'CANCELLATION' : (order.table !== 'Takeaway' ? `Table ${order.table}` : 'Takeaway')}</h3>
                     </div>
                     <div className="text-right">
                       <p className="text-sm text-gray-400 flex items-center gap-1 justify-end">
@@ -291,7 +322,9 @@ const LiveOrders = () => {
                   {(order.status === 'pending' || order.status === 'scheduled') && (
                     <div className="flex gap-2">
                       <button onClick={(e) => { e.stopPropagation(); updateOrderStatus(order.id, 'cancelled', order); }} className="flex-1 py-2 rounded-lg font-bold bg-red-500/10 text-red-500 hover:bg-red-500/20 text-xs">Cancel</button>
-                      <button onClick={(e) => { e.stopPropagation(); updateOrderStatus(order.id, 'processing', order); }} className="flex-1 py-2 rounded-lg font-bold bg-crmAccent text-white hover:brightness-110 text-xs flex justify-center items-center gap-1"><CheckCircle2 size={14}/> Send to Kitchen</button>
+                      <button onClick={(e) => { e.stopPropagation(); updateOrderStatus(order.id, 'processing', order); }} className="flex-1 py-2 rounded-lg font-bold bg-crmAccent text-white hover:brightness-110 text-xs flex justify-center items-center gap-1">
+                        <CheckCircle2 size={14}/> {order.type === 'cancellation' ? 'Accept' : 'Send to Kitchen'}
+                      </button>
                     </div>
                   )}
                   {order.status === 'processing' && (
@@ -364,8 +397,8 @@ const LiveOrders = () => {
             <div className="p-6 border-t border-crmBorder bg-crmDark rounded-b-2xl shrink-0 flex gap-3">
               {(selectedOrder.status === 'pending' || selectedOrder.status === 'scheduled') && (
                 <>
-                  <button onClick={() => updateOrderStatus(selectedOrder.id, 'cancelled', selectedOrder)} className="flex-1 py-3 px-4 rounded-xl font-bold bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors">Cancel Order</button>
-                  <button onClick={() => updateOrderStatus(selectedOrder.id, 'processing', selectedOrder)} className="flex-1 py-3 px-4 rounded-xl font-bold bg-crmAccent text-white shadow-lg hover:brightness-110 transition-all flex justify-center items-center gap-2"><CheckCircle2 size={20}/> Confirm Payment</button>
+                  <button onClick={() => updateOrderStatus(selectedOrder.id, 'cancelled', selectedOrder)} className="flex-1 py-3 px-4 rounded-xl font-bold bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors">{selectedOrder.type === 'cancellation' ? 'Dismiss' : 'Cancel Order'}</button>
+                  <button onClick={() => updateOrderStatus(selectedOrder.id, 'processing', selectedOrder)} className="flex-1 py-3 px-4 rounded-xl font-bold bg-crmAccent text-white shadow-lg hover:brightness-110 transition-all flex justify-center items-center gap-2"><CheckCircle2 size={20}/> {selectedOrder.type === 'cancellation' ? 'Accept Cancellation' : 'Confirm Payment'}</button>
                 </>
               )}
               {selectedOrder.status === 'processing' && (

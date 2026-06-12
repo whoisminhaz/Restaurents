@@ -38,7 +38,11 @@ const Settings = () => {
     tngQrCode: '',
     discountPercent: 0,
     discountItems: ['all'],
-    taxPercent: 0
+    taxPercent: 0,
+    bookingMode: 'enabled',
+    bookingEnabled: true,
+    requirePreOrderForBooking: false,
+    maxCapacityPerHour: 30
   });
 
   useEffect(() => {
@@ -47,7 +51,29 @@ const Settings = () => {
         const docRef = doc(db, 'settings', 'master');
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          setSettings(prev => ({ ...prev, ...docSnap.data() }));
+          const data = docSnap.data();
+          let bookingMode = data.bookingMode;
+          if (!bookingMode) {
+            if (data.bookingEnabled === false) {
+              bookingMode = 'disabled';
+            } else if (data.requirePreOrderForBooking === true) {
+              bookingMode = 'preorder';
+            } else {
+              bookingMode = 'enabled';
+            }
+          }
+          let maxCapacityPerHour;
+          if (data.maxCapacityPerHour === 0) {
+            maxCapacityPerHour = 0;
+          } else {
+            maxCapacityPerHour = data.maxCapacityPerHour || 30;
+          }
+          setSettings(prev => ({ 
+            ...prev, 
+            ...data, 
+            bookingMode, 
+            maxCapacityPerHour 
+          }));
         }
 
         const adminDocRef = doc(db, 'settings', 'adminConfig');
@@ -73,7 +99,28 @@ const Settings = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setSettings(prev => ({ ...prev, [name]: value }));
+    if (name === 'bookingMode') {
+      let bookingEnabled = true;
+      let requirePreOrderForBooking = false;
+      if (value === 'disabled') {
+        bookingEnabled = false;
+        requirePreOrderForBooking = false;
+      } else if (value === 'preorder') {
+        bookingEnabled = true;
+        requirePreOrderForBooking = true;
+      } else if (value === 'enabled') {
+        bookingEnabled = true;
+        requirePreOrderForBooking = false;
+      }
+      setSettings(prev => ({
+        ...prev,
+        bookingMode: value,
+        bookingEnabled,
+        requirePreOrderForBooking
+      }));
+    } else {
+      setSettings(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const toggleLanguage = (langId) => {
@@ -239,9 +286,24 @@ const Settings = () => {
   };
 
   const handleSave = async () => {
+    if (settings.maxCapacityPerHour === undefined || settings.maxCapacityPerHour === null || String(settings.maxCapacityPerHour).trim() === '') {
+      alert("Maximum Capacity Per Hour is required.");
+      return;
+    }
+    const maxCapacity = Number(settings.maxCapacityPerHour);
+    if (isNaN(maxCapacity) || maxCapacity < 0) {
+      alert("Maximum Capacity Per Hour must be a valid non-negative number.");
+      return;
+    }
+
     setSaving(true);
     try {
-      await setDoc(doc(db, 'settings', 'master'), settings);
+      const updatedSettings = {
+        ...settings,
+        maxCapacityPerHour: maxCapacity
+      };
+      await setDoc(doc(db, 'settings', 'master'), updatedSettings);
+      setSettings(updatedSettings);
       setToast(true);
       setTimeout(() => setToast(false), 3000);
     } catch (error) {
@@ -283,33 +345,34 @@ const Settings = () => {
           <p className="text-sm text-gray-400 mb-4">Configure your operating schedule and booking rules.</p>
           
           <div className="space-y-6">
-            <div className="md:col-span-2 space-y-3">
-               <label className="flex items-center gap-3 cursor-pointer p-4 border border-crmBorder rounded-xl hover:bg-crmDark/50 transition-colors">
-                  <input 
-                    type="checkbox"
-                    checked={settings.bookingEnabled !== false}
-                    onChange={(e) => setSettings(prev => ({ ...prev, bookingEnabled: e.target.checked }))}
-                    className="w-5 h-5 accent-crmAccent"
-                  />
-                  <div>
-                    <p className="font-medium text-crmText text-lg">Enable Booking System</p>
-                    <p className="text-sm text-gray-400">Allow customers to make reservations through the website.</p>
-                  </div>
-               </label>
-
-               <label className={`flex items-center gap-3 cursor-pointer p-4 border border-crmBorder rounded-xl transition-colors ${settings.bookingEnabled === false ? 'opacity-50 pointer-events-none bg-crmDark/30' : 'hover:bg-crmDark/50'}`}>
-                  <input 
-                    type="checkbox"
-                    checked={!!settings.requirePreOrderForBooking}
-                    onChange={(e) => setSettings(prev => ({ ...prev, requirePreOrderForBooking: e.target.checked }))}
-                    className="w-5 h-5 accent-crmAccent"
-                    disabled={settings.bookingEnabled === false}
-                  />
-                  <div>
-                    <p className="font-medium text-crmText">Require Pre-order Food</p>
-                    <p className="text-sm text-gray-400">Customers must order food to complete a table reservation.</p>
-                  </div>
-               </label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Booking System Mode</label>
+                <select
+                  name="bookingMode"
+                  value={settings.bookingMode || 'enabled'}
+                  onChange={handleChange}
+                  className="w-full bg-crmDark border border-crmBorder text-crmText px-4 py-3 rounded-xl focus:outline-none focus:border-crmAccent"
+                >
+                  <option value="disabled">Disabled</option>
+                  <option value="enabled">Enabled (No Pre-order)</option>
+                  <option value="preorder">Pre-order Required</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Maximum Capacity Per Hour</label>
+                <input
+                  type="number"
+                  name="maxCapacityPerHour"
+                  min="0"
+                  value={settings.maxCapacityPerHour !== undefined ? settings.maxCapacityPerHour : 30}
+                  onChange={handleChange}
+                  disabled={settings.bookingEnabled === false}
+                  className={`w-full bg-crmDark border border-crmBorder text-crmText px-4 py-3 rounded-xl focus:outline-none focus:border-crmAccent ${
+                    settings.bookingEnabled === false ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                />
+              </div>
             </div>
 
             <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-crmBorder ${settings.bookingEnabled === false ? 'opacity-50 pointer-events-none' : ''}`}>

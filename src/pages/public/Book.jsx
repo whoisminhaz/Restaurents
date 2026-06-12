@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, addDoc, serverTimestamp, doc, getDoc, updateDoc, query, where, getDocs } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, doc, getDoc, updateDoc, query, where, getDocs, setDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { ArrowLeft, CheckCircle2, Moon, Sun, CalendarDays, Search, XCircle, Clock, Download } from 'lucide-react';
 import LanguageDropdown from '../../components/LanguageDropdown';
@@ -24,6 +24,7 @@ const Book = () => {
   });
   
   const [searchQuery, setSearchQuery] = useState('');
+  const [manageDate, setManageDate] = useState('');
   const [foundRes, setFoundRes] = useState(null);
   const [manageLoading, setManageLoading] = useState(false);
 
@@ -93,10 +94,6 @@ const Book = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleManageChange = (e) => {
-    setManageData({ ...manageData, [e.target.name]: e.target.value });
-  };
-
   const generateTimeSlots = (openTime, closeTime) => {
     if (!openTime || !closeTime) return [];
     const slots = [];
@@ -147,21 +144,52 @@ const Book = () => {
     e.preventDefault();
     if (!formData.time) return alert("Please select a valid time.");
 
-    if (settings.requirePreOrderForBooking) {
-      // Save pending reservation to local storage and go to order page
-      localStorage.setItem('pendingReservation', JSON.stringify(formData));
-      navigate('/order');
-      return;
-    }
-
     setProcessing(true);
     try {
-      const docRef = await addDoc(collection(db, 'reservations'), {
+      // M2: Capacity Check
+      const maxCap = settings.maxCapacityPerHour !== undefined ? settings.maxCapacityPerHour : 30;
+      const qCap = query(
+        collection(db, 'reservations'),
+        where('date', '==', formData.date),
+        where('time', '==', formData.time)
+      );
+      const snapCap = await getDocs(qCap);
+      let confirmedGuests = 0;
+      snapCap.forEach(doc => {
+        if (doc.data().status === 'confirmed') {
+          confirmedGuests += Number(doc.data().guests || 0);
+        }
+      });
+      if (confirmedGuests + Number(formData.guests) > maxCap) {
+        alert("Sorry, we are fully booked for this slot.");
+        setProcessing(false);
+        return;
+      }
+
+      // M2: Generate alphanumeric ID
+      const generateId = () => {
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const numbers = '0123456789';
+        let id = '';
+        for(let i=0; i<2; i++) id += letters.charAt(Math.floor(Math.random() * letters.length));
+        for(let i=0; i<3; i++) id += numbers.charAt(Math.floor(Math.random() * numbers.length));
+        return id;
+      };
+      const resId = generateId();
+
+      if (settings.bookingMode === 'preorder' || settings.requirePreOrderForBooking) {
+        localStorage.setItem('pendingReservation', JSON.stringify({ ...formData, id: resId }));
+        navigate('/order');
+        return;
+      }
+
+      await setDoc(doc(db, 'reservations', resId), {
         ...formData,
+        id: resId,
         status: 'pending',
         timestamp: serverTimestamp()
       });
-      setCreatedResId(docRef.id);
+      setCreatedResId(resId);
       setSuccess(true);
     } catch (error) {
       console.error(error);
@@ -173,31 +201,31 @@ const Book = () => {
 
   const handleSearchReservation = async (e) => {
     e.preventDefault();
+    if (!manageDate) return alert("Please select the date of your reservation.");
     setManageLoading(true);
     setFoundRes(null);
     const searchVal = searchQuery.trim();
     try {
+      let found = null;
       // 1. Try by ID first
       const resDoc = await getDoc(doc(db, 'reservations', searchVal));
-      if (resDoc.exists()) {
-        const data = resDoc.data();
-        if (data.status === 'confirmed') {
-          setFoundRes({ id: resDoc.id, ...data });
-          setManageLoading(false);
-          return;
-        }
+      if (resDoc.exists() && resDoc.data().date === manageDate) {
+        found = { id: resDoc.id, ...resDoc.data() };
       }
       
       // 2. Try by Phone
-      const q = query(collection(db, 'reservations'), where('phone', '==', searchVal), where('status', '==', 'confirmed'));
-      const querySnapshot = await getDocs(q);
-      
-      if (!querySnapshot.empty) {
-        // We take the first confirmed one found (which would be the most recent if we had sorting, but this is fine)
-        const docSnap = querySnapshot.docs[0];
-        setFoundRes({ id: docSnap.id, ...docSnap.data() });
+      if (!found) {
+        const q = query(collection(db, 'reservations'), where('phone', '==', searchVal), where('date', '==', manageDate));
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+          found = { id: querySnapshot.docs[0].id, ...querySnapshot.docs[0].data() };
+        }
+      }
+
+      if (found) {
+        setFoundRes(found);
       } else {
-        alert("No confirmed reservations found with that ID or Phone Number.");
+        alert("No reservations found matching this Date and ID/Phone.");
       }
     } catch (err) {
       console.error(err);
@@ -209,12 +237,49 @@ const Book = () => {
 
   const handleCancelReservation = async () => {
     if(!window.confirm("Are you sure you want to cancel your reservation?")) return;
+    
+    // Check if > 1 hour away
+    const today = new Date();
+    const timeParts = foundRes.time.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+    let hours = 0, mins = 0;
+    if (timeParts) {
+      hours = parseInt(timeParts[1], 10);
+      mins = parseInt(timeParts[2], 10);
+      if (timeParts[3].toUpperCase() === 'PM' && hours !== 12) hours += 12;
+      if (timeParts[3].toUpperCase() === 'AM' && hours === 12) hours = 0;
+    }
+    const resDate = new Date(foundRes.date);
+    resDate.setHours(hours, mins, 0, 0);
+    
+    const diffHours = (resDate - today) / (1000 * 60 * 60);
+    if (diffHours <= 1) {
+      alert("You cannot cancel a reservation less than 1 hour before the booked time.");
+      return;
+    }
+
     setManageLoading(true);
     try {
       await updateDoc(doc(db, 'reservations', foundRes.id), {
         status: 'cancelled'
       });
       setFoundRes(prev => ({ ...prev, status: 'cancelled' }));
+      
+      // Create cancellation ticket
+      await addDoc(collection(db, 'orders'), {
+        orderNumber: `CANC-${foundRes.id}`,
+        status: 'pending',
+        timestamp: serverTimestamp(),
+        type: 'cancellation',
+        customerName: foundRes.name,
+        phone: foundRes.phone,
+        date: foundRes.date,
+        time: foundRes.time,
+        reservationId: foundRes.id,
+        notes: `Cancellation for reservation ${foundRes.id}`,
+        total: 0,
+        items: foundRes.preOrderItems || []
+      });
+
       alert("Reservation cancelled successfully.");
     } catch (err) {
       console.error(err);
@@ -241,11 +306,11 @@ const Book = () => {
     );
   }
 
-  if (settings.bookingEnabled === false) {
+  if (settings.bookingEnabled === false || settings.bookingMode === 'disabled') {
     return (
       <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0a0a0a] flex flex-col items-center justify-center p-6 text-center transition-colors duration-500">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Reservations Closed</h1>
-        <p className="text-gray-500 dark:text-gray-400 mb-8">Sorry, we are not taking orders or reservations right now.</p>
+        <p className="text-gray-500 dark:text-gray-400 mb-8">Sorry, We are not taking Reservations Now!! Thanks for your Understandig.</p>
         <button 
           onClick={() => navigate('/')}
           className="py-3 px-8 rounded-xl bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white font-bold hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
@@ -261,7 +326,8 @@ const Book = () => {
       <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0a0a0a] flex flex-col items-center justify-center p-6 text-center transition-colors duration-500">
         <CheckCircle2 size={64} className="text-green-500 mb-6 mx-auto" />
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Reservation Requested!</h1>
-        <p className="text-gray-500 dark:text-gray-400 mb-8">Your reservation is pending, please check back later for the owner confirmation.</p>
+        <p className="text-gray-500 dark:text-gray-400 mb-2">Your reservation is pending, please check back later for the owner confirmation.</p>
+        <p className="text-2xl font-bold text-crmAccent mb-8">Booking ID: {createdResId}</p>
 
         <div className="bg-white dark:bg-[#1a1a1a] w-full max-w-sm rounded-2xl shadow-xl overflow-hidden text-left border border-gray-100 dark:border-gray-800 p-6 space-y-4">
           <div className="bg-orange-500/10 text-orange-600 dark:text-orange-400 p-3 rounded-lg text-sm mb-4 font-medium flex items-start gap-2">
@@ -283,7 +349,7 @@ const Book = () => {
         </div>
 
         <div className="flex flex-col gap-3 mt-8 w-full max-w-sm">
-          {!settings.requirePreOrderForBooking && (
+          {(!settings.requirePreOrderForBooking && settings.bookingMode !== 'preorder') && (
             <div className="bg-gradient-to-r from-orange-500 to-red-500 p-6 rounded-2xl text-white shadow-xl shadow-orange-500/30 mb-4 animate-fade-in-up">
               <h3 className="font-bold text-xl mb-2 leading-tight">Want the food on your table when you arrive?</h3>
               <p className="text-orange-50 mb-5 text-sm">Don't wait for the food anymore. Pre-order now and it will be ready exactly when you sit down!</p>
@@ -320,6 +386,7 @@ const Book = () => {
           <div className="text-center mb-8 border-b border-dashed border-gray-400 pb-4">
             <h1 className="text-3xl font-bold mb-2 uppercase tracking-widest">{settings.restaurantName || 'Restaurant'}</h1>
             <p className="text-sm text-gray-600">Reservation Requested (Pending)</p>
+            <p className="font-bold text-lg mt-2">ID: {createdResId}</p>
           </div>
           
           <div className="mb-6 grid grid-cols-2 gap-4 text-sm">
@@ -495,7 +562,7 @@ const Book = () => {
               className="w-full py-4 rounded-2xl text-white text-lg font-bold shadow-lg hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-8"
               style={{ backgroundColor: processing ? '#9ca3af' : settings.themePrimary }}
             >
-              {processing ? 'Processing...' : (settings.requirePreOrderForBooking ? 'Proceed to Menu' : 'Request Booking')}
+              {processing ? 'Processing...' : ((settings.requirePreOrderForBooking || settings.bookingMode === 'preorder') ? 'Proceed to Menu' : 'Request Booking')}
             </button>
           </form>
         )}
@@ -504,12 +571,23 @@ const Book = () => {
           <div className="space-y-6 animate-fade-in-up">
             <form onSubmit={handleSearchReservation} className="bg-white dark:bg-[#1a1a1a] rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-800 transition-colors duration-500 space-y-4">
               <div>
+                <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Reservation Date</label>
+                <input 
+                  type="date" 
+                  name="manageDate"
+                  required 
+                  value={manageDate}
+                  onChange={(e) => setManageDate(e.target.value)}
+                  className="w-full bg-gray-50 dark:bg-[#222] border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2 transition-colors mb-4"
+                  style={{ focusRingColor: settings.themePrimary }}
+                />
+                
                 <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Phone Number OR Reservation ID</label>
                 <input 
                   type="text" 
                   name="searchQuery"
                   required 
-                  placeholder="e.g. +60123456789 or jB3xK9LpP..."
+                  placeholder="e.g. +60123456789 or AK649..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full bg-gray-50 dark:bg-[#222] border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2 transition-colors"
@@ -540,6 +618,7 @@ const Book = () => {
                   </span>
                 </div>
                 <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400 mb-6">
+                  <p className="text-base font-bold text-gray-900 dark:text-white font-mono">Booking ID: {foundRes.id}</p>
                   <p><span className="font-medium text-gray-900 dark:text-gray-200">Name:</span> {foundRes.name}</p>
                   <p><span className="font-medium text-gray-900 dark:text-gray-200">Date:</span> {foundRes.date}</p>
                   <p><span className="font-medium text-gray-900 dark:text-gray-200">Time:</span> {foundRes.time}</p>
