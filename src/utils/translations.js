@@ -28,7 +28,7 @@ export const uiTranslations = {
     onlineTransfer: "Bank Transfer",
     tngPayment: "DuitNow QR",
     tngEwallet: "Touch n Go eWallet",
-    paymentRef: "Last 4 digits of payment reference",
+    paymentRef: "Last 4 digits of payment reference/id",
     placeOrder: "Place Order",
     orderSuccess: "Order Successfully Placed!",
     orderSuccessSub: "Please save this receipt.",
