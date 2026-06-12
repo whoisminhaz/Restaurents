@@ -48,8 +48,8 @@ const LanguageDropdown = () => {
               onClick={() => changeLang(lang.code)}
               className={`w-full text-left px-4 py-3 text-sm transition-colors ${
                 currentLang === lang.code 
-                  ? 'bg-gray-50 dark:bg-white/5 font-bold text-gray-900 dark:text-white' 
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5'
+                  ? 'bg-gray-100 dark:bg-white/10 font-bold text-gray-900 dark:text-white' 
+                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
               {lang.name}
