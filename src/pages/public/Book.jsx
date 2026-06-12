@@ -3,15 +3,16 @@ import { collection, addDoc, serverTimestamp, doc, getDoc, updateDoc, query, whe
 import { db } from '../../config/firebase';
 import { ArrowLeft, CheckCircle2, Moon, Sun, CalendarDays, Search, XCircle, Clock, Download } from 'lucide-react';
 import LanguageDropdown from '../../components/LanguageDropdown';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { t } from '../../utils/translations';
 
 const Book = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [settings, setSettings] = useState(null);
   const [error, setError] = useState(null);
   
-  const [tab, setTab] = useState('book'); // 'book' | 'manage'
+  const [tab, setTab] = useState(searchParams.get('tab') === 'manage' ? 'manage' : 'book'); // 'book' | 'manage'
   
   const [formData, setFormData] = useState({
     name: '',
