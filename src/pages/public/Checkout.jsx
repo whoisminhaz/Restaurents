@@ -467,10 +467,10 @@ const Checkout = () => {
                 <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">{t(userLang, 'paymentRef')}</label>
                 <input 
                   type="text" 
-                  maxLength={4}
+                  minLength={4}
                   required={paymentMethod === 'online'}
                   value={paymentRef}
-                  onChange={e => setPaymentRef(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                  onChange={e => setPaymentRef(e.target.value)}
                   placeholder="e.g. 1234"
                   className="w-full bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2"
                   style={{ focusRingColor: settings.themePrimary }}
@@ -493,10 +493,10 @@ const Checkout = () => {
                 <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">{t(userLang, 'paymentRef')}</label>
                 <input 
                   type="text" 
-                  maxLength={4}
+                  minLength={4}
                   required={paymentMethod === 'tng'}
                   value={paymentRef}
-                  onChange={e => setPaymentRef(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                  onChange={e => setPaymentRef(e.target.value)}
                   placeholder="e.g. 1234"
                   className="w-full bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2"
                   style={{ focusRingColor: settings.themePrimary }}
@@ -526,10 +526,10 @@ const Checkout = () => {
                 <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">{t(userLang, 'paymentRef')}</label>
                 <input 
                   type="text" 
-                  maxLength={4}
+                  minLength={4}
                   required={paymentMethod === 'ewallet'}
                   value={paymentRef}
-                  onChange={e => setPaymentRef(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                  onChange={e => setPaymentRef(e.target.value)}
                   placeholder="e.g. 1234"
                   className="w-full bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2"
                   style={{ focusRingColor: settings.themePrimary }}
