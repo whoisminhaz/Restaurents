@@ -30,7 +30,8 @@ const Checkout = () => {
   const [isDark, setIsDark] = useState(localStorage.getItem('theme') !== 'light');
   const userLang = localStorage.getItem('userLang') || 'en';
   const orderMode = localStorage.getItem('orderMode') || 'takeaway';
-  const tableNum = localStorage.getItem('tableNum');
+  let tableNumStr = localStorage.getItem('tableNum');
+  const tableNum = tableNumStr === 'null' || !tableNumStr ? null : tableNumStr;
 
   useEffect(() => {
     if (isDark) {
@@ -57,26 +58,36 @@ const Checkout = () => {
     setProcessing(true);
 
     try {
-      // 1. Generate Sequential Daily Order Number via Transaction
-      const todayStr = new Date().toISOString().split('T')[0];
-      const counterRef = doc(db, 'counters', todayStr);
-      let orderNumber = "001";
+      const pendingResStr = localStorage.getItem('pendingReservation');
+      const isPreOrder = !!pendingResStr;
+      let pendingRes = null;
+      if (isPreOrder) {
+        try { pendingRes = JSON.parse(pendingResStr); } catch(e){}
+      }
 
-      try {
-        await runTransaction(db, async (transaction) => {
-          const counterDoc = await transaction.get(counterRef);
-          if (!counterDoc.exists()) {
-            transaction.set(counterRef, { count: 1 });
-            orderNumber = "001";
-          } else {
-            const newCount = (counterDoc.data().count || 0) + 1;
-            transaction.update(counterRef, { count: newCount });
-            orderNumber = String(newCount).padStart(3, '0');
-          }
-        });
-      } catch (e) {
-        console.error("Transaction failed, falling back to random", e);
-        orderNumber = String(Math.floor(1000 + Math.random() * 9000));
+      // 1. Generate Order Number
+      let orderNumber = "001";
+      if (isPreOrder && pendingRes && pendingRes.id) {
+        orderNumber = pendingRes.id;
+      } else {
+        const todayStr = new Date().toISOString().split('T')[0];
+        const counterRef = doc(db, 'counters', todayStr);
+        try {
+          await runTransaction(db, async (transaction) => {
+            const counterDoc = await transaction.get(counterRef);
+            if (!counterDoc.exists()) {
+              transaction.set(counterRef, { count: 1 });
+              orderNumber = "001";
+            } else {
+              const newCount = (counterDoc.data().count || 0) + 1;
+              transaction.update(counterRef, { count: newCount });
+              orderNumber = String(newCount).padStart(3, '0');
+            }
+          });
+        } catch (e) {
+          console.error("Transaction failed, falling back to random", e);
+          orderNumber = String(Math.floor(1000 + Math.random() * 9000));
+        }
       }
 
       const taxPercent = settings?.taxPercent ? parseFloat(settings.taxPercent) : 0;
@@ -84,8 +95,6 @@ const Checkout = () => {
       const grandTotal = cartTotal + taxAmount;
 
       // 2. Save Order
-      const pendingResStr = localStorage.getItem('pendingReservation');
-      const isPreOrder = !!pendingResStr;
       
       const finalOrderMode = isPreOrder ? 'dineIn' : (tableNum ? 'dineIn' : orderMode);
       const finalTable = isPreOrder ? 'Pending Table' : (tableNum ? tableNum : 'Takeaway');
@@ -108,35 +117,32 @@ const Checkout = () => {
         taxAmount: taxAmount,
         total: grandTotal,
         items: cart,
-        status: isPreOrder ? 'scheduled' : 'pending',
+        status: isPreOrder ? 'pending_reservation' : 'pending',
         dateStr,
         timeStr,
         timestamp: serverTimestamp()
       };
 
-      await addDoc(collection(db, 'orders'), orderData);
+      await setDoc(doc(db, 'orders', orderNumber), { ...orderData, id: orderNumber });
       
-      // 3. Create or Update Reservation if pending
+      // 3. Create Reservation if pending
       let reservationDetails = null;
-      if (pendingResStr) {
+      if (isPreOrder && pendingRes) {
         try {
-          const pendingRes = JSON.parse(pendingResStr);
           reservationDetails = pendingRes;
           
-          if (pendingRes.id) {
-            // Reservation was already created in Book.jsx (optional pre-order flow)
-            await updateDoc(doc(db, 'reservations', pendingRes.id), {
-              linkedOrderId: orderNumber
-            });
-          } else {
-            // Reservation was NOT created yet (required pre-order flow)
-            await addDoc(collection(db, 'reservations'), {
-              ...pendingRes,
-              linkedOrderId: orderNumber,
-              status: 'pending',
-              timestamp: serverTimestamp()
-            });
-          }
+          await setDoc(doc(db, 'reservations', pendingRes.id), {
+            ...pendingRes,
+            linkedOrderId: orderNumber,
+            preOrderItems: cart,
+            paymentMethod,
+            paymentRef: paymentMethod !== 'counter' ? paymentRef : 'Cash/Counter',
+            subTotal: cartTotal,
+            taxAmount,
+            total: grandTotal,
+            status: 'pending',
+            timestamp: serverTimestamp()
+          });
 
           localStorage.removeItem('pendingReservation');
         } catch (e) { 
@@ -159,8 +165,8 @@ const Checkout = () => {
     return (
       <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0a0a0a] flex flex-col items-center justify-center p-6 text-center transition-colors duration-500">
         <CheckCircle2 size={64} className="text-green-500 mb-6 mx-auto" />
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{successData.reservation ? 'Reservation Requested!' : t(userLang, 'orderSuccess')}</h1>
-        <p className="text-gray-500 dark:text-gray-400 mb-8">{successData.reservation ? 'Your reservation and pre-order are pending, please check back later for the owner confirmation.' : t(userLang, 'orderSuccessSub')}</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{successData.reservation ? t(userLang, 'reservationRequested') : t(userLang, 'orderSuccess')}</h1>
+        <p className="text-gray-500 dark:text-gray-400 mb-8">{successData.reservation ? t(userLang, 'bookingPendingNote') : t(userLang, 'orderSuccessSub')}</p>
 
         {/* Beautiful Receipt */}
         <div className="bg-white dark:bg-[#1a1a1a] w-full max-w-sm rounded-2xl shadow-xl overflow-hidden text-left border border-gray-100 dark:border-gray-800">
@@ -182,7 +188,7 @@ const Checkout = () => {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Type</span>
-                <span className="font-medium text-gray-900 dark:text-white capitalize">{successData.orderMode} {successData.table !== 'Takeaway' ? `(${successData.table})` : ''}</span>
+                <span className="font-medium text-gray-900 dark:text-white capitalize">{successData.orderMode === 'takeaway' ? t(userLang, 'takeaway') : t(userLang, 'dineIn')} {successData.table !== 'Takeaway' && successData.table !== 'Pending Table' ? `(${successData.table})` : ''}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Payment</span>
@@ -225,17 +231,14 @@ const Checkout = () => {
             style={{ backgroundColor: settings.themePrimary }}
           >
             <Download size={20} />
-            Download Receipt
+            {t(userLang, 'downloadReceipt')}
           </button>
           
           <button 
-            onClick={() => {
-              navigate('/');
-              window.location.reload();
-            }}
+            onClick={() => window.location.href = '/'}
             className="w-full py-3 px-8 rounded-xl bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white font-bold hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors no-print"
           >
-            Return to Home
+            {t(userLang, 'returnHome')}
           </button>
         </div>
 
@@ -248,32 +251,32 @@ const Checkout = () => {
           
           <div className="mb-6 grid grid-cols-2 gap-4 text-sm">
             <div>
-              <p className="font-bold text-gray-500 uppercase text-xs mb-1">Order No.</p>
+              <p className="font-bold text-gray-500 uppercase text-xs mb-1">{t(userLang, 'orderNumber')}</p>
               <p className="font-bold text-lg">#{successData.orderNumber}</p>
             </div>
             <div className="text-right">
-              <p className="font-bold text-gray-500 uppercase text-xs mb-1">Date & Time</p>
+              <p className="font-bold text-gray-500 uppercase text-xs mb-1">{t(userLang, 'date')}</p>
               <p>{new Date().toLocaleString()}</p>
             </div>
             <div>
-              <p className="font-bold text-gray-500 uppercase text-xs mb-1">Customer</p>
+              <p className="font-bold text-gray-500 uppercase text-xs mb-1">{t(userLang, 'customer')}</p>
               <p className="font-medium">{successData.customerName}</p>
               {successData.phone && <p>{successData.phone}</p>}
             </div>
             <div className="text-right">
               <p className="font-bold text-gray-500 uppercase text-xs mb-1">Type</p>
-              <p className="font-medium uppercase">{successData.orderMode === 'takeaway' ? 'Takeaway' : `Dine-In (Table ${successData.table})`}</p>
+              <p className="font-medium uppercase">{successData.orderMode === 'takeaway' ? t(userLang, 'takeaway') : `${t(userLang, 'dineIn')} (${successData.table})`}</p>
             </div>
             <div>
-              <p className="font-bold text-gray-500 uppercase text-xs mb-1">Payment Method</p>
+              <p className="font-bold text-gray-500 uppercase text-xs mb-1">{t(userLang, 'paymentMethod')}</p>
               <p className="font-medium uppercase">{successData.paymentMethod}</p>
             </div>
             <div className="text-right">
               {successData.reservation && (
                 <>
-                  <p className="font-bold text-gray-500 uppercase text-xs mb-1">Reservation For</p>
-                  <p className="font-medium">{successData.reservation.date} at {successData.reservation.time}</p>
-                  <p className="text-xs">{successData.reservation.guests} Guests</p>
+                  <p className="font-bold text-gray-500 uppercase text-xs mb-1">{t(userLang, 'reservationFor')}</p>
+                  <p className="font-medium">{successData.reservation.date} {t(userLang, 'at')} {successData.reservation.time}</p>
+                  <p className="text-xs">{successData.reservation.guests} {t(userLang, 'pax')}</p>
                 </>
               )}
             </div>
@@ -283,9 +286,9 @@ const Checkout = () => {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-300">
-                  <th className="text-left pb-2 font-bold uppercase">Item</th>
+                  <th className="text-left pb-2 font-bold uppercase">{t(userLang, 'items')}</th>
                   <th className="text-center pb-2 font-bold uppercase w-16">Qty</th>
-                  <th className="text-right pb-2 font-bold uppercase w-24">Price</th>
+                  <th className="text-right pb-2 font-bold uppercase w-24">{t(userLang, 'price')}</th>
                 </tr>
               </thead>
               <tbody>

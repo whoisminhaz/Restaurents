@@ -30,15 +30,14 @@ const Placeholder = ({ title }) => (
 
 import Book from './pages/public/Book';
 import Reservations from './pages/admin/Reservations';
-import LanguageGate from './components/LanguageGate';
 
 function AppRoutes() {
   return (
     <Routes>
       {/* Public Customer Routes */}
-      <Route path="/order" element={<LanguageGate><MenuOrder /></LanguageGate>} />
-      <Route path="/checkout" element={<LanguageGate><Checkout /></LanguageGate>} />
-      <Route path="/book" element={<LanguageGate><Book /></LanguageGate>} />
+      <Route path="/order" element={<MenuOrder />} />
+      <Route path="/checkout" element={<Checkout />} />
+      <Route path="/book" element={<Book />} />
       <Route path="/" element={<Navigate to="/book" replace />} />
       
       {/* Admin CRM Routes */}

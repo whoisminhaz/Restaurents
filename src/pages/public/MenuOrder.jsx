@@ -3,7 +3,7 @@ import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { ShoppingBag, Plus, Minus, ArrowLeft, Moon, Sun } from 'lucide-react';
 import LanguageDropdown from '../../components/LanguageDropdown';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { t } from '../../utils/translations';
 import LoadingScreen from '../../components/LoadingScreen';
 
@@ -18,8 +18,27 @@ const MenuOrder = () => {
   const [isDark, setIsDark] = useState(localStorage.getItem('theme') !== 'light');
 
   const userLang = localStorage.getItem('userLang') || 'en';
-  const orderMode = localStorage.getItem('orderMode') || 'takeaway';
-  const tableNum = localStorage.getItem('tableNum');
+  const [searchParams] = useSearchParams();
+  const [orderMode, setOrderMode] = useState(localStorage.getItem('orderMode') || 'takeaway');
+  let tableNumStr = localStorage.getItem('tableNum');
+  const [tableNum, setTableNum] = useState(tableNumStr === 'null' || !tableNumStr ? null : tableNumStr);
+
+  useEffect(() => {
+    const tableQ = searchParams.get('table');
+    const typeQ = searchParams.get('type');
+
+    if (tableQ) {
+      localStorage.setItem('tableNum', tableQ);
+      localStorage.setItem('orderMode', 'dineIn');
+      setTableNum(tableQ);
+      setOrderMode('dineIn');
+    } else if (typeQ === 'takeaway') {
+      localStorage.removeItem('tableNum');
+      localStorage.setItem('orderMode', 'takeaway');
+      setTableNum(null);
+      setOrderMode('takeaway');
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (isDark) {
@@ -91,7 +110,7 @@ const MenuOrder = () => {
   if (loading || !settings) {
     return (
       <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0a0a0a] flex items-center justify-center">
-        <LoadingScreen message="Loading Menu..." themeColor={settings?.themePrimary || '#000'} />
+        <LoadingScreen message={`${t(userLang, 'processing')}`} themeColor={settings?.themePrimary || '#000'} />
       </div>
     );
   }
@@ -100,12 +119,17 @@ const MenuOrder = () => {
     <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0a0a0a] pb-32 transition-colors duration-500">
       {/* Header */}
       <header className="bg-white dark:bg-[#121212] sticky top-0 z-40 shadow-sm dark:shadow-black/50 px-4 py-4 flex items-center justify-between transition-colors duration-500">
-        <button onClick={() => navigate('/')} className="p-2 -ml-2 text-gray-600 dark:text-gray-300">
+        <button onClick={() => window.location.href = '/'} className="p-2 -ml-2 text-gray-600 dark:text-gray-300">
           <ArrowLeft size={24} />
         </button>
         <div className="text-center">
           <h1 className="font-bold text-gray-900 dark:text-white text-lg leading-tight">{settings.restaurantName}</h1>
-          <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{orderMode === 'takeaway' ? t(userLang, 'takeaway') : t(userLang, 'dineIn')} {tableNum ? `- ${t(userLang, 'tableNumber')} ${tableNum}` : ''}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">
+            {localStorage.getItem('pendingReservation') 
+              ? t(userLang, 'preOrder') 
+              : (orderMode === 'takeaway' ? t(userLang, 'takeaway') : t(userLang, 'dineIn'))} 
+            {tableNum ? ` - ${t(userLang, 'tableNumber')} ${tableNum}` : ''}
+          </p>
         </div>
         <div className="flex items-center gap-1">
           <LanguageDropdown />

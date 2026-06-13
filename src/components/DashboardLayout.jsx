@@ -152,7 +152,7 @@ const DashboardLayout = () => {
           className="flex items-center gap-3 px-4 py-3 w-full rounded-lg text-gray-400 hover:text-red-400 hover:bg-red-400/10 transition-colors"
         >
           <LogOut size={20} />
-          <span className="font-medium text-sm">Sign Out</span>
+          <span className="font-medium text-sm">{t(ownerLang, 'signOut')}</span>
         </button>
       </div>
     </div>

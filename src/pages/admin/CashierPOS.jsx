@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { collection, getDocs, doc, getDoc, addDoc, serverTimestamp, query } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { Plus, Minus, Trash2, Send, CheckCircle2 } from 'lucide-react';
+import { t } from '../../utils/translations';
 import LoadingScreen from '../../components/LoadingScreen';
 
 const CashierPOS = () => {
@@ -15,6 +16,8 @@ const CashierPOS = () => {
   const [orderMode, setOrderMode] = useState('takeaway');
   const [tableNum, setTableNum] = useState('');
   const [posCategory, setPosCategory] = useState('all');
+  
+  const ownerLang = localStorage.getItem('ownerLang') || 'en';
 
   useEffect(() => {
     const fetchPOSData = async () => {
@@ -110,7 +113,7 @@ const CashierPOS = () => {
       setCart([]);
       setCustomerName('');
       setTableNum('');
-      alert("Order Sent to Kitchen!");
+      alert(t(ownerLang, 'orderSentKitchen'));
 
     } catch (error) {
       console.error("Failed to place POS order", error);
@@ -128,7 +131,7 @@ const CashierPOS = () => {
       {/* Left Side: Menu Grid */}
       <div className="flex-1 p-6 overflow-y-auto no-scrollbar border-r border-crmBorder">
         <div className="mb-4">
-          <h1 className="text-xl font-bold text-crmText">Cashier Point of Sale</h1>
+          <h1 className="text-xl font-bold text-crmText">{t(ownerLang, 'cashierPos')}</h1>
         </div>
 
         {/* Category Tabs */}
@@ -139,7 +142,7 @@ const CashierPOS = () => {
               onClick={() => setPosCategory(cat)}
               className={`whitespace-nowrap px-4 py-2 rounded-lg font-bold text-xs uppercase tracking-wider transition-colors ${posCategory === cat ? 'bg-crmAccent text-white' : 'bg-crmDark text-gray-400 border border-crmBorder hover:text-crmText'}`}
             >
-              {cat === 'all' ? 'All' : cat === 'addons' ? 'Add-ons' : cat.charAt(0).toUpperCase() + cat.slice(1)}
+              {t(ownerLang, cat)}
             </button>
           ))}
         </div>
@@ -174,12 +177,12 @@ const CashierPOS = () => {
       {/* Right Side: Cart Summary */}
       <div className="w-full md:w-96 bg-crmCard flex flex-col h-full shadow-2xl z-10 shrink-0">
         <div className="p-5 border-b border-crmBorder bg-crmDark">
-          <h2 className="text-lg font-bold text-crmText mb-4">Current Order</h2>
+          <h2 className="text-lg font-bold text-crmText mb-4">{t(ownerLang, 'orderSummary')}</h2>
           
           <div className="space-y-3">
             <input 
               type="text" 
-              placeholder="Customer Name (Optional)" 
+              placeholder={t(ownerLang, 'customerNameOptional')} 
               value={customerName}
               onChange={(e) => setCustomerName(e.target.value)}
               className="w-full bg-crmCard border border-crmBorder text-crmText px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:border-crmAccent"
@@ -190,13 +193,13 @@ const CashierPOS = () => {
                 onChange={(e) => setOrderMode(e.target.value)}
                 className="flex-1 bg-crmCard border border-crmBorder text-crmText px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:border-crmAccent"
               >
-                <option value="takeaway">Takeaway</option>
-                <option value="dine-in">Dine-In</option>
+                <option value="takeaway">{t(ownerLang, 'takeaway')}</option>
+                <option value="dine-in">{t(ownerLang, 'dineIn')}</option>
               </select>
               {orderMode === 'dine-in' && (
                 <input 
                   type="text" 
-                  placeholder="Table No." 
+                  placeholder={t(ownerLang, 'tableNo')}
                   value={tableNum}
                   onChange={(e) => setTableNum(e.target.value)}
                   className="w-24 bg-crmCard border border-crmBorder text-crmText px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:border-crmAccent"
@@ -211,7 +214,7 @@ const CashierPOS = () => {
           {cart.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-gray-500 gap-3">
               <CheckCircle2 size={48} className="opacity-20" />
-              <p>No items added yet.</p>
+              <p>{t(ownerLang, 'noItemsAdded')}</p>
             </div>
           ) : (
             cart.map(item => (
@@ -238,7 +241,7 @@ const CashierPOS = () => {
         {/* Checkout Button */}
         <div className="p-5 border-t border-crmBorder bg-crmDark">
           <div className="flex justify-between items-center mb-4 text-lg">
-            <span className="text-gray-400 font-medium">Total</span>
+            <span className="text-gray-400 font-medium">{t(ownerLang, 'total')}</span>
             <span className="text-2xl font-bold text-crmText">RM {cartTotal.toFixed(2)}</span>
           </div>
           <button 
@@ -249,7 +252,7 @@ const CashierPOS = () => {
             }`}
           >
             {processing ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : <Send size={20} />}
-            Confirm & Send to Kitchen
+            {t(ownerLang, 'sendToKitchen')}
           </button>
         </div>
       </div>
