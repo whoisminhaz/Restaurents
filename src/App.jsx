@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/admin/Login';
 import DashboardLayout from './components/DashboardLayout';
@@ -29,6 +30,7 @@ const Placeholder = ({ title }) => (
 );
 
 import Book from './pages/public/Book';
+import Landing from './pages/public/Landing';
 import Reservations from './pages/admin/Reservations';
 
 function AppRoutes() {
@@ -38,7 +40,7 @@ function AppRoutes() {
       <Route path="/order" element={<MenuOrder />} />
       <Route path="/checkout" element={<Checkout />} />
       <Route path="/book" element={<Book />} />
-      <Route path="/" element={<Navigate to="/book" replace />} />
+      <Route path="/" element={<Landing />} />
       
       {/* Admin CRM Routes */}
       <Route path="/login" element={<Login />} />
@@ -66,11 +68,13 @@ function AppRoutes() {
 
 function App() {
   return (
-    <AuthProvider>
-      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <AppRoutes />
-      </Router>
-    </AuthProvider>
+    <HelmetProvider>
+      <AuthProvider>
+        <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <AppRoutes />
+        </Router>
+      </AuthProvider>
+    </HelmetProvider>
   );
 }
 
