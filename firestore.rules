@@ -7,15 +7,9 @@ service cloud.firestore {
       return request.auth != null && request.auth.token.email == "minhazuddin7827@gmail.com";
     }
     
-    // Dynamic Role Check: Checks if the user's email is in the allowedEmails array
+    // Dynamic Role Check: Allow any logged in user for the demo branch
     function isAuthorized() {
-      return isSuperAdmin() || 
-             (request.auth != null && 
-              exists(/databases/$(database)/documents/settings/adminConfig) &&
-              (('allowedEmails' in get(/databases/$(database)/documents/settings/adminConfig).data &&
-                request.auth.token.email in get(/databases/$(database)/documents/settings/adminConfig).data.allowedEmails) ||
-               ('ownerEmail' in get(/databases/$(database)/documents/settings/adminConfig).data &&
-                request.auth.token.email == get(/databases/$(database)/documents/settings/adminConfig).data.ownerEmail)));
+      return request.auth != null;
     }
 
     match /settings/{document=**} {
