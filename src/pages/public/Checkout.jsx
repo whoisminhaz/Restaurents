@@ -116,7 +116,7 @@ const Checkout = () => {
         taxAmount: taxAmount,
         total: grandTotal,
         items: cart,
-        status: isPreOrder ? 'scheduled' : 'pending',
+        status: isPreOrder ? 'pending_reservation' : 'pending',
         dateStr,
         timeStr,
         timestamp: serverTimestamp()
@@ -133,6 +133,12 @@ const Checkout = () => {
           await setDoc(doc(db, 'reservations', pendingRes.id), {
             ...pendingRes,
             linkedOrderId: orderNumber,
+            preOrderItems: cart,
+            paymentMethod,
+            paymentRef: paymentMethod !== 'counter' ? paymentRef : 'Cash/Counter',
+            subTotal: cartTotal,
+            taxAmount,
+            total: grandTotal,
             status: 'pending',
             timestamp: serverTimestamp()
           });

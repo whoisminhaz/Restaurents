@@ -70,6 +70,26 @@ const ReservationCard = React.memo(({ r, totalTables, onUpdateStatus, onDelete }
         </div>
       )}
 
+      {r.preOrderItems && r.preOrderItems.length > 0 && (
+        <div className="bg-crmDark border border-crmBorder p-2 rounded-lg text-xs mb-3 flex flex-col gap-1">
+          <div className="flex justify-between items-center font-bold text-crmText border-b border-crmBorder pb-1 mb-1">
+            <span>Pre-Ordered Food</span>
+            <span className="text-crmAccent">RM {r.total?.toFixed(2)}</span>
+          </div>
+          <div className="max-h-24 overflow-y-auto no-scrollbar space-y-1 pr-1">
+            {r.preOrderItems.map((item, idx) => (
+              <div key={idx} className="flex justify-between text-gray-400">
+                <span>{item.qty}x {item.names?.en || item.name}</span>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-between items-center text-gray-500 text-[9px] uppercase font-bold pt-1.5 border-t border-crmBorder mt-1">
+            <span>{r.paymentMethod === 'onlineTransfer' ? 'Bank Transfer' : (r.paymentMethod || 'Pay at Counter')}</span>
+            <span>{r.paymentRef && r.paymentRef !== 'Cash/Counter' ? `Ref: ${r.paymentRef}` : ''}</span>
+          </div>
+        </div>
+      )}
+
       <div className="mt-auto pt-3 border-t border-crmBorder flex flex-col gap-2">
         {r.status === 'pending' && (
           <>
@@ -145,12 +165,23 @@ const Reservations = () => {
 
       await updateDoc(doc(db, 'reservations', resId), updates);
 
-      // If confirming and there's a pre-order, update the order's table too
-      if (status === 'confirmed' && linkedOrderId && selectedTable) {
-        const orderQ = query(collection(db, 'orders'), where('orderNumber', '==', linkedOrderId));
-        const orderSnaps = await getDocs(orderQ);
-        for (const orderDoc of orderSnaps.docs) {
-          await updateDoc(doc(db, 'orders', orderDoc.id), { table: selectedTable });
+      // If confirming and there's a pre-order, update the order's table and schedule it
+      if (status === 'confirmed' && linkedOrderId) {
+        try {
+          await updateDoc(doc(db, 'orders', linkedOrderId), { 
+            table: selectedTable || 'Pending Table',
+            status: 'scheduled'
+          });
+        } catch (e) {
+          // Fallback if they didn't have identical ID
+          const orderQ = query(collection(db, 'orders'), where('orderNumber', '==', linkedOrderId));
+          const orderSnaps = await getDocs(orderQ);
+          for (const orderDoc of orderSnaps.docs) {
+            await updateDoc(doc(db, 'orders', orderDoc.id), { 
+              table: selectedTable || 'Pending Table',
+              status: 'scheduled' 
+            });
+          }
         }
       }
     } catch (error) {
@@ -254,7 +285,7 @@ const Reservations = () => {
                           </div>
                         </div>
                         {/* Cards Column */}
-                        <div className="flex-1 grid grid-cols-1 xl:grid-cols-2 gap-4">
+                        <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                           {schedule[date][time].list.map(r => <ReservationCard key={r.id} r={r} totalTables={totalTables} onUpdateStatus={handleUpdateStatus} onDelete={handleDelete} />)}
                         </div>
                       </div>
@@ -271,7 +302,7 @@ const Reservations = () => {
             {pending.length === 0 ? (
               <p className="text-gray-500 text-sm italic text-center py-12">No pending requests to review.</p>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                 {pending.map(r => <ReservationCard key={r.id} r={r} totalTables={totalTables} onUpdateStatus={handleUpdateStatus} onDelete={handleDelete} />)}
               </div>
             )}
@@ -283,7 +314,7 @@ const Reservations = () => {
             {confirmed.length === 0 ? (
               <p className="text-gray-500 text-sm italic text-center py-12">No confirmed bookings.</p>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                 {confirmed.map(r => <ReservationCard key={r.id} r={r} totalTables={totalTables} onUpdateStatus={handleUpdateStatus} onDelete={handleDelete} />)}
               </div>
             )}
@@ -295,7 +326,7 @@ const Reservations = () => {
             {completed.length === 0 ? (
               <p className="text-gray-500 text-sm italic text-center py-12">No historical records found.</p>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 opacity-70 hover:opacity-100 transition-opacity">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 opacity-70 hover:opacity-100 transition-opacity">
                 {completed.map(r => <ReservationCard key={r.id} r={r} totalTables={totalTables} onUpdateStatus={handleUpdateStatus} onDelete={handleDelete} />)}
               </div>
             )}
