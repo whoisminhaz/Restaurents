@@ -21,6 +21,7 @@ const MenuManager = () => {
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [importing, setImporting] = useState(false);
   
   const ownerLang = localStorage.getItem('ownerLang') || 'en';
   
@@ -81,6 +82,76 @@ const MenuManager = () => {
       ...prev,
       names: { ...prev.names, [langId]: value }
     }));
+  };
+
+  const autoImportMenu = async () => {
+    if(!window.confirm("Are you sure you want to auto-import the Utoo Boho Menu? This will add 12 items.")) return;
+    setImporting(true);
+    try {
+      const importItems = [
+        { name: 'Cempedak Basque Cheesecake', price: 16.90, category: 'Desserts', img: 'basque-cemp.jpg' },
+        { name: 'Durian Basque Cheesecake', price: 18.90, category: 'Desserts', img: 'basque-dur.jpg' },
+        { name: 'Original Basque Cheesecake', price: 14.90, category: 'Desserts', img: 'basque-orig.jpg' },
+        { name: 'Big Breakfast', price: 25.90, category: 'Mains', img: 'big-breakfast.jpg' },
+        { name: 'Caesar Salad', price: 18.90, category: 'Mains', img: 'caesar-salad.jpg' },
+        { name: 'Dirty Matcha', price: 14.90, category: 'Drinks', img: 'dirty-matcha.jpg' },
+        { name: 'Fish & Chips', price: 22.90, category: 'Mains', img: 'fish-chips.jpg' },
+        { name: 'Eggs Florentine', price: 20.90, category: 'Mains', img: 'florentine.jpg' },
+        { name: 'Matcha Latte', price: 12.90, category: 'Drinks', img: 'matcha-latte.jpg' },
+        { name: 'Boho Pancake', price: 15.90, category: 'Desserts', img: 'pancake.jpg' },
+        { name: 'Panna Cotta', price: 10.90, category: 'Desserts', img: 'panna-cotta.jpg' },
+        { name: 'Grilled Salmon Steak', price: 28.90, category: 'Mains', img: 'salmon-steak.jpg' },
+      ];
+
+      for (const item of importItems) {
+        const response = await fetch(`/temp-assets/${item.img}`);
+        const blob = await response.blob();
+        
+        const base64Data = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(blob);
+        });
+
+        const img = new Image();
+        img.src = base64Data;
+        
+        await new Promise((resolve) => {
+          img.onload = async () => {
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 400;
+            const scaleSize = MAX_WIDTH / img.width;
+            canvas.width = MAX_WIDTH;
+            canvas.height = img.height * scaleSize;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            const base64String = canvas.toDataURL('image/jpeg', 0.7);
+
+            const newId = 'item_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+            const itemToSave = {
+              id: newId,
+              price: item.price,
+              salePrice: 0,
+              category: item.category,
+              available: true,
+              imageUrl: base64String,
+              names: { en: item.name, ms: item.name, zh: item.name, ta: item.name }
+            };
+
+            await setDoc(doc(db, 'menu', newId), itemToSave);
+            resolve();
+          };
+        });
+      }
+      
+      alert("Menu auto-imported successfully!");
+      fetchData();
+    } catch (error) {
+      console.error("Auto import failed:", error);
+      alert("Auto import failed. Check console.");
+    } finally {
+      setImporting(false);
+    }
   };
 
   // Resize and compress image using HTML5 Canvas (Base64)
@@ -161,13 +232,22 @@ const MenuManager = () => {
           <h1 className="text-3xl font-bold text-crmText">{t(ownerLang, 'menuManager')}</h1>
           <p className="text-gray-400 mt-2">{t(ownerLang, 'menuManagerDesc')}</p>
         </div>
-        <button 
-          onClick={() => openModal()}
-          className="bg-crmAccent hover:bg-[#964d20] text-white px-6 py-2.5 rounded-xl font-medium flex items-center justify-center gap-2 transition-all shadow-lg shadow-crmAccent/20"
-        >
-          <Plus size={20} />
-          {t(ownerLang, 'addMenuItem')}
-        </button>
+        <div className="flex gap-2">
+          <button 
+            onClick={autoImportMenu}
+            disabled={importing}
+            className="bg-[#00c8d4] hover:bg-[#00a3ad] text-white px-4 py-2.5 rounded-xl font-medium flex items-center justify-center transition-all shadow-lg disabled:opacity-50"
+          >
+            {importing ? "Importing..." : "Auto-Import Utoo Boho"}
+          </button>
+          <button 
+            onClick={() => openModal()}
+            className="bg-crmAccent hover:bg-[#964d20] text-white px-6 py-2.5 rounded-xl font-medium flex items-center justify-center gap-2 transition-all shadow-lg shadow-crmAccent/20"
+          >
+            <Plus size={20} />
+            {t(ownerLang, 'addMenuItem')}
+          </button>
+        </div>
       </div>
 
       {loading ? (
