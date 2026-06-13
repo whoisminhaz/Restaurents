@@ -57,26 +57,36 @@ const Checkout = () => {
     setProcessing(true);
 
     try {
-      // 1. Generate Sequential Daily Order Number via Transaction
-      const todayStr = new Date().toISOString().split('T')[0];
-      const counterRef = doc(db, 'counters', todayStr);
-      let orderNumber = "001";
+      const pendingResStr = localStorage.getItem('pendingReservation');
+      const isPreOrder = !!pendingResStr;
+      let pendingRes = null;
+      if (isPreOrder) {
+        try { pendingRes = JSON.parse(pendingResStr); } catch(e){}
+      }
 
-      try {
-        await runTransaction(db, async (transaction) => {
-          const counterDoc = await transaction.get(counterRef);
-          if (!counterDoc.exists()) {
-            transaction.set(counterRef, { count: 1 });
-            orderNumber = "001";
-          } else {
-            const newCount = (counterDoc.data().count || 0) + 1;
-            transaction.update(counterRef, { count: newCount });
-            orderNumber = String(newCount).padStart(3, '0');
-          }
-        });
-      } catch (e) {
-        console.error("Transaction failed, falling back to random", e);
-        orderNumber = String(Math.floor(1000 + Math.random() * 9000));
+      // 1. Generate Order Number
+      let orderNumber = "001";
+      if (isPreOrder && pendingRes && pendingRes.id) {
+        orderNumber = pendingRes.id;
+      } else {
+        const todayStr = new Date().toISOString().split('T')[0];
+        const counterRef = doc(db, 'counters', todayStr);
+        try {
+          await runTransaction(db, async (transaction) => {
+            const counterDoc = await transaction.get(counterRef);
+            if (!counterDoc.exists()) {
+              transaction.set(counterRef, { count: 1 });
+              orderNumber = "001";
+            } else {
+              const newCount = (counterDoc.data().count || 0) + 1;
+              transaction.update(counterRef, { count: newCount });
+              orderNumber = String(newCount).padStart(3, '0');
+            }
+          });
+        } catch (e) {
+          console.error("Transaction failed, falling back to random", e);
+          orderNumber = String(Math.floor(1000 + Math.random() * 9000));
+        }
       }
 
       const taxPercent = settings?.taxPercent ? parseFloat(settings.taxPercent) : 0;
@@ -84,8 +94,6 @@ const Checkout = () => {
       const grandTotal = cartTotal + taxAmount;
 
       // 2. Save Order
-      const pendingResStr = localStorage.getItem('pendingReservation');
-      const isPreOrder = !!pendingResStr;
       
       const finalOrderMode = isPreOrder ? 'dineIn' : (tableNum ? 'dineIn' : orderMode);
       const finalTable = isPreOrder ? 'Pending Table' : (tableNum ? tableNum : 'Takeaway');
@@ -114,29 +122,20 @@ const Checkout = () => {
         timestamp: serverTimestamp()
       };
 
-      await addDoc(collection(db, 'orders'), orderData);
+      await setDoc(doc(db, 'orders', orderNumber), { ...orderData, id: orderNumber });
       
-      // 3. Create or Update Reservation if pending
+      // 3. Create Reservation if pending
       let reservationDetails = null;
-      if (pendingResStr) {
+      if (isPreOrder && pendingRes) {
         try {
-          const pendingRes = JSON.parse(pendingResStr);
           reservationDetails = pendingRes;
           
-          if (pendingRes.id) {
-            // Reservation was already created in Book.jsx (optional pre-order flow)
-            await updateDoc(doc(db, 'reservations', pendingRes.id), {
-              linkedOrderId: orderNumber
-            });
-          } else {
-            // Reservation was NOT created yet (required pre-order flow)
-            await addDoc(collection(db, 'reservations'), {
-              ...pendingRes,
-              linkedOrderId: orderNumber,
-              status: 'pending',
-              timestamp: serverTimestamp()
-            });
-          }
+          await setDoc(doc(db, 'reservations', pendingRes.id), {
+            ...pendingRes,
+            linkedOrderId: orderNumber,
+            status: 'pending',
+            timestamp: serverTimestamp()
+          });
 
           localStorage.removeItem('pendingReservation');
         } catch (e) { 

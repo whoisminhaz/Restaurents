@@ -30,6 +30,8 @@ const Book = () => {
 
   const [processing, setProcessing] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [showPreOrderPrompt, setShowPreOrderPrompt] = useState(false);
+  const [pendingSubmission, setPendingSubmission] = useState(null);
   const [createdResId, setCreatedResId] = useState(null);
 
   const [isDark, setIsDark] = useState(localStorage.getItem('theme') !== 'light');
@@ -177,19 +179,34 @@ const Book = () => {
       };
       const resId = generateId();
 
+      setPendingSubmission({ ...formData, id: resId });
+      
       if (settings.bookingMode === 'preorder' || settings.requirePreOrderForBooking) {
         localStorage.setItem('pendingReservation', JSON.stringify({ ...formData, id: resId }));
         navigate('/order');
         return;
       }
 
-      await setDoc(doc(db, 'reservations', resId), {
-        ...formData,
-        id: resId,
+      // Instead of submitting to Firestore immediately, show the pre-order prompt
+      setShowPreOrderPrompt(true);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to proceed.");
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleFinalSubmit = async () => {
+    setProcessing(true);
+    try {
+      await setDoc(doc(db, 'reservations', pendingSubmission.id), {
+        ...pendingSubmission,
         status: 'pending',
         timestamp: serverTimestamp()
       });
-      setCreatedResId(resId);
+      setCreatedResId(pendingSubmission.id);
+      setShowPreOrderPrompt(false);
       setSuccess(true);
     } catch (error) {
       console.error(error);
@@ -321,18 +338,54 @@ const Book = () => {
     );
   }
 
+  if (showPreOrderPrompt && pendingSubmission) {
+    return (
+      <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0a0a0a] flex flex-col items-center justify-center p-6 text-center transition-colors duration-500">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Almost there!</h1>
+        <p className="text-gray-500 dark:text-gray-400 mb-8">Your table is available. Would you like to pre-order your food?</p>
+
+        <div className="flex flex-col gap-3 w-full max-w-sm">
+          <div className="bg-gradient-to-r from-orange-500 to-red-500 p-6 rounded-2xl text-white shadow-xl shadow-orange-500/30 mb-4 animate-fade-in-up">
+            <h3 className="font-bold text-xl mb-2 leading-tight">Want the food on your table when you arrive?</h3>
+            <p className="text-orange-50 mb-5 text-sm">Don't wait for the food anymore. Pre-order now and it will be ready exactly when you sit down!</p>
+            <button 
+              onClick={() => {
+                localStorage.setItem('pendingReservation', JSON.stringify(pendingSubmission));
+                navigate('/order');
+              }}
+              className="w-full bg-white text-orange-600 font-bold py-3 px-4 rounded-xl hover:scale-105 transition-transform flex items-center justify-center gap-2 mb-3"
+            >
+              Yes, I want to Pre-Order!
+            </button>
+            <button 
+              onClick={handleFinalSubmit}
+              disabled={processing}
+              className="w-full bg-transparent border-2 border-white/30 text-white font-bold py-3 px-4 rounded-xl hover:bg-white/10 transition-colors flex items-center justify-center gap-2"
+            >
+              {processing ? 'Processing...' : 'No, thanks, Request Booking Only'}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (success) {
     return (
       <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0a0a0a] flex flex-col items-center justify-center p-6 text-center transition-colors duration-500">
         <CheckCircle2 size={64} className="text-green-500 mb-6 mx-auto" />
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Reservation Requested!</h1>
-        <p className="text-gray-500 dark:text-gray-400 mb-2">Your reservation is pending, please check back later for the owner confirmation.</p>
-        <p className="text-2xl font-bold text-crmAccent mb-8">Booking ID: {createdResId}</p>
+        <p className="text-2xl font-bold text-crmAccent mb-8 mt-4">Booking ID: {createdResId}</p>
 
         <div className="bg-white dark:bg-[#1a1a1a] w-full max-w-sm rounded-2xl shadow-xl overflow-hidden text-left border border-gray-100 dark:border-gray-800 p-6 space-y-4">
-          <div className="bg-orange-500/10 text-orange-600 dark:text-orange-400 p-3 rounded-lg text-sm mb-4 font-medium flex items-start gap-2">
-            <Clock size={18} className="shrink-0 mt-0.5" />
-            Note: Your reservation gives you exactly 1 hour of booking time. Please arrive promptly.
+          <div className="bg-orange-500/10 text-orange-600 dark:text-orange-400 p-3 rounded-lg text-sm mb-4 font-medium flex flex-col items-start gap-2">
+            <div className="flex items-start gap-2">
+              <Clock size={18} className="shrink-0 mt-0.5" />
+              <span>Note: Your reservation gives you exactly 1 hour of booking time. Please arrive promptly.</span>
+            </div>
+            <div className="flex items-start gap-2 mt-2 pt-2 border-t border-orange-500/20 w-full">
+              <span className="font-semibold text-orange-700 dark:text-orange-300">Your reservation is pending, please check back later for the owner confirmation.</span>
+            </div>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-gray-500">{t(userLang, 'name')}</span>
@@ -349,22 +402,6 @@ const Book = () => {
         </div>
 
         <div className="flex flex-col gap-3 mt-8 w-full max-w-sm">
-          {(!settings.requirePreOrderForBooking && settings.bookingMode !== 'preorder') && (
-            <div className="bg-gradient-to-r from-orange-500 to-red-500 p-6 rounded-2xl text-white shadow-xl shadow-orange-500/30 mb-4 animate-fade-in-up">
-              <h3 className="font-bold text-xl mb-2 leading-tight">Want the food on your table when you arrive?</h3>
-              <p className="text-orange-50 mb-5 text-sm">Don't wait for the food anymore. Pre-order now and it will be ready exactly when you sit down!</p>
-              <button 
-                onClick={() => {
-                  localStorage.setItem('pendingReservation', JSON.stringify({ ...formData, id: createdResId }));
-                  navigate('/order');
-                }}
-                className="w-full bg-white text-orange-600 font-bold py-3 px-4 rounded-xl hover:scale-105 transition-transform flex items-center justify-center gap-2"
-              >
-                Yes, I want to Pre-Order!
-              </button>
-            </div>
-          )}
-
           <button 
             onClick={() => window.print()}
             className="w-full py-3 px-8 rounded-xl font-bold transition-colors shadow-lg flex items-center justify-center gap-2 no-print text-white"
@@ -562,7 +599,7 @@ const Book = () => {
               className="w-full py-4 rounded-2xl text-white text-lg font-bold shadow-lg hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-8"
               style={{ backgroundColor: processing ? '#9ca3af' : settings.themePrimary }}
             >
-              {processing ? 'Processing...' : ((settings.requirePreOrderForBooking || settings.bookingMode === 'preorder') ? 'Proceed to Menu' : 'Request Booking')}
+              {processing ? 'Processing...' : ((settings.requirePreOrderForBooking || settings.bookingMode === 'preorder') ? 'Proceed to Menu' : 'Next')}
             </button>
           </form>
         )}
