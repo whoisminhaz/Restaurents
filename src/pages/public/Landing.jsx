@@ -337,9 +337,9 @@ const Landing = () => {
                     <Globe size={20} />
                   </button>
                   <div className="absolute right-0 mt-2 w-32 bg-white dark:bg-[#141f2e] rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-gray-100 dark:border-gray-700">
-                    {['en', 'ms', 'zh', 'ta'].map(lang => (
+                    {['en', 'ms', 'zh', 'ta', 'bn'].map(lang => (
                       <button key={lang} onClick={() => changeLanguage(lang)} className="block w-full text-left px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 uppercase text-sm first:rounded-t-lg last:rounded-b-lg font-bold">
-                        {lang === 'en' ? 'English' : lang === 'ms' ? 'Malay' : lang === 'zh' ? 'Chinese' : 'Tamil'}
+                        {lang === 'en' ? 'English' : lang === 'ms' ? 'Malay' : lang === 'zh' ? 'Chinese' : lang === 'ta' ? 'Tamil' : 'Bengali'}
                       </button>
                     ))}
                   </div>

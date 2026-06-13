@@ -12,7 +12,8 @@ const allLanguages = [
   { id: 'ms', label: 'Malay Name' },
   { id: 'zh', label: 'Chinese Name' },
   { id: 'ta', label: 'Tamil Name' },
-  { id: 'ar', label: 'Arabic Name' }
+  { id: 'ar', label: 'Arabic Name' },
+  { id: 'bn', label: 'Bengali Name' }
 ];
 
 const MenuManager = () => {
