@@ -285,7 +285,7 @@ const Reservations = () => {
                           </div>
                         </div>
                         {/* Cards Column */}
-                        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                        <div className="flex-1 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
                           {schedule[date][time].list.map(r => <ReservationCard key={r.id} r={r} totalTables={totalTables} onUpdateStatus={handleUpdateStatus} onDelete={handleDelete} ownerLang={ownerLang} />)}
                         </div>
                       </div>
@@ -302,7 +302,7 @@ const Reservations = () => {
             {pending.length === 0 ? (
               <p className="text-gray-500 text-sm italic text-center py-12">{t(ownerLang, 'noPendingRequests')}</p>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
                 {pending.map(r => <ReservationCard key={r.id} r={r} totalTables={totalTables} onUpdateStatus={handleUpdateStatus} onDelete={handleDelete} ownerLang={ownerLang} />)}
               </div>
             )}
@@ -314,7 +314,7 @@ const Reservations = () => {
             {confirmed.length === 0 ? (
               <p className="text-gray-500 text-sm italic text-center py-12">{t(ownerLang, 'noConfirmedBookings')}</p>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
                 {confirmed.map(r => <ReservationCard key={r.id} r={r} totalTables={totalTables} onUpdateStatus={handleUpdateStatus} onDelete={handleDelete} ownerLang={ownerLang} />)}
               </div>
             )}
@@ -326,7 +326,7 @@ const Reservations = () => {
             {completed.length === 0 ? (
               <p className="text-gray-500 text-sm italic text-center py-12">{t(ownerLang, 'noHistoricalRecords')}</p>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 opacity-70 hover:opacity-100 transition-opacity">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 opacity-70 hover:opacity-100 transition-opacity">
                 {completed.map(r => <ReservationCard key={r.id} r={r} totalTables={totalTables} onUpdateStatus={handleUpdateStatus} onDelete={handleDelete} ownerLang={ownerLang} />)}
               </div>
             )}
