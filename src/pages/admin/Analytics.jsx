@@ -168,7 +168,7 @@ const Analytics = () => {
     if (timeRange === 'today') return t(ownerLang, 'today');
     if (timeRange === 'week') return t(ownerLang, 'thisWeek');
     if (timeRange === 'month') return t(ownerLang, 'thisMonth');
-    if (timeRange === 'custom') return 'Custom Range';
+    if (timeRange === 'custom') return t(ownerLang, 'customDateRange');
     return t(ownerLang, 'allTime');
   };
 
@@ -177,7 +177,7 @@ const Analytics = () => {
       <div className="mb-8 flex items-start md:items-center justify-between flex-col md:flex-row gap-4">
         <div>
           <h1 className="text-3xl font-bold text-crmText mb-2 tracking-tight">{t(ownerLang, 'analytics')}</h1>
-          <p className="text-gray-500 dark:text-gray-400">Track your restaurant's performance.</p>
+          <p className="text-gray-500 dark:text-gray-400">{t(ownerLang, 'trackPerformance')}</p>
         </div>
         <div className="flex flex-wrap items-center gap-4">
           {timeRange === 'custom' && (
@@ -202,14 +202,14 @@ const Analytics = () => {
             onChange={(e) => setTimeRange(e.target.value)}
             className="bg-crmCard border border-crmBorder text-crmText px-4 py-2 rounded-xl focus:outline-none focus:border-crmAccent h-[42px]"
           >
-            <option value="today">Today</option>
-            <option value="yesterday">Yesterday</option>
-            <option value="thisWeek">This Week</option>
-            <option value="lastWeek">Last Week</option>
-            <option value="thisMonth">This Month</option>
-            <option value="lastMonth">Last Month</option>
-            <option value="all">All Time</option>
-            <option value="custom">Custom Date Range</option>
+            <option value="today">{t(ownerLang, 'today')}</option>
+            <option value="yesterday">{t(ownerLang, 'yesterday')}</option>
+            <option value="thisWeek">{t(ownerLang, 'thisWeek')}</option>
+            <option value="lastWeek">{t(ownerLang, 'lastWeek')}</option>
+            <option value="thisMonth">{t(ownerLang, 'thisMonth')}</option>
+            <option value="lastMonth">{t(ownerLang, 'lastMonth')}</option>
+            <option value="all">{t(ownerLang, 'allTime')}</option>
+            <option value="custom">{t(ownerLang, 'customDateRange')}</option>
           </select>
           <button 
             onClick={handleExportCSV}
@@ -283,7 +283,7 @@ const Analytics = () => {
           
           {stats.topItems.length === 0 ? (
             <div className="h-48 flex items-center justify-center text-gray-500 border-2 border-dashed border-crmBorder rounded-2xl">
-              No sales recorded in this period.
+              {t(ownerLang, 'noSalesRecorded')}
             </div>
           ) : (
             <div className="space-y-5">
@@ -295,7 +295,7 @@ const Analytics = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between mb-2">
                       <span className="font-medium text-crmText truncate pr-4">{item.name}</span>
-                      <span className="font-bold text-crmText shrink-0">{item.count} sold</span>
+                      <span className="font-bold text-crmText shrink-0">{item.count} {t(ownerLang, 'sold')}</span>
                     </div>
                     <div className="w-full h-2.5 bg-crmDark rounded-full overflow-hidden">
                       <div 
@@ -315,13 +315,13 @@ const Analytics = () => {
 
         {/* Quick Tips or Alerts */}
         <div className="bg-gradient-to-br from-crmAccent/20 to-crmAccent/5 border border-crmAccent/20 rounded-3xl p-6 flex flex-col">
-          <h2 className="text-xl font-bold text-crmText mb-4">Insights ({getRangeLabel()})</h2>
+          <h2 className="text-xl font-bold text-crmText mb-4">{t(ownerLang, 'insights')} ({getRangeLabel()})</h2>
           <div className="flex-1 space-y-4">
             <div className="bg-crmCard/80 backdrop-blur p-4 rounded-2xl">
-              <p className="text-sm text-crmText"><span className="font-bold">Trending:</span> {stats.topItems[0] ? `${stats.topItems[0].name} is your best seller!` : 'Awaiting first order.'}</p>
+              <p className="text-sm text-crmText"><span className="font-bold">{t(ownerLang, 'trending')}</span> {stats.topItems[0] ? `${stats.topItems[0].name} ${t(ownerLang, 'bestSeller')}` : t(ownerLang, 'awaitingFirstOrder')}</p>
             </div>
             <div className="bg-crmCard/80 backdrop-blur p-4 rounded-2xl">
-              <p className="text-sm text-crmText"><span className="font-bold">Volume:</span> You have processed {stats.todayOrders} orders.</p>
+              <p className="text-sm text-crmText"><span className="font-bold">{t(ownerLang, 'volume')}</span> {t(ownerLang, 'youHaveProcessed')} {stats.todayOrders} {t(ownerLang, 'ordersCount')}</p>
             </div>
           </div>
         </div>

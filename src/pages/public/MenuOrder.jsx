@@ -20,7 +20,8 @@ const MenuOrder = () => {
   const userLang = localStorage.getItem('userLang') || 'en';
   const [searchParams] = useSearchParams();
   const [orderMode, setOrderMode] = useState(localStorage.getItem('orderMode') || 'takeaway');
-  const [tableNum, setTableNum] = useState(localStorage.getItem('tableNum') || null);
+  let tableNumStr = localStorage.getItem('tableNum');
+  const [tableNum, setTableNum] = useState(tableNumStr === 'null' || !tableNumStr ? null : tableNumStr);
 
   useEffect(() => {
     const tableQ = searchParams.get('table');
@@ -109,7 +110,7 @@ const MenuOrder = () => {
   if (loading || !settings) {
     return (
       <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0a0a0a] flex items-center justify-center">
-        <LoadingScreen message="Loading Menu..." themeColor={settings?.themePrimary || '#000'} />
+        <LoadingScreen message={`${t(userLang, 'processing')}`} themeColor={settings?.themePrimary || '#000'} />
       </div>
     );
   }
@@ -123,7 +124,12 @@ const MenuOrder = () => {
         </button>
         <div className="text-center">
           <h1 className="font-bold text-gray-900 dark:text-white text-lg leading-tight">{settings.restaurantName}</h1>
-          <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{orderMode === 'takeaway' ? t(userLang, 'takeaway') : t(userLang, 'dineIn')} {tableNum ? `- ${t(userLang, 'tableNumber')} ${tableNum}` : ''}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">
+            {localStorage.getItem('pendingReservation') 
+              ? t(userLang, 'preOrder') 
+              : (orderMode === 'takeaway' ? t(userLang, 'takeaway') : t(userLang, 'dineIn'))} 
+            {tableNum ? ` - ${t(userLang, 'tableNumber')} ${tableNum}` : ''}
+          </p>
         </div>
         <div className="flex items-center gap-1">
           <LanguageDropdown />

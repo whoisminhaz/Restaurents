@@ -30,7 +30,8 @@ const Checkout = () => {
   const [isDark, setIsDark] = useState(localStorage.getItem('theme') !== 'light');
   const userLang = localStorage.getItem('userLang') || 'en';
   const orderMode = localStorage.getItem('orderMode') || 'takeaway';
-  const tableNum = localStorage.getItem('tableNum');
+  let tableNumStr = localStorage.getItem('tableNum');
+  const tableNum = tableNumStr === 'null' || !tableNumStr ? null : tableNumStr;
 
   useEffect(() => {
     if (isDark) {
@@ -164,8 +165,8 @@ const Checkout = () => {
     return (
       <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0a0a0a] flex flex-col items-center justify-center p-6 text-center transition-colors duration-500">
         <CheckCircle2 size={64} className="text-green-500 mb-6 mx-auto" />
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{successData.reservation ? 'Reservation Requested!' : t(userLang, 'orderSuccess')}</h1>
-        <p className="text-gray-500 dark:text-gray-400 mb-8">{successData.reservation ? 'Your reservation and pre-order are pending, please check back later for the owner confirmation.' : t(userLang, 'orderSuccessSub')}</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{successData.reservation ? t(userLang, 'reservationRequested') : t(userLang, 'orderSuccess')}</h1>
+        <p className="text-gray-500 dark:text-gray-400 mb-8">{successData.reservation ? t(userLang, 'bookingPendingNote') : t(userLang, 'orderSuccessSub')}</p>
 
         {/* Beautiful Receipt */}
         <div className="bg-white dark:bg-[#1a1a1a] w-full max-w-sm rounded-2xl shadow-xl overflow-hidden text-left border border-gray-100 dark:border-gray-800">
@@ -187,7 +188,7 @@ const Checkout = () => {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Type</span>
-                <span className="font-medium text-gray-900 dark:text-white capitalize">{successData.orderMode} {successData.table !== 'Takeaway' ? `(${successData.table})` : ''}</span>
+                <span className="font-medium text-gray-900 dark:text-white capitalize">{successData.orderMode === 'takeaway' ? t(userLang, 'takeaway') : t(userLang, 'dineIn')} {successData.table !== 'Takeaway' && successData.table !== 'Pending Table' ? `(${successData.table})` : ''}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Payment</span>
@@ -230,14 +231,14 @@ const Checkout = () => {
             style={{ backgroundColor: settings.themePrimary }}
           >
             <Download size={20} />
-            Download Receipt
+            {t(userLang, 'downloadReceipt')}
           </button>
           
           <button 
             onClick={() => window.location.href = '/'}
             className="w-full py-3 px-8 rounded-xl bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white font-bold hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors no-print"
           >
-            Return to Home
+            {t(userLang, 'returnHome')}
           </button>
         </div>
 
@@ -250,32 +251,32 @@ const Checkout = () => {
           
           <div className="mb-6 grid grid-cols-2 gap-4 text-sm">
             <div>
-              <p className="font-bold text-gray-500 uppercase text-xs mb-1">Order No.</p>
+              <p className="font-bold text-gray-500 uppercase text-xs mb-1">{t(userLang, 'orderNumber')}</p>
               <p className="font-bold text-lg">#{successData.orderNumber}</p>
             </div>
             <div className="text-right">
-              <p className="font-bold text-gray-500 uppercase text-xs mb-1">Date & Time</p>
+              <p className="font-bold text-gray-500 uppercase text-xs mb-1">{t(userLang, 'date')}</p>
               <p>{new Date().toLocaleString()}</p>
             </div>
             <div>
-              <p className="font-bold text-gray-500 uppercase text-xs mb-1">Customer</p>
+              <p className="font-bold text-gray-500 uppercase text-xs mb-1">{t(userLang, 'customer')}</p>
               <p className="font-medium">{successData.customerName}</p>
               {successData.phone && <p>{successData.phone}</p>}
             </div>
             <div className="text-right">
               <p className="font-bold text-gray-500 uppercase text-xs mb-1">Type</p>
-              <p className="font-medium uppercase">{successData.orderMode === 'takeaway' ? 'Takeaway' : `Dine-In (Table ${successData.table})`}</p>
+              <p className="font-medium uppercase">{successData.orderMode === 'takeaway' ? t(userLang, 'takeaway') : `${t(userLang, 'dineIn')} (${successData.table})`}</p>
             </div>
             <div>
-              <p className="font-bold text-gray-500 uppercase text-xs mb-1">Payment Method</p>
+              <p className="font-bold text-gray-500 uppercase text-xs mb-1">{t(userLang, 'paymentMethod')}</p>
               <p className="font-medium uppercase">{successData.paymentMethod}</p>
             </div>
             <div className="text-right">
               {successData.reservation && (
                 <>
-                  <p className="font-bold text-gray-500 uppercase text-xs mb-1">Reservation For</p>
-                  <p className="font-medium">{successData.reservation.date} at {successData.reservation.time}</p>
-                  <p className="text-xs">{successData.reservation.guests} Guests</p>
+                  <p className="font-bold text-gray-500 uppercase text-xs mb-1">{t(userLang, 'reservationFor')}</p>
+                  <p className="font-medium">{successData.reservation.date} {t(userLang, 'at')} {successData.reservation.time}</p>
+                  <p className="text-xs">{successData.reservation.guests} {t(userLang, 'pax')}</p>
                 </>
               )}
             </div>
@@ -285,9 +286,9 @@ const Checkout = () => {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-300">
-                  <th className="text-left pb-2 font-bold uppercase">Item</th>
+                  <th className="text-left pb-2 font-bold uppercase">{t(userLang, 'items')}</th>
                   <th className="text-center pb-2 font-bold uppercase w-16">Qty</th>
-                  <th className="text-right pb-2 font-bold uppercase w-24">Price</th>
+                  <th className="text-right pb-2 font-bold uppercase w-24">{t(userLang, 'price')}</th>
                 </tr>
               </thead>
               <tbody>

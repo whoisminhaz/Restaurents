@@ -326,13 +326,13 @@ const Book = () => {
   if (settings.bookingEnabled === false || settings.bookingMode === 'disabled') {
     return (
       <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0a0a0a] flex flex-col items-center justify-center p-6 text-center transition-colors duration-500">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Reservations Closed</h1>
-        <p className="text-gray-500 dark:text-gray-400 mb-8">Sorry, We are not taking Reservations Now!! Thanks for your Understandig.</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{t(userLang, 'reservationsClosed')}</h1>
+        <p className="text-gray-500 dark:text-gray-400 mb-8">{t(userLang, 'reservationsClosedDesc')}</p>
         <button 
           onClick={() => window.location.href = '/'}
           className="py-3 px-8 rounded-xl bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white font-bold hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
         >
-          Return to Home
+          {t(userLang, 'returnHome')}
         </button>
       </div>
     );
@@ -341,13 +341,13 @@ const Book = () => {
   if (showPreOrderPrompt && pendingSubmission) {
     return (
       <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0a0a0a] flex flex-col items-center justify-center p-6 text-center transition-colors duration-500">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Almost there!</h1>
-        <p className="text-gray-500 dark:text-gray-400 mb-8">Your table is available. Would you like to pre-order your food?</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{t(userLang, 'almostThere')}</h1>
+        <p className="text-gray-500 dark:text-gray-400 mb-8">{t(userLang, 'preOrderPrompt')}</p>
 
         <div className="flex flex-col gap-3 w-full max-w-sm">
           <div className="bg-gradient-to-r from-orange-500 to-red-500 p-6 rounded-2xl text-white shadow-xl shadow-orange-500/30 mb-4 animate-fade-in-up">
-            <h3 className="font-bold text-xl mb-2 leading-tight">Want the food on your table when you arrive?</h3>
-            <p className="text-orange-50 mb-5 text-sm">Don't wait for the food anymore. Pre-order now and it will be ready exactly when you sit down!</p>
+            <h3 className="font-bold text-xl mb-2 leading-tight">{t(userLang, 'wantFoodReady')}</h3>
+            <p className="text-orange-50 mb-5 text-sm">{t(userLang, 'preOrderDesc')}</p>
             <button 
               onClick={() => {
                 localStorage.setItem('pendingReservation', JSON.stringify(pendingSubmission));
@@ -355,14 +355,14 @@ const Book = () => {
               }}
               className="w-full bg-white text-orange-600 font-bold py-3 px-4 rounded-xl hover:scale-105 transition-transform flex items-center justify-center gap-2 mb-3"
             >
-              Yes, I want to Pre-Order!
+              {t(userLang, 'yesPreOrder')}
             </button>
             <button 
               onClick={handleFinalSubmit}
               disabled={processing}
               className="w-full bg-transparent border-2 border-white/30 text-white font-bold py-3 px-4 rounded-xl hover:bg-white/10 transition-colors flex items-center justify-center gap-2"
             >
-              {processing ? 'Processing...' : 'No, thanks, Request Booking Only'}
+              {processing ? t(userLang, 'processing') : t(userLang, 'noPreOrder')}
             </button>
           </div>
         </div>
@@ -374,17 +374,17 @@ const Book = () => {
     return (
       <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0a0a0a] flex flex-col items-center justify-center p-6 text-center transition-colors duration-500">
         <CheckCircle2 size={64} className="text-green-500 mb-6 mx-auto" />
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Reservation Requested!</h1>
-        <p className="text-2xl font-bold text-crmAccent mb-8 mt-4">Booking ID: {createdResId}</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{t(userLang, 'reservationRequested')}</h1>
+        <p className="text-2xl font-bold text-crmAccent mb-8 mt-4">{t(userLang, 'bookingId')} {createdResId}</p>
 
         <div className="bg-white dark:bg-[#1a1a1a] w-full max-w-sm rounded-2xl shadow-xl overflow-hidden text-left border border-gray-100 dark:border-gray-800 p-6 space-y-4">
           <div className="bg-orange-500/10 text-orange-600 dark:text-orange-400 p-3 rounded-lg text-sm mb-4 font-medium flex flex-col items-start gap-2">
             <div className="flex items-start gap-2">
               <Clock size={18} className="shrink-0 mt-0.5" />
-              <span>Note: Your reservation gives you exactly 1 hour of booking time. Please arrive promptly.</span>
+              <span>{t(userLang, 'bookingNote1hr')}</span>
             </div>
             <div className="flex items-start gap-2 mt-2 pt-2 border-t border-orange-500/20 w-full">
-              <span className="font-semibold text-orange-700 dark:text-orange-300">Your reservation is pending, please check back later for the owner confirmation.</span>
+              <span className="font-semibold text-orange-700 dark:text-orange-300">{t(userLang, 'bookingPendingNote')}</span>
             </div>
           </div>
           <div className="flex justify-between text-sm">
@@ -393,11 +393,11 @@ const Book = () => {
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-gray-500">{t(userLang, 'date')}</span>
-            <span className="font-medium text-gray-900 dark:text-white">{formData.date} at {formData.time}</span>
+            <span className="font-medium text-gray-900 dark:text-white">{formData.date} {t(userLang, 'at')} {formData.time}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-gray-500">Guests</span>
-            <span className="font-medium text-gray-900 dark:text-white">{formData.guests} pax</span>
+            <span className="text-gray-500">{t(userLang, 'guests')}</span>
+            <span className="font-medium text-gray-900 dark:text-white">{formData.guests} {t(userLang, 'pax')}</span>
           </div>
         </div>
 
@@ -408,13 +408,13 @@ const Book = () => {
             style={{ backgroundColor: settings.themePrimary }}
           >
             <Download size={20} />
-            Download Receipt
+            {t(userLang, 'downloadReceipt')}
           </button>
           <button 
             onClick={() => window.location.href = '/'}
             className="w-full py-3 px-8 rounded-xl bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white font-bold hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors no-print"
           >
-            Return to Home
+            {t(userLang, 'returnHome')}
           </button>
         </div>
 
@@ -422,32 +422,32 @@ const Book = () => {
         <div className="hidden print:block absolute top-0 left-0 w-full bg-white text-black p-8 text-left font-sans">
           <div className="text-center mb-8 border-b border-dashed border-gray-400 pb-4">
             <h1 className="text-3xl font-bold mb-2 uppercase tracking-widest">{settings.restaurantName || 'Restaurant'}</h1>
-            <p className="text-sm text-gray-600">Reservation Requested (Pending)</p>
+            <p className="text-sm text-gray-600">{t(userLang, 'reservationRequestedPending')}</p>
             <p className="font-bold text-lg mt-2">ID: {createdResId}</p>
           </div>
           
           <div className="mb-6 grid grid-cols-2 gap-4 text-sm">
             <div>
-              <p className="font-bold text-gray-500 uppercase text-xs mb-1">Date Created</p>
+              <p className="font-bold text-gray-500 uppercase text-xs mb-1">{t(userLang, 'dateCreated')}</p>
               <p className="font-bold text-lg">{new Date().toLocaleDateString()}</p>
             </div>
             <div className="text-right">
-              <p className="font-bold text-gray-500 uppercase text-xs mb-1">Reservation For</p>
-              <p className="font-bold text-lg">{formData.date} at {formData.time}</p>
+              <p className="font-bold text-gray-500 uppercase text-xs mb-1">{t(userLang, 'reservationFor')}</p>
+              <p className="font-bold text-lg">{formData.date} {t(userLang, 'at')} {formData.time}</p>
             </div>
             <div>
-              <p className="font-bold text-gray-500 uppercase text-xs mb-1">Customer</p>
+              <p className="font-bold text-gray-500 uppercase text-xs mb-1">{t(userLang, 'customer')}</p>
               <p className="font-medium">{formData.name}</p>
               {formData.phone && <p>{formData.phone}</p>}
             </div>
             <div className="text-right">
-              <p className="font-bold text-gray-500 uppercase text-xs mb-1">Guests</p>
-              <p className="font-medium uppercase">{formData.guests} Pax</p>
+              <p className="font-bold text-gray-500 uppercase text-xs mb-1">{t(userLang, 'guests')}</p>
+              <p className="font-medium uppercase">{formData.guests} {t(userLang, 'pax')}</p>
             </div>
           </div>
 
           <div className="text-center border-t border-dashed border-gray-400 pt-8 mt-12 text-sm text-gray-500">
-            <p className="mb-4">We look forward to serving you!</p>
+            <p className="mb-4">{t(userLang, 'lookForward')}</p>
             <p className="text-gray-300 text-xs">© whoisMinhaz</p>
           </div>
         </div>
@@ -458,12 +458,10 @@ const Book = () => {
   return (
     <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0a0a0a] pb-32 transition-colors duration-500">
       <header className="bg-white dark:bg-[#121212] sticky top-0 z-40 shadow-sm px-4 py-4 flex items-center justify-between transition-colors duration-500">
-        <button onClick={() => window.location.href = '/'} className="p-2 -ml-2 text-gray-600 dark:text-gray-300">
-          <ArrowLeft size={24} />
-        </button>
+        <div className="w-8"></div> {/* Placeholder to keep layout balanced */}
         <div className="text-center">
           <h1 className="font-bold text-gray-900 dark:text-white text-lg leading-tight">{settings.restaurantName}</h1>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Reservations</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{t(userLang, 'reservations')}</p>
         </div>
         <div className="flex items-center gap-1">
           <LanguageDropdown />
@@ -481,13 +479,13 @@ const Book = () => {
             onClick={() => setTab('book')}
             className={`flex-1 py-2 text-sm font-bold rounded-lg transition-colors ${tab === 'book' ? 'bg-white dark:bg-[#333] text-gray-900 dark:text-white shadow-sm' : 'text-gray-500'}`}
           >
-            New Booking
+            {t(userLang, 'newBooking')}
           </button>
           <button 
             onClick={() => setTab('manage')}
             className={`flex-1 py-2 text-sm font-bold rounded-lg transition-colors ${tab === 'manage' ? 'bg-white dark:bg-[#333] text-gray-900 dark:text-white shadow-sm' : 'text-gray-500'}`}
           >
-            Manage Booking
+            {t(userLang, 'manageBooking')}
           </button>
         </div>
 
@@ -497,11 +495,11 @@ const Book = () => {
                <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 text-white" style={{ backgroundColor: settings.themePrimary }}>
                  <CalendarDays size={32} />
                </div>
-               <h2 className="font-bold text-xl text-gray-900 dark:text-white mb-1">Reserve a Table</h2>
-               <p className="text-sm text-gray-500 text-center mb-4">Please note: A reservation gives you exactly 1 hour of booking time.</p>
+               <h2 className="font-bold text-xl text-gray-900 dark:text-white mb-1">{t(userLang, 'reserveTable')}</h2>
+               <p className="text-sm text-gray-500 text-center mb-4">{t(userLang, 'bookingNote1hr')}</p>
                {settings.requirePreOrderForBooking && (
                  <span className="text-xs font-bold bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-center">
-                   Food pre-order required to confirm booking.
+                   {t(userLang, 'preOrderRequired')}
                  </span>
                )}
             </div>
@@ -547,7 +545,7 @@ const Book = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Time</label>
+                  <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">{t(userLang, 'timeLabel')}</label>
                   <select 
                     name="time"
                     required
@@ -556,7 +554,7 @@ const Book = () => {
                     className="w-full bg-gray-50 dark:bg-[#222] border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2 transition-colors appearance-none"
                     style={{ focusRingColor: settings.themePrimary }}
                   >
-                    <option value="" disabled>Select</option>
+                    <option value="" disabled>{t(userLang, 'selectTime')}</option>
                     {timeSlots.map((slot, i) => (
                       <option key={i} value={slot}>{slot}</option>
                     ))}
@@ -565,7 +563,7 @@ const Book = () => {
               </div>
 
               <div>
-                <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Number of Guests</label>
+                <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">{t(userLang, 'numGuests')}</label>
                 <select 
                   name="guests"
                   value={formData.guests}
@@ -574,18 +572,18 @@ const Book = () => {
                   style={{ focusRingColor: settings.themePrimary }}
                 >
                   {[1,2,3,4,5,6,7,8,9,10,11,12].map(num => (
-                    <option key={num} value={num}>{num} People</option>
+                    <option key={num} value={num}>{num} {t(userLang, 'people')}</option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">{t(userLang, 'specialInstructions')} (Optional)</label>
+                <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">{t(userLang, 'specialInstructions')} {t(userLang, 'optional')}</label>
                 <textarea 
                   name="notes"
                   value={formData.notes}
                   onChange={handleChange}
-                  placeholder="e.g. Birthday celebration, window seat..."
+                  placeholder={t(userLang, 'specialInstPlaceHolder')}
                   rows="2"
                   className="w-full bg-gray-50 dark:bg-[#222] border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2 transition-colors resize-none"
                   style={{ focusRingColor: settings.themePrimary }}
@@ -599,7 +597,7 @@ const Book = () => {
               className="w-full py-4 rounded-2xl text-white text-lg font-bold shadow-lg hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-8"
               style={{ backgroundColor: processing ? '#9ca3af' : settings.themePrimary }}
             >
-              {processing ? 'Processing...' : ((settings.requirePreOrderForBooking || settings.bookingMode === 'preorder') ? 'Proceed to Menu' : 'Next')}
+              {processing ? t(userLang, 'processing') : ((settings.requirePreOrderForBooking || settings.bookingMode === 'preorder') ? t(userLang, 'proceedToMenu') : t(userLang, 'next'))}
             </button>
           </form>
         )}
@@ -608,7 +606,7 @@ const Book = () => {
           <div className="space-y-6 animate-fade-in-up">
             <form onSubmit={handleSearchReservation} className="bg-white dark:bg-[#1a1a1a] rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-800 transition-colors duration-500 space-y-4">
               <div>
-                <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Reservation Date</label>
+                <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">{t(userLang, 'reservationDate')}</label>
                 <input 
                   type="date" 
                   name="manageDate"
@@ -619,12 +617,12 @@ const Book = () => {
                   style={{ focusRingColor: settings.themePrimary }}
                 />
                 
-                <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Phone Number OR Reservation ID</label>
+                <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">{t(userLang, 'phoneOrId')}</label>
                 <input 
                   type="text" 
                   name="searchQuery"
                   required 
-                  placeholder="e.g. +60123456789 or AK649..."
+                  placeholder={t(userLang, 'phoneOrIdPlaceholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full bg-gray-50 dark:bg-[#222] border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2 transition-colors"
@@ -637,32 +635,32 @@ const Book = () => {
                 className="w-full py-3 rounded-xl text-white font-bold flex items-center justify-center gap-2 transition-colors"
                 style={{ backgroundColor: settings.themePrimary }}
               >
-                {manageLoading ? 'Searching...' : <><Search size={18} /> Find Reservation</>}
+                {manageLoading ? t(userLang, 'searching') : <><Search size={18} /> {t(userLang, 'findReservation')}</>}
               </button>
             </form>
 
             {foundRes && (
               <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-800 transition-colors duration-500 animate-fade-in-up">
                 <div className="flex justify-between items-center border-b border-gray-100 dark:border-gray-800 pb-3 mb-3">
-                  <h3 className="font-bold text-gray-900 dark:text-white">Booking Details</h3>
+                  <h3 className="font-bold text-gray-900 dark:text-white">{t(userLang, 'bookingDetails')}</h3>
                   <span className={`text-xs font-bold uppercase px-2 py-1 rounded-md ${
                     foundRes.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
                     foundRes.status === 'confirmed' ? 'bg-blue-100 text-blue-700' :
                     foundRes.status === 'completed' ? 'bg-green-100 text-green-700' :
                     'bg-red-100 text-red-700'
                   }`}>
-                    {foundRes.status}
+                    {t(userLang, foundRes.status)}
                   </span>
                 </div>
                 <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400 mb-6">
-                  <p className="text-base font-bold text-gray-900 dark:text-white font-mono">Booking ID: {foundRes.id}</p>
-                  <p><span className="font-medium text-gray-900 dark:text-gray-200">Name:</span> {foundRes.name}</p>
-                  <p><span className="font-medium text-gray-900 dark:text-gray-200">Date:</span> {foundRes.date}</p>
-                  <p><span className="font-medium text-gray-900 dark:text-gray-200">Time:</span> {foundRes.time}</p>
-                  <p><span className="font-medium text-gray-900 dark:text-gray-200">Guests:</span> {foundRes.guests}</p>
+                  <p className="text-base font-bold text-gray-900 dark:text-white font-mono">{t(userLang, 'bookingId')} {foundRes.id}</p>
+                  <p><span className="font-medium text-gray-900 dark:text-gray-200">{t(userLang, 'name')}:</span> {foundRes.name}</p>
+                  <p><span className="font-medium text-gray-900 dark:text-gray-200">{t(userLang, 'date')}:</span> {foundRes.date}</p>
+                  <p><span className="font-medium text-gray-900 dark:text-gray-200">{t(userLang, 'timeLabel')}:</span> {foundRes.time}</p>
+                  <p><span className="font-medium text-gray-900 dark:text-gray-200">{t(userLang, 'guests')}:</span> {foundRes.guests}</p>
                   {foundRes.status === 'confirmed' && foundRes.table && foundRes.table !== 'Assigned' && (
                     <p className="mt-2 pt-2 border-t border-gray-100 dark:border-gray-800 text-green-600 dark:text-green-400 font-bold">
-                      Assigned Table: {foundRes.table}
+                      {t(userLang, 'assignedTable')} {foundRes.table}
                     </p>
                   )}
                 </div>
@@ -673,7 +671,7 @@ const Book = () => {
                     disabled={manageLoading}
                     className="w-full py-3 rounded-xl text-red-500 font-bold bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors flex items-center justify-center gap-2"
                   >
-                    <XCircle size={18} /> Cancel Reservation
+                    <XCircle size={18} /> {t(userLang, 'cancelReservation')}
                   </button>
                 )}
               </div>

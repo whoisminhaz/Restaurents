@@ -6,7 +6,7 @@ import { t } from '../../utils/translations';
 import { formatDate } from '../../utils/formatDate';
 import LoadingScreen from '../../components/LoadingScreen';
 
-const ReservationCard = React.memo(({ r, totalTables, onUpdateStatus, onDelete }) => {
+const ReservationCard = React.memo(({ r, totalTables, onUpdateStatus, onDelete, ownerLang }) => {
   const [selectedTable, setSelectedTable] = useState(
     r.table && r.table !== 'Pending Table' && r.table !== 'Assigned' ? r.table : ''
   );
@@ -36,12 +36,12 @@ const ReservationCard = React.memo(({ r, totalTables, onUpdateStatus, onDelete }
         </div>
         <div className="text-right flex flex-col items-end gap-1.5">
           <div className="bg-crmDark border border-crmBorder rounded-lg p-1.5 text-center min-w-[60px]">
-            <p className="text-[10px] text-gray-500 uppercase font-bold mb-0.5">Guests</p>
+            <p className="text-[10px] text-gray-500 uppercase font-bold mb-0.5">{t(ownerLang, 'guests')}</p>
             <p className="font-bold text-crmText text-base">{r.guests}</p>
           </div>
           {r.linkedOrderId && (
             <span className="bg-crmAccent/10 text-crmAccent text-[10px] font-bold px-1.5 py-0.5 rounded-md">
-              Order #{r.linkedOrderId}
+              {t(ownerLang, 'order')} #{r.linkedOrderId}
             </span>
           )}
         </div>
@@ -60,26 +60,26 @@ const ReservationCard = React.memo(({ r, totalTables, onUpdateStatus, onDelete }
 
       {r.table && r.status === 'confirmed' && r.table !== 'Pending Table' && r.table !== 'Assigned' && (
         <div className="bg-blue-500/10 text-blue-400 p-2 rounded-lg text-xs mb-3 font-bold flex items-center gap-1.5">
-          Table: {r.table}
+          {t(ownerLang, 'tableColon')} {r.table}
         </div>
       )}
 
       {r.notes && (
         <div className="bg-orange-500/10 border border-orange-500/20 text-orange-500 p-2 rounded-lg text-xs mb-3 line-clamp-2">
-          <span className="font-bold">Notes:</span> {r.notes}
+          <span className="font-bold">{t(ownerLang, 'notesColon')}</span> {r.notes}
         </div>
       )}
 
-      {r.preOrderItems && r.preOrderItems.length > 0 && (
+      {((r.preOrderItems && r.preOrderItems.length > 0) || (r.items && r.items.length > 0)) && (
         <div className="bg-crmDark border border-crmBorder p-2 rounded-lg text-xs mb-3 flex flex-col gap-1">
           <div className="flex justify-between items-center font-bold text-crmText border-b border-crmBorder pb-1 mb-1">
-            <span>Pre-Ordered Food</span>
+            <span>{t(ownerLang, 'preOrderedFood')}</span>
             <span className="text-crmAccent">RM {r.total?.toFixed(2)}</span>
           </div>
           <div className="max-h-24 overflow-y-auto no-scrollbar space-y-1 pr-1">
-            {r.preOrderItems.map((item, idx) => (
+            {(r.preOrderItems || r.items || []).map((item, idx) => (
               <div key={idx} className="flex justify-between text-gray-400">
-                <span>{item.qty}x {item.names?.en || item.name}</span>
+                <span>{item.qty}x {item.names?.en || item.names?.[ownerLang] || item.name}</span>
               </div>
             ))}
           </div>
@@ -94,33 +94,33 @@ const ReservationCard = React.memo(({ r, totalTables, onUpdateStatus, onDelete }
         {r.status === 'pending' && (
           <>
             <div className="flex items-center gap-2 mb-1 bg-crmDark p-2 rounded-lg border border-crmBorder">
-              <label className="text-[10px] text-gray-400 font-bold uppercase shrink-0">Assign Table:</label>
+              <label className="text-[10px] text-gray-400 font-bold uppercase shrink-0">{t(ownerLang, 'assignTable')}</label>
               <select
                 value={selectedTable}
                 onChange={(e) => setSelectedTable(e.target.value)}
                 className="flex-1 bg-crmCard text-crmText text-xs font-bold focus:outline-none cursor-pointer rounded px-1 py-0.5 border border-crmBorder"
               >
-                <option value="" disabled>Select Table</option>
+                <option value="" disabled>{t(ownerLang, 'selectTable')}</option>
                 {[...Array(totalTables)].map((_, i) => (
                   <option key={i+1} value={String(i+1)}>Table {i+1}</option>
                 ))}
               </select>
             </div>
             <div className="flex gap-2">
-              <button disabled={busy} onClick={() => handleAction('cancelled')} className="flex-1 py-1.5 rounded-lg font-bold bg-red-500/10 text-red-500 hover:bg-red-500/20 text-xs disabled:opacity-50">Decline</button>
-              <button disabled={busy || !selectedTable} onClick={() => handleAction('confirmed')} className="flex-1 py-1.5 rounded-lg font-bold bg-crmAccent text-white hover:brightness-110 text-xs flex items-center justify-center gap-1 disabled:opacity-50"><CheckCircle2 size={14}/> Confirm</button>
+              <button disabled={busy} onClick={() => handleAction('cancelled')} className="flex-1 py-1.5 rounded-lg font-bold bg-red-500/10 text-red-500 hover:bg-red-500/20 text-xs disabled:opacity-50">{t(ownerLang, 'decline')}</button>
+              <button disabled={busy || !selectedTable} onClick={() => handleAction('confirmed')} className="flex-1 py-1.5 rounded-lg font-bold bg-crmAccent text-white hover:brightness-110 text-xs flex items-center justify-center gap-1 disabled:opacity-50"><CheckCircle2 size={14}/> {t(ownerLang, 'confirm')}</button>
             </div>
           </>
         )}
         {r.status === 'pending' && (
           <button disabled={busy} onClick={async () => { setBusy(true); await onDelete(r.id); setBusy(false); }} className="w-full py-1 rounded-lg font-bold bg-gray-500/10 text-gray-400 hover:bg-red-500/10 hover:text-red-500 text-[10px] flex items-center justify-center gap-1 disabled:opacity-50 mt-1">
-            <Trash2 size={10}/> Remove from list
+            <Trash2 size={10}/> {t(ownerLang, 'removeFromList')}
           </button>
         )}
         {r.status === 'confirmed' && (
           <div className="flex gap-2">
-            <button disabled={busy} onClick={() => handleAction('cancelled')} className="flex-1 py-1.5 rounded-lg font-bold bg-red-500/10 text-red-500 hover:bg-red-500/20 text-xs disabled:opacity-50">Cancel</button>
-            <button disabled={busy} onClick={() => handleAction('completed')} className="flex-1 py-1.5 rounded-lg font-bold bg-green-500 text-white hover:bg-green-600 text-xs flex items-center justify-center gap-1 disabled:opacity-50"><CheckCircle2 size={14}/> Complete</button>
+            <button disabled={busy} onClick={() => handleAction('cancelled')} className="flex-1 py-1.5 rounded-lg font-bold bg-red-500/10 text-red-500 hover:bg-red-500/20 text-xs disabled:opacity-50">{t(ownerLang, 'cancel')}</button>
+            <button disabled={busy} onClick={() => handleAction('completed')} className="flex-1 py-1.5 rounded-lg font-bold bg-green-500 text-white hover:bg-green-600 text-xs flex items-center justify-center gap-1 disabled:opacity-50"><CheckCircle2 size={14}/> {t(ownerLang, 'complete')}</button>
           </div>
         )}
       </div>
@@ -230,26 +230,26 @@ const Reservations = () => {
             onClick={() => setView('schedule')}
             className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-colors ${view === 'schedule' ? 'bg-crmAccent text-white' : 'text-gray-400 hover:text-crmText'}`}
           >
-            Daily Schedule
+            {t(ownerLang, 'dailySchedule')}
           </button>
           <button 
             onClick={() => setView('confirmed')}
             className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-colors ${view === 'confirmed' ? 'bg-crmAccent text-white' : 'text-gray-400 hover:text-crmText'}`}
           >
-            Confirmed Bookings
+            {t(ownerLang, 'confirmedBookings')}
           </button>
           <button 
             onClick={() => setView('requests')}
             className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-colors flex items-center gap-2 ${view === 'requests' ? 'bg-crmAccent text-white' : 'text-gray-400 hover:text-crmText'}`}
           >
-            Pending Requests 
+            {t(ownerLang, 'pendingRequests')} 
             {pending.length > 0 && <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">{pending.length}</span>}
           </button>
           <button 
             onClick={() => setView('history')}
             className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-colors ${view === 'history' ? 'bg-crmAccent text-white' : 'text-gray-400 hover:text-crmText'}`}
           >
-            History
+            {t(ownerLang, 'history')}
           </button>
         </div>
       </div>
@@ -260,8 +260,8 @@ const Reservations = () => {
             {sortedDates.length === 0 ? (
               <div className="text-center p-12 border-2 border-dashed border-crmBorder rounded-3xl">
                 <CalendarDays size={48} className="mx-auto text-gray-500 mb-4" />
-                <h3 className="text-xl font-bold text-crmText">No Upcoming Bookings</h3>
-                <p className="text-gray-500 mt-2">Your schedule is completely clear.</p>
+                <h3 className="text-xl font-bold text-crmText">{t(ownerLang, 'noUpcomingBookings')}</h3>
+                <p className="text-gray-500 mt-2">{t(ownerLang, 'scheduleClear')}</p>
               </div>
             ) : (
               sortedDates.map(date => (
@@ -280,13 +280,13 @@ const Reservations = () => {
                             <h3 className="text-lg font-bold text-crmText mb-1">{time}</h3>
                             <div className="flex items-center gap-1.5 text-crmAccent text-xs font-bold bg-crmAccent/10 px-2 py-1 rounded-lg w-fit">
                               <Users size={12} />
-                              {schedule[date][time].pax} Pax Total
+                              {schedule[date][time].pax} {t(ownerLang, 'paxTotal')}
                             </div>
                           </div>
                         </div>
                         {/* Cards Column */}
-                        <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                          {schedule[date][time].list.map(r => <ReservationCard key={r.id} r={r} totalTables={totalTables} onUpdateStatus={handleUpdateStatus} onDelete={handleDelete} />)}
+                        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                          {schedule[date][time].list.map(r => <ReservationCard key={r.id} r={r} totalTables={totalTables} onUpdateStatus={handleUpdateStatus} onDelete={handleDelete} ownerLang={ownerLang} />)}
                         </div>
                       </div>
                     ))}
@@ -300,10 +300,10 @@ const Reservations = () => {
         {view === 'requests' && (
           <div>
             {pending.length === 0 ? (
-              <p className="text-gray-500 text-sm italic text-center py-12">No pending requests to review.</p>
+              <p className="text-gray-500 text-sm italic text-center py-12">{t(ownerLang, 'noPendingRequests')}</p>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-                {pending.map(r => <ReservationCard key={r.id} r={r} totalTables={totalTables} onUpdateStatus={handleUpdateStatus} onDelete={handleDelete} />)}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
+                {pending.map(r => <ReservationCard key={r.id} r={r} totalTables={totalTables} onUpdateStatus={handleUpdateStatus} onDelete={handleDelete} ownerLang={ownerLang} />)}
               </div>
             )}
           </div>
@@ -312,10 +312,10 @@ const Reservations = () => {
         {view === 'confirmed' && (
           <div>
             {confirmed.length === 0 ? (
-              <p className="text-gray-500 text-sm italic text-center py-12">No confirmed bookings.</p>
+              <p className="text-gray-500 text-sm italic text-center py-12">{t(ownerLang, 'noConfirmedBookings')}</p>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-                {confirmed.map(r => <ReservationCard key={r.id} r={r} totalTables={totalTables} onUpdateStatus={handleUpdateStatus} onDelete={handleDelete} />)}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
+                {confirmed.map(r => <ReservationCard key={r.id} r={r} totalTables={totalTables} onUpdateStatus={handleUpdateStatus} onDelete={handleDelete} ownerLang={ownerLang} />)}
               </div>
             )}
           </div>
@@ -324,10 +324,10 @@ const Reservations = () => {
         {view === 'history' && (
           <div>
             {completed.length === 0 ? (
-              <p className="text-gray-500 text-sm italic text-center py-12">No historical records found.</p>
+              <p className="text-gray-500 text-sm italic text-center py-12">{t(ownerLang, 'noHistoricalRecords')}</p>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 opacity-70 hover:opacity-100 transition-opacity">
-                {completed.map(r => <ReservationCard key={r.id} r={r} totalTables={totalTables} onUpdateStatus={handleUpdateStatus} onDelete={handleDelete} />)}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 opacity-70 hover:opacity-100 transition-opacity">
+                {completed.map(r => <ReservationCard key={r.id} r={r} totalTables={totalTables} onUpdateStatus={handleUpdateStatus} onDelete={handleDelete} ownerLang={ownerLang} />)}
               </div>
             )}
           </div>
