@@ -618,7 +618,7 @@ const Landing = () => {
             {/* Feature 1 */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center reveal opacity-0 translate-y-12 transition-all duration-1000 ease-out">
               <div className="order-2 lg:order-1 relative group">
-                <div className="absolute inset-0 bg-[#00c8d4] rounded-xl blur-2xl opacity-10 group-hover:opacity-20 transition-opacity duration-500"></div>
+                <div className="absolute inset-0 bg-[#00c8d4] rounded-xl blur-2xl opacity-10 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none"></div>
                 <div className="relative">
                   <div className="bg-[#e2e8f0] dark:bg-[#141f2e] rounded-t-xl p-3 flex items-center space-x-2 border border-gray-300 dark:border-gray-800">
                     <div className="w-3 h-3 rounded-full bg-red-500"></div><div className="w-3 h-3 rounded-full bg-yellow-500"></div><div className="w-3 h-3 rounded-full bg-green-500"></div>
@@ -659,7 +659,7 @@ const Landing = () => {
                 </div>
               </div>
               <div className="relative group">
-                 <div className="absolute inset-0 bg-[#00c8d4] rounded-xl blur-2xl opacity-10 group-hover:opacity-20 transition-opacity duration-500"></div>
+                 <div className="absolute inset-0 bg-[#00c8d4] rounded-xl blur-2xl opacity-10 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none"></div>
                  <div className="relative">
                    <div className="bg-[#e2e8f0] dark:bg-[#141f2e] rounded-t-xl p-3 flex items-center space-x-2 border border-gray-300 dark:border-gray-800">
                     <div className="w-3 h-3 rounded-full bg-red-500"></div><div className="w-3 h-3 rounded-full bg-yellow-500"></div><div className="w-3 h-3 rounded-full bg-green-500"></div>
@@ -672,7 +672,7 @@ const Landing = () => {
             {/* Feature 3 */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center reveal opacity-0 translate-y-12 transition-all duration-1000 ease-out">
               <div className="order-2 lg:order-1 relative group">
-                <div className="absolute inset-0 bg-[#00c8d4] rounded-xl blur-2xl opacity-10 group-hover:opacity-20 transition-opacity duration-500"></div>
+                <div className="absolute inset-0 bg-[#00c8d4] rounded-xl blur-2xl opacity-10 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none"></div>
                 <div className="relative">
                   <div className="bg-[#e2e8f0] dark:bg-[#141f2e] rounded-t-xl p-3 flex items-center space-x-2 border border-gray-300 dark:border-gray-800">
                     <div className="w-3 h-3 rounded-full bg-red-500"></div><div className="w-3 h-3 rounded-full bg-yellow-500"></div><div className="w-3 h-3 rounded-full bg-green-500"></div>
@@ -713,7 +713,7 @@ const Landing = () => {
                 </div>
               </div>
               <div className="relative group">
-                 <div className="absolute inset-0 bg-[#00c8d4] rounded-xl blur-2xl opacity-10 group-hover:opacity-20 transition-opacity duration-500"></div>
+                 <div className="absolute inset-0 bg-[#00c8d4] rounded-xl blur-2xl opacity-10 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none"></div>
                  <div className="relative">
                    <div className="bg-[#e2e8f0] dark:bg-[#141f2e] rounded-t-xl p-3 flex items-center space-x-2 border border-gray-300 dark:border-gray-800">
                     <div className="w-3 h-3 rounded-full bg-red-500"></div><div className="w-3 h-3 rounded-full bg-yellow-500"></div><div className="w-3 h-3 rounded-full bg-green-500"></div>
@@ -764,7 +764,7 @@ const Landing = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-gray-50 dark:bg-[#141f2e] p-10 rounded-3xl border border-gray-200 dark:border-gray-800 text-center relative overflow-hidden group shadow-xl">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#00c8d4]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-[#00c8d4]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Experience the Owner Dashboard</h3>
               <p className="text-gray-600 dark:text-[#8aa4bc] mb-8 font-medium">See live orders, manage the menu, view analytics. Demo credentials are pre-filled.</p>
               <button onClick={() => navigate('/login')} className="px-8 py-4 rounded-xl bg-gradient-to-r from-[#00c8d4] to-[#00a3ad] hover:from-[#00b0ba] hover:to-[#008f98] text-white font-bold w-full transition-transform hover:-translate-y-1 shadow-lg shadow-[#00c8d4]/30 flex items-center justify-center">
@@ -772,7 +772,7 @@ const Landing = () => {
               </button>
             </div>
             <div className="bg-gray-50 dark:bg-[#141f2e] p-10 rounded-3xl border border-gray-200 dark:border-gray-800 text-center relative overflow-hidden group shadow-xl">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#22c55e]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-[#22c55e]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Try Customer Table Booking</h3>
               <p className="text-gray-600 dark:text-[#8aa4bc] mb-8 font-medium">Book a table through our reservation system and see how the customer experience works.</p>
               <button onClick={() => navigate('/book')} className="px-8 py-4 rounded-xl border-2 border-[#22c55e] text-[#22c55e] hover:bg-[#22c55e] hover:text-white font-bold w-full transition-all hover:-translate-y-1 shadow-lg flex items-center justify-center">
