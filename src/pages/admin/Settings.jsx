@@ -11,7 +11,8 @@ const availableLanguages = [
   { id: 'ms', name: 'Malay' },
   { id: 'zh', name: 'Chinese' },
   { id: 'ta', name: 'Tamil' },
-  { id: 'ar', name: 'Arabic' }
+  { id: 'ar', name: 'Arabic' },
+  { id: 'bn', name: 'Bengali' }
 ];
 
 const Settings = () => {
