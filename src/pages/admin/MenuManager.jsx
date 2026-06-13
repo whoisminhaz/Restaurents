@@ -3,6 +3,7 @@ import { collection, getDocs, doc, setDoc, deleteDoc, getDoc } from 'firebase/fi
 import { db } from '../../config/firebase';
 import { Plus, Edit2, Trash2, Image as ImageIcon, X, Save } from 'lucide-react';
 import LoadingScreen from '../../components/LoadingScreen';
+import { t } from '../../utils/translations';
 
 const categories = ['Mains', 'Drinks', 'Desserts', 'Add-ons'];
 
@@ -20,6 +21,8 @@ const MenuManager = () => {
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  
+  const ownerLang = localStorage.getItem('ownerLang') || 'en';
   
   const [formData, setFormData] = useState({
     id: '',
@@ -155,15 +158,15 @@ const MenuManager = () => {
     <div className="p-6 md:p-10 max-w-6xl mx-auto relative">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-crmText">Menu Manager</h1>
-          <p className="text-gray-400 mt-2">Manage your food items, prices, photos, and translations.</p>
+          <h1 className="text-3xl font-bold text-crmText">{t(ownerLang, 'menuManager')}</h1>
+          <p className="text-gray-400 mt-2">{t(ownerLang, 'menuManagerDesc')}</p>
         </div>
         <button 
           onClick={() => openModal()}
           className="bg-crmAccent hover:bg-[#964d20] text-white px-6 py-2.5 rounded-xl font-medium flex items-center justify-center gap-2 transition-all shadow-lg shadow-crmAccent/20"
         >
           <Plus size={20} />
-          Add New Item
+          {t(ownerLang, 'addMenuItem')}
         </button>
       </div>
 
@@ -181,7 +184,7 @@ const MenuManager = () => {
                 )}
                 <div className="absolute top-3 right-3 flex gap-2">
                   <span className={`px-3 py-1 rounded-full text-xs font-bold ${item.available ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
-                    {item.available ? 'Available' : 'Sold Out'}
+                    {item.available ? t(ownerLang, 'available') : t(ownerLang, 'soldOut')}
                   </span>
                 </div>
               </div>
@@ -196,7 +199,7 @@ const MenuManager = () => {
                 
                 <div className="mt-auto flex gap-2 border-t border-crmBorder pt-4">
                   <button onClick={() => toggleAvailability(item)} className="flex-1 px-3 py-2 bg-crmDark hover:bg-crmBorder text-crmText rounded-lg text-sm transition-colors">
-                    {item.available ? 'Mark Sold Out' : 'Mark Available'}
+                    {item.available ? t(ownerLang, 'markSoldOut') : t(ownerLang, 'markAvailable')}
                   </button>
                   <button onClick={() => openModal(item)} className="p-2 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 rounded-lg transition-colors">
                     <Edit2 size={18} />
@@ -210,7 +213,7 @@ const MenuManager = () => {
           ))}
           {items.length === 0 && (
             <div className="col-span-full py-12 text-center border-2 border-dashed border-crmBorder rounded-2xl">
-              <p className="text-gray-400">Your menu is empty. Click "Add New Item" to get started.</p>
+              <p className="text-gray-400">{t(ownerLang, 'menuEmpty')}</p>
             </div>
           )}
         </div>
@@ -222,7 +225,7 @@ const MenuManager = () => {
           <div className="bg-crmCard border border-crmBorder rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="sticky top-0 bg-crmCard border-b border-crmBorder p-6 flex items-center justify-between z-10">
               <h2 className="text-2xl font-bold text-crmText">
-                {formData.names['en'] ? 'Edit Item' : 'New Menu Item'}
+                {formData.names['en'] ? t(ownerLang, 'editItem') : t(ownerLang, 'newMenuItem')}
               </h2>
               <button onClick={() => setModalOpen(false)} className="text-gray-400 hover:text-white transition-colors">
                 <X size={24} />
@@ -233,7 +236,7 @@ const MenuManager = () => {
               
               {/* Dynamic Language Inputs */}
               <div>
-                <h3 className="text-sm font-semibold text-gray-300 mb-3 uppercase tracking-wider">Item Names (Dynamic)</h3>
+                <h3 className="text-sm font-semibold text-gray-300 mb-3 uppercase tracking-wider">{t(ownerLang, 'itemNamesDynamic')}</h3>
                 <div className="space-y-3">
                   {activeLangs.map(langId => {
                     const langDef = allLanguages.find(l => l.id === langId);
@@ -256,7 +259,7 @@ const MenuManager = () => {
               {/* Pricing & Category */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Price (RM)</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">{t(ownerLang, 'price')} (RM)</label>
                   <input
                     type="number"
                     step="0.01"
@@ -267,14 +270,14 @@ const MenuManager = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">{t(ownerLang, 'category')}</label>
                   <select
                     value={formData.category}
                     onChange={(e) => setFormData({...formData, category: e.target.value})}
                     className="w-full bg-crmDark border border-crmBorder text-crmText px-4 py-3 rounded-xl focus:outline-none focus:border-crmAccent appearance-none"
                     required
                   >
-                    <option value="" disabled>Select a category...</option>
+                    <option value="" disabled>{t(ownerLang, 'selectCategory')}</option>
                     <option value="Mains">Mains</option>
                     <option value="Drinks">Drinks</option>
                     <option value="Desserts">Desserts</option>
@@ -285,7 +288,7 @@ const MenuManager = () => {
 
               {/* Image Upload - BASE64 COMPRESSION */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Item Photo</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">{t(ownerLang, 'itemPhoto')}</label>
                 <div className="flex items-center gap-4">
                   <div className="w-20 h-20 bg-crmDark border border-crmBorder rounded-xl flex items-center justify-center overflow-hidden shrink-0">
                     {formData.imageUrl ? (
@@ -301,7 +304,7 @@ const MenuManager = () => {
                       onChange={handleImageChange}
                       className="w-full text-sm text-gray-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-crmAccent/10 file:text-crmAccent hover:file:bg-crmAccent/20 cursor-pointer"
                     />
-                    <p className="text-xs text-gray-500 mt-2">Will be automatically compressed.</p>
+                    <p className="text-xs text-gray-500 mt-2">{t(ownerLang, 'autoCompressed')}</p>
                   </div>
                 </div>
               </div>
@@ -313,7 +316,7 @@ const MenuManager = () => {
                   onClick={() => setModalOpen(false)}
                   className="px-6 py-2.5 text-gray-400 hover:text-white font-medium mr-4 transition-colors"
                 >
-                  Cancel
+                  {t(ownerLang, 'cancel')}
                 </button>
                 <button
                   type="submit"
@@ -321,7 +324,7 @@ const MenuManager = () => {
                   className="bg-crmAccent hover:bg-[#964d20] text-white px-8 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-all shadow-lg shadow-crmAccent/20"
                 >
                   {saving ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : <Save size={20} />}
-                  {saving ? 'Saving...' : 'Save Item'}
+                  {saving ? t(ownerLang, 'saving') : t(ownerLang, 'saveItem')}
                 </button>
               </div>
 

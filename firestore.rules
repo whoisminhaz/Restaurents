@@ -12,7 +12,10 @@ service cloud.firestore {
       return isSuperAdmin() || 
              (request.auth != null && 
               exists(/databases/$(database)/documents/settings/adminConfig) &&
-              request.auth.token.email in get(/databases/$(database)/documents/settings/adminConfig).data.allowedEmails);
+              (('allowedEmails' in get(/databases/$(database)/documents/settings/adminConfig).data &&
+                request.auth.token.email in get(/databases/$(database)/documents/settings/adminConfig).data.allowedEmails) ||
+               ('ownerEmail' in get(/databases/$(database)/documents/settings/adminConfig).data &&
+                request.auth.token.email == get(/databases/$(database)/documents/settings/adminConfig).data.ownerEmail)));
     }
 
     match /settings/{document=**} {
@@ -30,9 +33,16 @@ service cloud.firestore {
       allow read, update, delete: if isAuthorized();
     }
 
-    match /reservations/{document=**} {
-      allow create: if true;
-      allow read, update, delete: if isAuthorized();
+    match /reservations/{reservationId} {
+      allow create, read: if true;
+      allow update: if isAuthorized() || (
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']) &&
+        request.resource.data.status == 'cancelled'
+      ) || (
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['linkedOrderId']) &&
+        !('linkedOrderId' in resource.data)
+      );
+      allow delete: if isAuthorized();
     }
 
     // Required for customer checkout order numbers

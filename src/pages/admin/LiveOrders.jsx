@@ -4,6 +4,7 @@ import { db } from '../../config/firebase';
 import { Clock, CheckCircle2, XCircle, ChevronRight, FileText, BellRing, Users } from 'lucide-react';
 import { formatDate } from '../../utils/formatDate';
 import LoadingScreen from '../../components/LoadingScreen';
+import { t } from '../../utils/translations';
 
 const LiveOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -11,6 +12,7 @@ const LiveOrders = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('pending'); // pending, processing, completed, cancelled
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const ownerLang = localStorage.getItem('ownerLang') || 'en';
 
   const [settings, setSettings] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -58,9 +60,19 @@ const LiveOrders = () => {
 
   const updateOrderStatus = async (orderId, newStatus, fullOrder = null) => {
     try {
-      await updateDoc(doc(db, 'orders', orderId), { status: newStatus });
-      
       const orderData = fullOrder || selectedOrder;
+      
+      // Handle cancellation tickets — skip the normal flow, just mark everything completed
+      if (orderData?.type === 'cancellation' && (newStatus === 'completed' || newStatus === 'processing')) {
+        if (orderData.reservationId) {
+          await updateDoc(doc(db, 'reservations', orderData.reservationId), { status: 'completed' });
+        }
+        await updateDoc(doc(db, 'orders', orderId), { status: 'completed' });
+        setSelectedOrder(null);
+        return;
+      }
+      
+      await updateDoc(doc(db, 'orders', orderId), { status: newStatus });
       
       if (newStatus === 'processing' && settings?.telegramWebhook && orderData) {
         try {
@@ -127,11 +139,25 @@ const LiveOrders = () => {
     }
   };
 
+  const parseTime = (timeStr) => {
+    const timeParts = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+    let hours = 0, mins = 0;
+    if (timeParts) {
+      hours = parseInt(timeParts[1], 10);
+      mins = parseInt(timeParts[2], 10);
+      if (timeParts[3].toUpperCase() === 'PM' && hours !== 12) hours += 12;
+      if (timeParts[3].toUpperCase() === 'AM' && hours === 12) hours = 0;
+    }
+    return { hours, mins };
+  };
+
   // Calculate upcoming reservations for the "New Orders" section
   const upcomingReservations = reservations.filter(r => {
     if (r.status !== 'confirmed' || r.alertSent || !r.date || !r.time) return false;
     if (r.linkedOrderId) return false; // Hide here, the Order card handles it!
-    const arrival = new Date(`${r.date}T${r.time}`);
+    const { hours, mins } = parseTime(r.time);
+    const arrival = new Date(r.date);
+    arrival.setHours(hours, mins, 0, 0);
     const diffMinutes = (arrival - currentTime) / (1000 * 60);
     return diffMinutes > 0 && diffMinutes <= 60;
   });
@@ -142,7 +168,9 @@ const LiveOrders = () => {
       if (o.status === 'scheduled') {
         const res = reservations.find(r => r.linkedOrderId === o.orderNumber);
         if (res && res.status === 'confirmed' && res.date && res.time) {
-          const arrival = new Date(`${res.date}T${res.time}`);
+          const { hours, mins } = parseTime(res.time);
+          const arrival = new Date(res.date);
+          arrival.setHours(hours, mins, 0, 0);
           const diffMinutes = (arrival - currentTime) / (1000 * 60);
           if (diffMinutes <= 60) return true;
         }
@@ -153,15 +181,21 @@ const LiveOrders = () => {
 
   const pendingOrdersList = getPendingOrders();
   const pendingCount = pendingOrdersList.length + upcomingReservations.length;
-  const scheduledOrdersList = orders.filter(o => o.status === 'scheduled' && !pendingOrdersList.find(p => p.id === o.id));
+  const scheduledOrdersList = orders.filter(o => {
+    if (o.status !== 'scheduled') return false;
+    if (pendingOrdersList.find(p => p.id === o.id)) return false;
+    const res = reservations.find(r => r.linkedOrderId === o.orderNumber);
+    if (res && res.status !== 'confirmed') return false;
+    return true;
+  });
   const filteredOrders = activeTab === 'pending' ? pendingOrdersList : (activeTab === 'scheduled' ? scheduledOrdersList : orders.filter(o => o.status === activeTab));
 
   const tabs = [
-    { id: 'pending', label: 'New Orders & Alerts', count: pendingCount, color: 'text-yellow-500' },
-    { id: 'processing', label: 'Processing (Kitchen)', count: orders.filter(o => o.status === 'processing').length, color: 'text-blue-500' },
-    { id: 'scheduled', label: 'Scheduled', count: scheduledOrdersList.length, color: 'text-purple-500' },
-    { id: 'completed', label: 'Completed', count: orders.filter(o => o.status === 'completed').length, color: 'text-green-500' },
-    { id: 'cancelled', label: 'Cancelled', count: orders.filter(o => o.status === 'cancelled').length, color: 'text-red-500' }
+    { id: 'pending', label: t(ownerLang, 'newOrdersAlerts'), count: pendingCount, color: 'text-yellow-500' },
+    { id: 'processing', label: t(ownerLang, 'processingKitchen'), count: orders.filter(o => o.status === 'processing').length, color: 'text-blue-500' },
+    { id: 'scheduled', label: t(ownerLang, 'scheduled'), count: scheduledOrdersList.length, color: 'text-purple-500' },
+    { id: 'completed', label: t(ownerLang, 'completed'), count: orders.filter(o => o.status === 'completed').length, color: 'text-green-500' },
+    { id: 'cancelled', label: t(ownerLang, 'cancelled'), count: orders.filter(o => o.status === 'cancelled').length, color: 'text-red-500' }
   ];
 
   if (loading) return <LoadingScreen message="Loading live orders..." />;
@@ -174,8 +208,8 @@ const LiveOrders = () => {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
           </span>
-          Live Orders
-          <span className="text-gray-500 text-xs font-normal hidden md:inline ml-1">— Real-time order management</span>
+          {t(ownerLang, 'liveOrders')}
+          <span className="text-gray-500 text-xs font-normal hidden md:inline ml-1">— {t(ownerLang, 'realTimeOrderManagement')}</span>
         </h1>
       </div>
 
@@ -205,7 +239,7 @@ const LiveOrders = () => {
               <div className="flex justify-between items-start mb-4 relative z-10">
                 <div>
                   <span className="text-xs font-bold text-purple-400 tracking-wider bg-purple-500/10 px-2 py-1 rounded-md flex items-center gap-1 w-fit mb-2">
-                    <BellRing size={12} /> 1-HOUR ALERT
+                    <BellRing size={12} /> {t(ownerLang, 'oneHourAlert')}
                   </span>
                   <h3 className="font-bold text-crmText text-xl">{r.name}</h3>
                 </div>
@@ -220,7 +254,7 @@ const LiveOrders = () => {
               {r.linkedOrderId && (
                  <div className="bg-crmAccent/10 border border-crmAccent/20 text-crmAccent p-2 rounded-lg text-xs mb-4 flex gap-2">
                    <FileText size={14} className="shrink-0 mt-0.5" />
-                   <p className="font-bold">Pre-Ordered Food (Order #{r.linkedOrderId})</p>
+                   <p className="font-bold">{t(ownerLang, 'preOrderedFoodOrder').replace('{id}', r.linkedOrderId)}</p>
                  </div>
               )}
 
@@ -229,7 +263,7 @@ const LiveOrders = () => {
                   onClick={() => sendReservationAlert(r)} 
                   className="w-full py-2.5 rounded-lg font-bold bg-purple-500 text-white hover:brightness-110 text-xs flex justify-center items-center gap-2"
                 >
-                  <BellRing size={16}/> Send Telegram Reminder
+                  <BellRing size={16}/> {t(ownerLang, 'sendTelegramReminder')}
                 </button>
               </div>
             </div>
@@ -237,7 +271,7 @@ const LiveOrders = () => {
 
           {filteredOrders.length === 0 && (activeTab !== 'pending' || upcomingReservations.length === 0) ? (
             <div className="col-span-full py-20 text-center border-2 border-dashed border-crmBorder rounded-2xl">
-              <p className="text-gray-400 text-lg">No {activeTab} items at the moment.</p>
+              <p className="text-gray-400 text-lg">{t(ownerLang, 'noItemsAtMoment').replace('items', activeTab)}</p>
             </div>
           ) : (
             filteredOrders.map(order => (
@@ -251,15 +285,20 @@ const LiveOrders = () => {
                 >
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      {order.status === 'scheduled' && (
+                      {order.type === 'cancellation' && (
+                        <div className="bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg mb-2 w-fit uppercase">
+                          {t(ownerLang, 'bookingCancellation')}
+                        </div>
+                      )}
+                      {order.status === 'scheduled' && order.type !== 'cancellation' && (
                         <div className="bg-purple-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg mb-2 animate-pulse w-fit uppercase">
-                          Reservations at {reservations.find(r => r.linkedOrderId === order.orderNumber)?.time}
+                          {t(ownerLang, 'reservationsAt')} {reservations.find(r => r.linkedOrderId === order.orderNumber)?.time}
                         </div>
                       )}
                       <span className="text-xs font-bold text-crmAccent tracking-wider bg-crmAccent/10 px-2 py-1 rounded-md">
-                        {order.orderNumber ? `#${order.orderNumber}` : order.orderMode.toUpperCase()}
+                        {order.orderNumber ? `#${order.orderNumber}` : order.orderMode?.toUpperCase()}
                       </span>
-                      <h3 className="font-bold text-crmText text-xl mt-2">{order.table !== 'Takeaway' ? `Table ${order.table}` : 'Takeaway'}</h3>
+                      <h3 className="font-bold text-crmText text-xl mt-2">{order.type === 'cancellation' ? t(ownerLang, 'cancellationUpper') : (order.table !== 'Takeaway' ? `${t(ownerLang, 'table')} ${order.table}` : t(ownerLang, 'takeaway'))}</h3>
                     </div>
                     <div className="text-right">
                       <p className="text-sm text-gray-400 flex items-center gap-1 justify-end">
@@ -271,7 +310,7 @@ const LiveOrders = () => {
                   </div>
                   
                   <p className="text-gray-300 text-sm font-medium mb-1 line-clamp-1">{order.customerName}</p>
-                  <p className="text-gray-500 text-xs mb-4">Ref: <span className="text-gray-300 font-mono">{order.paymentRef || 'None'}</span></p>
+                  <p className="text-gray-500 text-xs mb-4">{t(ownerLang, 'ref')}: <span className="text-gray-300 font-mono">{order.paymentRef || 'None'}</span></p>
 
                   {order.notes && (
                     <div className="bg-orange-500/10 border border-orange-500/20 text-orange-500 p-2 rounded-lg text-xs mb-4 flex gap-2">
@@ -281,7 +320,7 @@ const LiveOrders = () => {
                   )}
 
                   <div className="border-t border-crmBorder pt-3 flex items-center justify-between text-crmAccent text-sm font-bold">
-                    <span>{order.items?.length || 0} Items</span>
+                    <span>{order.items?.length || 0} {t(ownerLang, 'items')}</span>
                     <ChevronRight size={16} />
                   </div>
                 </div>
@@ -290,12 +329,14 @@ const LiveOrders = () => {
                 <div className="border-t border-crmBorder pt-3 mt-auto">
                   {(order.status === 'pending' || order.status === 'scheduled') && (
                     <div className="flex gap-2">
-                      <button onClick={(e) => { e.stopPropagation(); updateOrderStatus(order.id, 'cancelled', order); }} className="flex-1 py-2 rounded-lg font-bold bg-red-500/10 text-red-500 hover:bg-red-500/20 text-xs">Cancel</button>
-                      <button onClick={(e) => { e.stopPropagation(); updateOrderStatus(order.id, 'processing', order); }} className="flex-1 py-2 rounded-lg font-bold bg-crmAccent text-white hover:brightness-110 text-xs flex justify-center items-center gap-1"><CheckCircle2 size={14}/> Send to Kitchen</button>
+                      <button onClick={(e) => { e.stopPropagation(); updateOrderStatus(order.id, 'cancelled', order); }} className="flex-1 py-2 rounded-lg font-bold bg-red-500/10 text-red-500 hover:bg-red-500/20 text-xs">{t(ownerLang, 'cancelOrder')}</button>
+                      <button onClick={(e) => { e.stopPropagation(); updateOrderStatus(order.id, 'processing', order); }} className="flex-1 py-2 rounded-lg font-bold bg-crmAccent text-white hover:brightness-110 text-xs flex justify-center items-center gap-1">
+                        <CheckCircle2 size={14}/> {order.type === 'cancellation' ? 'Accept' : t(ownerLang, 'sendToKitchen')}
+                      </button>
                     </div>
                   )}
                   {order.status === 'processing' && (
-                    <button onClick={(e) => { e.stopPropagation(); updateOrderStatus(order.id, 'completed', order); }} className="w-full py-2 rounded-lg font-bold bg-green-500 text-white hover:bg-green-600 text-xs flex justify-center items-center gap-1"><CheckCircle2 size={14}/> Complete</button>
+                    <button onClick={(e) => { e.stopPropagation(); updateOrderStatus(order.id, 'completed', order); }} className="w-full py-2 rounded-lg font-bold bg-green-500 text-white hover:bg-green-600 text-xs flex justify-center items-center gap-1"><CheckCircle2 size={14}/> {t(ownerLang, 'markCompleted')}</button>
                   )}
                   {(order.status === 'completed' || order.status === 'cancelled') && (
                     <div className="w-full text-center py-2 text-gray-500 text-xs font-bold uppercase tracking-wider">
@@ -364,8 +405,8 @@ const LiveOrders = () => {
             <div className="p-6 border-t border-crmBorder bg-crmDark rounded-b-2xl shrink-0 flex gap-3">
               {(selectedOrder.status === 'pending' || selectedOrder.status === 'scheduled') && (
                 <>
-                  <button onClick={() => updateOrderStatus(selectedOrder.id, 'cancelled', selectedOrder)} className="flex-1 py-3 px-4 rounded-xl font-bold bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors">Cancel Order</button>
-                  <button onClick={() => updateOrderStatus(selectedOrder.id, 'processing', selectedOrder)} className="flex-1 py-3 px-4 rounded-xl font-bold bg-crmAccent text-white shadow-lg hover:brightness-110 transition-all flex justify-center items-center gap-2"><CheckCircle2 size={20}/> Confirm Payment</button>
+                  <button onClick={() => updateOrderStatus(selectedOrder.id, 'cancelled', selectedOrder)} className="flex-1 py-3 px-4 rounded-xl font-bold bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors">{selectedOrder.type === 'cancellation' ? 'Dismiss' : t(ownerLang, 'cancelOrder')}</button>
+                  <button onClick={() => updateOrderStatus(selectedOrder.id, 'processing', selectedOrder)} className="flex-1 py-3 px-4 rounded-xl font-bold bg-crmAccent text-white shadow-lg hover:brightness-110 transition-all flex justify-center items-center gap-2"><CheckCircle2 size={20}/> {selectedOrder.type === 'cancellation' ? 'Accept Cancellation' : 'Confirm Payment'}</button>
                 </>
               )}
               {selectedOrder.status === 'processing' && (

@@ -11,7 +11,8 @@ const availableLanguages = [
   { id: 'ms', name: 'Malay' },
   { id: 'zh', name: 'Chinese' },
   { id: 'ta', name: 'Tamil' },
-  { id: 'ar', name: 'Arabic' }
+  { id: 'ar', name: 'Arabic' },
+  { id: 'bn', name: 'Bengali' }
 ];
 
 const Settings = () => {
@@ -38,7 +39,11 @@ const Settings = () => {
     tngQrCode: '',
     discountPercent: 0,
     discountItems: ['all'],
-    taxPercent: 0
+    taxPercent: 0,
+    bookingMode: 'enabled',
+    bookingEnabled: true,
+    requirePreOrderForBooking: false,
+    maxCapacityPerHour: 30
   });
 
   useEffect(() => {
@@ -47,7 +52,29 @@ const Settings = () => {
         const docRef = doc(db, 'settings', 'master');
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          setSettings(prev => ({ ...prev, ...docSnap.data() }));
+          const data = docSnap.data();
+          let bookingMode = data.bookingMode;
+          if (!bookingMode) {
+            if (data.bookingEnabled === false) {
+              bookingMode = 'disabled';
+            } else if (data.requirePreOrderForBooking === true) {
+              bookingMode = 'preorder';
+            } else {
+              bookingMode = 'enabled';
+            }
+          }
+          let maxCapacityPerHour;
+          if (data.maxCapacityPerHour === 0) {
+            maxCapacityPerHour = 0;
+          } else {
+            maxCapacityPerHour = data.maxCapacityPerHour || 30;
+          }
+          setSettings(prev => ({ 
+            ...prev, 
+            ...data, 
+            bookingMode, 
+            maxCapacityPerHour 
+          }));
         }
 
         const adminDocRef = doc(db, 'settings', 'adminConfig');
@@ -73,7 +100,28 @@ const Settings = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setSettings(prev => ({ ...prev, [name]: value }));
+    if (name === 'bookingMode') {
+      let bookingEnabled = true;
+      let requirePreOrderForBooking = false;
+      if (value === 'disabled') {
+        bookingEnabled = false;
+        requirePreOrderForBooking = false;
+      } else if (value === 'preorder') {
+        bookingEnabled = true;
+        requirePreOrderForBooking = true;
+      } else if (value === 'enabled') {
+        bookingEnabled = true;
+        requirePreOrderForBooking = false;
+      }
+      setSettings(prev => ({
+        ...prev,
+        bookingMode: value,
+        bookingEnabled,
+        requirePreOrderForBooking
+      }));
+    } else {
+      setSettings(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const toggleLanguage = (langId) => {
@@ -239,9 +287,24 @@ const Settings = () => {
   };
 
   const handleSave = async () => {
+    if (settings.maxCapacityPerHour === undefined || settings.maxCapacityPerHour === null || String(settings.maxCapacityPerHour).trim() === '') {
+      alert("Maximum Capacity Per Hour is required.");
+      return;
+    }
+    const maxCapacity = Number(settings.maxCapacityPerHour);
+    if (isNaN(maxCapacity) || maxCapacity < 0) {
+      alert("Maximum Capacity Per Hour must be a valid non-negative number.");
+      return;
+    }
+
     setSaving(true);
     try {
-      await setDoc(doc(db, 'settings', 'master'), settings);
+      const updatedSettings = {
+        ...settings,
+        maxCapacityPerHour: maxCapacity
+      };
+      await setDoc(doc(db, 'settings', 'master'), updatedSettings);
+      setSettings(updatedSettings);
       setToast(true);
       setTimeout(() => setToast(false), 3000);
     } catch (error) {
@@ -263,7 +326,7 @@ const Settings = () => {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-crmText">{t(ownerLang, 'settingsTheme')}</h1>
-          <p className="text-gray-400 mt-2">Manage your restaurant details, themes, and payment proofs.</p>
+          <p className="text-gray-400 mt-2">{t(ownerLang, 'settingsDesc')}</p>
         </div>
         <button 
           onClick={handleSave}
@@ -279,42 +342,43 @@ const Settings = () => {
         
         {/* 1. Reservation Configuration */}
         <div className="bg-crmCard border border-crmBorder rounded-2xl p-6 shadow-xl">
-          <h2 className="text-xl font-semibold text-crmText mb-2">Reservation Rules</h2>
-          <p className="text-sm text-gray-400 mb-4">Configure your operating schedule and booking rules.</p>
+          <h2 className="text-xl font-semibold text-crmText mb-2">{t(ownerLang, 'reservationRules')}</h2>
+          <p className="text-sm text-gray-400 mb-4">{t(ownerLang, 'reservationRulesDesc')}</p>
           
           <div className="space-y-6">
-            <div className="md:col-span-2 space-y-3">
-               <label className="flex items-center gap-3 cursor-pointer p-4 border border-crmBorder rounded-xl hover:bg-crmDark/50 transition-colors">
-                  <input 
-                    type="checkbox"
-                    checked={settings.bookingEnabled !== false}
-                    onChange={(e) => setSettings(prev => ({ ...prev, bookingEnabled: e.target.checked }))}
-                    className="w-5 h-5 accent-crmAccent"
-                  />
-                  <div>
-                    <p className="font-medium text-crmText text-lg">Enable Booking System</p>
-                    <p className="text-sm text-gray-400">Allow customers to make reservations through the website.</p>
-                  </div>
-               </label>
-
-               <label className={`flex items-center gap-3 cursor-pointer p-4 border border-crmBorder rounded-xl transition-colors ${settings.bookingEnabled === false ? 'opacity-50 pointer-events-none bg-crmDark/30' : 'hover:bg-crmDark/50'}`}>
-                  <input 
-                    type="checkbox"
-                    checked={!!settings.requirePreOrderForBooking}
-                    onChange={(e) => setSettings(prev => ({ ...prev, requirePreOrderForBooking: e.target.checked }))}
-                    className="w-5 h-5 accent-crmAccent"
-                    disabled={settings.bookingEnabled === false}
-                  />
-                  <div>
-                    <p className="font-medium text-crmText">Require Pre-order Food</p>
-                    <p className="text-sm text-gray-400">Customers must order food to complete a table reservation.</p>
-                  </div>
-               </label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">{t(ownerLang, 'bookingSystemMode')}</label>
+                <select
+                  name="bookingMode"
+                  value={settings.bookingMode || 'enabled'}
+                  onChange={handleChange}
+                  className="w-full bg-crmDark border border-crmBorder text-crmText px-4 py-3 rounded-xl focus:outline-none focus:border-crmAccent"
+                >
+                  <option value="disabled">{t(ownerLang, 'disabled')}</option>
+                  <option value="enabled">{t(ownerLang, 'enabledNoPreorder')}</option>
+                  <option value="preorder">{t(ownerLang, 'preorderRequired')}</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">{t(ownerLang, 'maxCapacityPerHour')}</label>
+                <input
+                  type="number"
+                  name="maxCapacityPerHour"
+                  min="0"
+                  value={settings.maxCapacityPerHour !== undefined ? settings.maxCapacityPerHour : 30}
+                  onChange={handleChange}
+                  disabled={settings.bookingEnabled === false}
+                  className={`w-full bg-crmDark border border-crmBorder text-crmText px-4 py-3 rounded-xl focus:outline-none focus:border-crmAccent ${
+                    settings.bookingEnabled === false ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                />
+              </div>
             </div>
 
             <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-crmBorder ${settings.bookingEnabled === false ? 'opacity-50 pointer-events-none' : ''}`}>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Opening Time</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">{t(ownerLang, 'openingTime')}</label>
                 <input
                   type="time"
                   name="operatingHoursOpen"
@@ -324,7 +388,7 @@ const Settings = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Closing Time</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">{t(ownerLang, 'closingTime')}</label>
                 <input
                   type="time"
                   name="operatingHoursClose"
@@ -336,7 +400,7 @@ const Settings = () => {
             </div>
 
             <div className={settings.bookingEnabled === false ? 'opacity-50 pointer-events-none' : ''}>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Weekly Operating Days</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">{t(ownerLang, 'weeklyOperatingDays')}</label>
               <div className="flex flex-wrap gap-2">
                 {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day, idx) => {
                   const daysArray = settings.operatingDays || [0,1,2,3,4,5,6];
@@ -363,7 +427,7 @@ const Settings = () => {
             </div>
 
             <div className={settings.bookingEnabled === false ? 'opacity-50 pointer-events-none' : ''}>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Specific Closed Dates (Holidays etc.)</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">{t(ownerLang, 'specificClosedDates')}</label>
               <form onSubmit={(e) => {
                 e.preventDefault();
                 const val = e.target.elements.closedDate.value;
@@ -372,7 +436,7 @@ const Settings = () => {
                 e.target.reset();
               }} className="flex gap-2 mb-3">
                 <input type="date" name="closedDate" className="flex-1 bg-crmDark border border-crmBorder text-crmText px-4 py-2 rounded-xl focus:outline-none focus:border-crmAccent" />
-                <button type="submit" className="bg-crmDark hover:bg-crmBorder text-crmText px-4 py-2 rounded-xl border border-crmBorder font-bold">Add</button>
+                <button type="submit" className="bg-crmDark hover:bg-crmBorder text-crmText px-4 py-2 rounded-xl border border-crmBorder font-bold">{t(ownerLang, 'add')}</button>
               </form>
               <div className="flex flex-wrap gap-2">
                 {(settings.closedDates || []).map((date, i) => (
@@ -388,12 +452,12 @@ const Settings = () => {
 
         {/* 2. Languages (Combined) */}
         <div className="bg-crmCard border border-crmBorder rounded-2xl p-6 shadow-xl">
-          <h2 className="text-xl font-semibold text-crmText mb-2">Languages Configuration</h2>
-          <p className="text-sm text-gray-400 mb-6">Manage languages for both your customers and your dashboard.</p>
+          <h2 className="text-xl font-semibold text-crmText mb-2">{t(ownerLang, 'languageConfig')}</h2>
+          <p className="text-sm text-gray-400 mb-6">{t(ownerLang, 'languageConfigDesc')}</p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-crmBorder pt-6">
             <div>
-              <h3 className="font-medium text-crmText mb-4">Customer Menu Languages</h3>
+              <h3 className="font-medium text-crmText mb-4">{t(ownerLang, 'customerLanguages')}</h3>
               <div className="flex flex-wrap gap-3">
                 {availableLanguages.map((lang) => {
                   const active = settings.languages?.includes(lang.id);
@@ -431,12 +495,12 @@ const Settings = () => {
 
         {/* 3. Discount Tab */}
         <div className="bg-crmCard border border-crmBorder rounded-2xl p-6 shadow-xl">
-          <h2 className="text-xl font-semibold text-crmText mb-2">Promotions & Discounts</h2>
-          <p className="text-sm text-gray-400 mb-4">Apply percentage discounts to specific items or your entire menu.</p>
+          <h2 className="text-xl font-semibold text-crmText mb-2">{t(ownerLang, 'discountConfig')}</h2>
+          <p className="text-sm text-gray-400 mb-4">{t(ownerLang, 'discountConfigDesc')}</p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Discount Percentage (%)</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">{t(ownerLang, 'globalDiscountPercent')}</label>
               <input
                 type="number"
                 name="discountPercent"
@@ -449,7 +513,7 @@ const Settings = () => {
             </div>
             
             <div className="relative">
-              <label className="block text-sm font-medium text-gray-300 mb-2">Apply Discount To</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">{t(ownerLang, 'applyDiscountTo')}</label>
               <button 
                 onClick={() => setIsDiscountDropdownOpen(!isDiscountDropdownOpen)}
                 className="w-full bg-crmDark border border-crmBorder text-crmText px-4 py-3 rounded-xl focus:outline-none focus:border-crmAccent flex justify-between items-center"
@@ -507,8 +571,8 @@ const Settings = () => {
 
         {/* 5. Payment Details */}
         <div className="bg-crmCard border border-crmBorder rounded-2xl p-6 shadow-xl">
-          <h2 className="text-xl font-semibold text-crmText mb-2">Payment Methods</h2>
-          <p className="text-sm text-gray-400 mb-4">Shown to customers at checkout to transfer money manually.</p>
+          <h2 className="text-xl font-semibold text-crmText mb-2">{t(ownerLang, 'paymentConfig')}</h2>
+          <p className="text-sm text-gray-400 mb-4">{t(ownerLang, 'paymentConfigDesc')}</p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div className="md:col-span-2">
@@ -526,7 +590,7 @@ const Settings = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Account Number</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">{t(ownerLang, 'accountNumber')}</label>
               <input
                 type="text"
                 name="accountNumber"
@@ -537,7 +601,7 @@ const Settings = () => {
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-300 mb-2">Account Holder Name</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">{t(ownerLang, 'accountHolder')}</label>
               <input
                 type="text"
                 name="accountHolder"
@@ -551,7 +615,7 @@ const Settings = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
-              <h3 className="font-medium text-crmText mb-3 border-b border-crmBorder pb-2">DuitNow QR & Touch n Go eWallet</h3>
+              <h3 className="font-medium text-crmText mb-3 border-b border-crmBorder pb-2">{t(ownerLang, 'duitNowQrInfo')}</h3>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">{t(ownerLang, 'tngQrCode')} Image</label>
@@ -573,7 +637,7 @@ const Settings = () => {
                 )}
                 
                 <label className="cursor-pointer bg-crmDark hover:bg-crmBorder text-crmText px-4 py-2 rounded-lg text-sm transition-colors border border-crmBorder">
-                  Upload QR Code
+                  {t(ownerLang, 'uploadQrCode')}
                   <input type="file" accept="image/*" onChange={handleQrUpload} className="hidden" />
                 </label>
               </div>
@@ -595,10 +659,10 @@ const Settings = () => {
 
         {/* 6. Core Info */}
         <div className="bg-crmCard border border-crmBorder rounded-2xl p-6 shadow-xl">
-          <h2 className="text-xl font-semibold text-crmText mb-4">Core Information</h2>
+          <h2 className="text-xl font-semibold text-crmText mb-4">{t(ownerLang, 'appAppearance')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Restaurant Name</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">{t(ownerLang, 'restaurantName')}</label>
               <input
                 type="text"
                 name="restaurantName"
@@ -608,7 +672,7 @@ const Settings = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Global Brand Color (Hex)</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">{t(ownerLang, 'themeColor')}</label>
               <div className="flex gap-3">
                 <input
                   type="color"
@@ -656,7 +720,7 @@ const Settings = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             <div className="md:col-span-2 mt-4">
-              <label className="block text-sm font-medium text-gray-300 mb-2">Dashboard Custom Background (Optional)</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">{t(ownerLang, 'dashboardBackground')}</label>
               <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
                 {settings.dashboardBg ? (
                   <div className="relative w-48 h-28 rounded-xl overflow-hidden border border-crmBorder shrink-0">
@@ -708,10 +772,10 @@ const Settings = () => {
         {/* 8. Employee Management */}
         <div className="bg-crmCard border border-crmBorder rounded-2xl p-6 shadow-xl mb-6">
           <div className="flex items-center gap-3 mb-2">
-            <h2 className="text-xl font-semibold text-crmText">Employee Access Management</h2>
+            <h2 className="text-xl font-semibold text-crmText">{t(ownerLang, 'adminAccess')}</h2>
             <span className="bg-green-500/20 text-green-500 text-xs px-2 py-1 rounded border border-green-500/30">Live Sync</span>
           </div>
-          <p className="text-sm text-gray-400 mb-6">Add an employee's Google email address here to instantly grant them full access to the admin dashboard.</p>
+          <p className="text-sm text-gray-400 mb-6">{t(ownerLang, 'adminAccessDesc')}</p>
           
           <form onSubmit={handleAddEmployee} className="flex flex-col sm:flex-row gap-3 mb-6">
             <input
@@ -727,16 +791,16 @@ const Settings = () => {
               disabled={addingEmployee || !newEmployeeEmail}
               className="bg-crmDark hover:bg-crmBorder text-crmText px-6 py-3 rounded-xl border border-crmBorder font-bold transition-colors disabled:opacity-50 whitespace-nowrap"
             >
-              {addingEmployee ? 'Adding...' : 'Add Employee'}
+              {addingEmployee ? 'Adding...' : t(ownerLang, 'addStaffEmail')}
             </button>
           </form>
 
           <div className="space-y-3">
-            <h3 className="text-sm font-medium text-gray-300 mb-2 mt-4">Authorized Accounts</h3>
+            <h3 className="text-sm font-medium text-gray-300 mb-2 mt-4">{t(ownerLang, 'ownerEmail')}</h3>
             
             <div className="flex items-center justify-between bg-crmDark/50 border border-crmBorder p-4 rounded-xl">
               <div className="w-full">
-                <p className="text-xs text-gray-500 mb-2">Restaurant Owner Email (Full Settings Access)</p>
+                <p className="text-xs text-gray-500 mb-2">{t(ownerLang, 'ownerEmailDesc')}</p>
                 <div className="flex gap-3">
                   <input
                     type="email"
@@ -754,13 +818,13 @@ const Settings = () => {
               <div key={email} className="flex items-center justify-between bg-crmDark border border-crmBorder p-4 rounded-xl group">
                 <div>
                   <p className="font-medium text-crmText">{email}</p>
-                  <p className="text-xs text-gray-500 mt-1">Staff Access</p>
+                  <p className="text-xs text-gray-500 mt-1">{t(ownerLang, 'staffEmailsDesc')}</p>
                 </div>
                 <button 
                   onClick={() => handleRemoveEmployee(email)}
                   className="text-red-500 hover:bg-red-500/10 p-2 rounded-lg opacity-0 md:group-hover:opacity-100 transition-all flex items-center gap-2 text-sm font-medium"
                 >
-                  <X size={16} /> Revoke
+                  <X size={16} /> {t(ownerLang, 'remove')}
                 </button>
               </div>
             ))}
