@@ -329,7 +329,7 @@ const Book = () => {
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Reservations Closed</h1>
         <p className="text-gray-500 dark:text-gray-400 mb-8">Sorry, We are not taking Reservations Now!! Thanks for your Understandig.</p>
         <button 
-          onClick={() => navigate('/')}
+          onClick={() => window.location.href = '/'}
           className="py-3 px-8 rounded-xl bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white font-bold hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
         >
           Return to Home
@@ -411,7 +411,7 @@ const Book = () => {
             Download Receipt
           </button>
           <button 
-            onClick={() => navigate('/')}
+            onClick={() => window.location.href = '/'}
             className="w-full py-3 px-8 rounded-xl bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white font-bold hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors no-print"
           >
             Return to Home
@@ -458,7 +458,7 @@ const Book = () => {
   return (
     <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0a0a0a] pb-32 transition-colors duration-500">
       <header className="bg-white dark:bg-[#121212] sticky top-0 z-40 shadow-sm px-4 py-4 flex items-center justify-between transition-colors duration-500">
-        <button onClick={() => navigate('/')} className="p-2 -ml-2 text-gray-600 dark:text-gray-300">
+        <button onClick={() => window.location.href = '/'} className="p-2 -ml-2 text-gray-600 dark:text-gray-300">
           <ArrowLeft size={24} />
         </button>
         <div className="text-center">

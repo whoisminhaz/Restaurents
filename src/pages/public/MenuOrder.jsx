@@ -100,7 +100,7 @@ const MenuOrder = () => {
     <div className="min-h-screen bg-[#faf7f2] dark:bg-[#0a0a0a] pb-32 transition-colors duration-500">
       {/* Header */}
       <header className="bg-white dark:bg-[#121212] sticky top-0 z-40 shadow-sm dark:shadow-black/50 px-4 py-4 flex items-center justify-between transition-colors duration-500">
-        <button onClick={() => navigate('/')} className="p-2 -ml-2 text-gray-600 dark:text-gray-300">
+        <button onClick={() => window.location.href = '/'} className="p-2 -ml-2 text-gray-600 dark:text-gray-300">
           <ArrowLeft size={24} />
         </button>
         <div className="text-center">

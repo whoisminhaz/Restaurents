@@ -228,10 +228,7 @@ const Checkout = () => {
           </button>
           
           <button 
-            onClick={() => {
-              navigate('/');
-              window.location.reload();
-            }}
+            onClick={() => window.location.href = '/'}
             className="w-full py-3 px-8 rounded-xl bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white font-bold hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors no-print"
           >
             Return to Home
