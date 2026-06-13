@@ -4,6 +4,7 @@ import { db } from '../../config/firebase';
 import { Clock, CheckCircle2, XCircle, ChevronRight, FileText, BellRing, Users } from 'lucide-react';
 import { formatDate } from '../../utils/formatDate';
 import LoadingScreen from '../../components/LoadingScreen';
+import { t } from '../../utils/translations';
 
 const LiveOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -11,6 +12,7 @@ const LiveOrders = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('pending'); // pending, processing, completed, cancelled
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const ownerLang = localStorage.getItem('ownerLang') || 'en';
 
   const [settings, setSettings] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -188,7 +190,6 @@ const LiveOrders = () => {
   });
   const filteredOrders = activeTab === 'pending' ? pendingOrdersList : (activeTab === 'scheduled' ? scheduledOrdersList : orders.filter(o => o.status === activeTab));
 
-  const ownerLang = localStorage.getItem('ownerLang') || 'en';
   const tabs = [
     { id: 'pending', label: t(ownerLang, 'newOrdersAlerts'), count: pendingCount, color: 'text-yellow-500' },
     { id: 'processing', label: t(ownerLang, 'processingKitchen'), count: orders.filter(o => o.status === 'processing').length, color: 'text-blue-500' },
