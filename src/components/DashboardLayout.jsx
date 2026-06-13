@@ -99,7 +99,7 @@ const DashboardLayout = () => {
     { name: t(ownerLang, 'menuManager'), path: '/dashboard/menu', icon: MenuIcon, adminOnly: false },
     { name: t(ownerLang, 'analytics'), path: '/dashboard/analytics', icon: Activity, adminOnly: false },
     { name: t(ownerLang, 'qrStation'), path: '/dashboard/qr', icon: QrCode, adminOnly: false },
-    { name: t(ownerLang, 'settingsTheme'), path: '/dashboard/settings', icon: Settings, adminOnly: true },
+    { name: t(ownerLang, 'settingsTheme'), path: '/dashboard/settings', icon: Settings, adminOnly: false },
   ];
 
   const renderSidebarContent = () => (

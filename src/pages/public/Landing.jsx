@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
-import { Moon, Sun, ArrowRight, Menu, X, Globe, CheckCircle, Smartphone, Monitor, ChevronDown, MessageCircle, BarChart3, Clock, Utensils, CalendarDays, Server, Code, BrainCircuit } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
+import { Moon, Sun, ArrowRight, Menu, X, Globe, CheckCircle, Smartphone, Monitor, ChevronDown, ChevronUp, MessageCircle, BarChart3, Clock, Utensils, CalendarDays, Server, Code, BrainCircuit } from 'lucide-react';
 
 const landingTranslations = {
   en: {
@@ -492,24 +493,24 @@ const Landing = () => {
       </section>
 
       {/* SECTION 2: PROOF BAR */}
-      <section className="bg-gradient-to-r from-[#00c8d4] to-[#00a3ad] text-white py-12 relative z-20 shadow-2xl reveal opacity-0 translate-y-12 transition-all duration-1000 ease-out">
+      <section className="bg-gradient-to-r from-[#00c8d4] to-[#00a3ad] text-white py-6 relative z-20 shadow-2xl reveal opacity-0 translate-y-12 transition-all duration-1000 ease-out">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-white/20">
             <div>
-              <div className="text-4xl md:text-5xl font-black mb-1 drop-shadow-md">5+</div>
-              <div className="font-bold text-sm uppercase tracking-wider">{t('proofLive')}</div>
+              <div className="text-3xl md:text-4xl font-black mb-1 drop-shadow-md">5+</div>
+              <div className="font-bold text-xs uppercase tracking-wider">{t('proofLive')}</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-black mb-1 drop-shadow-md">100%</div>
-              <div className="font-bold text-sm uppercase tracking-wider">{t('proofFree')}</div>
+              <div className="text-3xl md:text-4xl font-black mb-1 drop-shadow-md">100%</div>
+              <div className="font-bold text-xs uppercase tracking-wider">{t('proofFree')}</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-black mb-1 drop-shadow-md">30m</div>
-              <div className="font-bold text-sm uppercase tracking-wider">{t('proofSetup')}</div>
+              <div className="text-3xl md:text-4xl font-black mb-1 drop-shadow-md">30m</div>
+              <div className="font-bold text-xs uppercase tracking-wider">{t('proofSetup')}</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-black mb-1 drop-shadow-md">Global</div>
-              <div className="font-bold text-sm uppercase tracking-wider">Reach & Delivery</div>
+              <div className="text-3xl md:text-4xl font-black mb-1 drop-shadow-md">Global</div>
+              <div className="font-bold text-xs uppercase tracking-wider">Reach & Delivery</div>
             </div>
           </div>
         </div>
@@ -526,32 +527,32 @@ const Landing = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white dark:bg-[#141f2e] p-8 rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-[#00c8d4]/50 transition-all hover:-translate-y-2 shadow-sm hover:shadow-xl group">
-              <div className="w-16 h-16 bg-gradient-to-br from-[#00c8d4]/20 to-[#00c8d4]/5 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <Utensils className="text-[#00c8d4]" size={32} />
+            <div className="bg-white dark:bg-[#141f2e] p-6 rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-[#00c8d4]/50 transition-all hover:-translate-y-2 shadow-sm hover:shadow-xl group">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#00c8d4]/20 to-[#00c8d4]/5 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <Utensils className="text-[#00c8d4]" size={24} />
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Restaurant OS</h3>
-              <p className="text-gray-600 dark:text-[#8aa4bc] leading-relaxed mb-6">
+              <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">Restaurant OS</h3>
+              <p className="text-gray-600 dark:text-[#8aa4bc] leading-relaxed text-sm">
                 Our flagship product. A complete, lifetime-free restaurant management system with QR ordering, POS, live dashboard, and reservations.
               </p>
             </div>
             
-            <div className="bg-white dark:bg-[#141f2e] p-8 rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-[#00c8d4]/50 transition-all hover:-translate-y-2 shadow-sm hover:shadow-xl group delay-100">
-              <div className="w-16 h-16 bg-gradient-to-br from-[#00c8d4]/20 to-[#00c8d4]/5 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <BrainCircuit className="text-[#00c8d4]" size={32} />
+            <div className="bg-white dark:bg-[#141f2e] p-6 rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-[#00c8d4]/50 transition-all hover:-translate-y-2 shadow-sm hover:shadow-xl group delay-100">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#00c8d4]/20 to-[#00c8d4]/5 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <BrainCircuit className="text-[#00c8d4]" size={24} />
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Custom AI Solutions</h3>
-              <p className="text-gray-600 dark:text-[#8aa4bc] leading-relaxed mb-6">
+              <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">Custom AI Solutions</h3>
+              <p className="text-gray-600 dark:text-[#8aa4bc] leading-relaxed text-sm">
                 Integrate advanced AI into your workflow. Custom chatbots, automated data processing, and AI-driven analytics tailored to your company's data.
               </p>
             </div>
             
-            <div className="bg-white dark:bg-[#141f2e] p-8 rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-[#00c8d4]/50 transition-all hover:-translate-y-2 shadow-sm hover:shadow-xl group delay-200">
-              <div className="w-16 h-16 bg-gradient-to-br from-[#00c8d4]/20 to-[#00c8d4]/5 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <Code className="text-[#00c8d4]" size={32} />
+            <div className="bg-white dark:bg-[#141f2e] p-6 rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-[#00c8d4]/50 transition-all hover:-translate-y-2 shadow-sm hover:shadow-xl group delay-200">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#00c8d4]/20 to-[#00c8d4]/5 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <Code className="text-[#00c8d4]" size={24} />
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Premium Web Development</h3>
-              <p className="text-gray-600 dark:text-[#8aa4bc] leading-relaxed mb-6">
+              <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">Premium Web Development</h3>
+              <p className="text-gray-600 dark:text-[#8aa4bc] leading-relaxed text-sm">
                 From SEO-optimized corporate landing pages to complex full-stack SaaS platforms. We build aesthetic, lightning-fast web applications.
               </p>
             </div>
@@ -743,8 +744,17 @@ const Landing = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
             {[1, 7, 12].map(table => (
               <div key={table} className="bg-gray-50 dark:bg-[#141f2e] p-8 rounded-3xl border border-gray-200 dark:border-gray-800 text-center shadow-lg hover:-translate-y-2 hover:shadow-xl transition-all duration-300">
-                <div className="bg-white p-4 inline-block rounded-xl mb-6 border-4 border-gray-100 shadow-sm">
-                  <img src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://restaurant-master-template.web.app/order?table=${table}`} alt={`QR Code Table ${table}`} className="w-48 h-48" />
+                <div className="p-5 inline-block rounded-3xl mb-6 bg-gradient-to-br from-[#00c8d4]/10 to-[#00a3ad]/5 dark:from-[#00c8d4]/20 dark:to-[#00a3ad]/10 border-2 border-[#00c8d4]/30 shadow-lg backdrop-blur-sm transition-all duration-300">
+                  <div className="bg-white/80 dark:bg-[#080d14]/80 p-4 rounded-2xl backdrop-blur-md shadow-inner">
+                    <QRCodeSVG 
+                      value={`https://restaurant-master-template.web.app/order?table=${table}`}
+                      size={160}
+                      bgColor="transparent"
+                      fgColor={isDark ? "#00c8d4" : "#00a3ad"}
+                      level="Q"
+                      includeMargin={false}
+                    />
+                  </div>
                 </div>
                 <div className="text-2xl font-black mb-2 text-gray-900 dark:text-white">Table {table}</div>
                 <div className="text-sm font-bold uppercase tracking-wider text-[#00c8d4]">Try QR Ordering</div>
