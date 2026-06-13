@@ -3,7 +3,7 @@ import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { ShoppingBag, Plus, Minus, ArrowLeft, Moon, Sun } from 'lucide-react';
 import LanguageDropdown from '../../components/LanguageDropdown';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { t } from '../../utils/translations';
 import LoadingScreen from '../../components/LoadingScreen';
 
@@ -18,8 +18,26 @@ const MenuOrder = () => {
   const [isDark, setIsDark] = useState(localStorage.getItem('theme') !== 'light');
 
   const userLang = localStorage.getItem('userLang') || 'en';
-  const orderMode = localStorage.getItem('orderMode') || 'takeaway';
-  const tableNum = localStorage.getItem('tableNum');
+  const [searchParams] = useSearchParams();
+  const [orderMode, setOrderMode] = useState(localStorage.getItem('orderMode') || 'takeaway');
+  const [tableNum, setTableNum] = useState(localStorage.getItem('tableNum') || null);
+
+  useEffect(() => {
+    const tableQ = searchParams.get('table');
+    const typeQ = searchParams.get('type');
+
+    if (tableQ) {
+      localStorage.setItem('tableNum', tableQ);
+      localStorage.setItem('orderMode', 'dineIn');
+      setTableNum(tableQ);
+      setOrderMode('dineIn');
+    } else if (typeQ === 'takeaway') {
+      localStorage.removeItem('tableNum');
+      localStorage.setItem('orderMode', 'takeaway');
+      setTableNum(null);
+      setOrderMode('takeaway');
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (isDark) {
