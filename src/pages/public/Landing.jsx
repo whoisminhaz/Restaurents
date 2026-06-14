@@ -55,9 +55,9 @@ const Landing = () => {
     {
       title: "Fresh Appetizers & Breads",
       items: [
-        { name: "Roti Bawang", desc: "Freshly baked garlic bread, crispy on the outside, soft inside.", price: "RM 8.00", image: "https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?auto=format&fit=crop&q=80&w=800" },
+        { name: "Roti Bawang", desc: "Freshly baked garlic bread, crispy on the outside, soft inside.", price: "RM 8.00", image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=800" },
         { name: "Classic Hummus", desc: "Creamy chickpea dip with tahini, olive oil, and lemon.", price: "RM 12.00", image: "https://images.unsplash.com/photo-1577906096429-f73c2c312435?auto=format&fit=crop&q=80&w=800" },
-        { name: "Crispy Falafel", desc: "Deep-fried spiced chickpea patties served with tahini sauce.", price: "RM 14.00", image: "https://images.unsplash.com/photo-1593001874117-c99c800e3eb7?auto=format&fit=crop&q=80&w=800" }
+        { name: "Crispy Falafel", desc: "Deep-fried spiced chickpea patties served with tahini sauce.", price: "RM 14.00", image: "https://images.unsplash.com/photo-1585937421606-2225bdce0d14?auto=format&fit=crop&q=80&w=800" }
       ]
     },
     {
