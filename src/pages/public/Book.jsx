@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { collection, addDoc, serverTimestamp, doc, getDoc, updateDoc, query, where, getDocs, setDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
-import { ArrowLeft, CheckCircle2, Moon, Sun, CalendarDays, Search, XCircle, Clock, Download } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Moon, Sun, CalendarDays, Search, XCircle, Clock, Download, LayoutDashboard } from 'lucide-react';
 import LanguageDropdown from '../../components/LanguageDropdown';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { t } from '../../utils/translations';
@@ -465,6 +465,9 @@ const Book = () => {
         </div>
         <div className="flex items-center gap-1">
           <LanguageDropdown />
+          <button onClick={() => navigate('/login')} className="p-2 text-gray-600 dark:text-gray-300 hover:opacity-70 transition-opacity">
+            <LayoutDashboard size={22} />
+          </button>
           <button onClick={() => setIsDark(!isDark)} className="p-2 -mr-2 text-gray-600 dark:text-gray-300">
             {isDark ? <Sun size={22} /> : <Moon size={22} />}
           </button>

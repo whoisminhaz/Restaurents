@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
-import { ShoppingBag, Plus, Minus, ArrowLeft, Moon, Sun } from 'lucide-react';
+import { ShoppingBag, Plus, Minus, ArrowLeft, Moon, Sun, LayoutDashboard } from 'lucide-react';
 import LanguageDropdown from '../../components/LanguageDropdown';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { t } from '../../utils/translations';
@@ -133,6 +133,9 @@ const MenuOrder = () => {
         </div>
         <div className="flex items-center gap-1">
           <LanguageDropdown />
+          <button onClick={() => navigate('/login')} className="p-2 text-gray-600 dark:text-gray-300 hover:opacity-70 transition-opacity">
+            <LayoutDashboard size={22} />
+          </button>
           <button onClick={() => setIsDark(!isDark)} className="p-2 -mr-2 text-gray-600 dark:text-gray-300 hover:opacity-70 transition-opacity">
             {isDark ? <Sun size={22} /> : <Moon size={22} />}
           </button>
