@@ -28,6 +28,7 @@ const Placeholder = ({ title }) => (
   </div>
 );
 
+import Landing from './pages/public/Landing';
 import Book from './pages/public/Book';
 import Reservations from './pages/admin/Reservations';
 
@@ -38,7 +39,7 @@ function AppRoutes() {
       <Route path="/order" element={<MenuOrder />} />
       <Route path="/checkout" element={<Checkout />} />
       <Route path="/book" element={<Book />} />
-      <Route path="/" element={<Navigate to="/book" replace />} />
+      <Route path="/" element={<Landing />} />
       
       {/* Admin CRM Routes */}
       <Route path="/login" element={<Login />} />
