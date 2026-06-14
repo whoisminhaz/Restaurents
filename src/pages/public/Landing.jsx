@@ -144,9 +144,9 @@ const Landing = () => {
             </motion.p>
             
             <motion.div variants={fadeIn} className="flex flex-col sm:flex-row gap-5">
-              <Link to="/order" className="group flex items-center justify-center gap-3 bg-crmAccent text-white px-10 py-5 rounded-xl font-bold text-lg hover:bg-crmAccent/90 transition-all shadow-[0_10px_30px_rgba(181,96,42,0.4)] hover:-translate-y-1">
-                <Utensils className="w-6 h-6" />
-                Order Delivery
+              <Link to="/book?tab=manage" className="group flex items-center justify-center gap-3 bg-crmAccent text-white px-10 py-5 rounded-xl font-bold text-lg hover:bg-crmAccent/90 transition-all shadow-[0_10px_30px_rgba(181,96,42,0.4)] hover:-translate-y-1">
+                <CalendarDays className="w-6 h-6" />
+                My Reservations
                 <ChevronRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
               </Link>
               <Link to="/book" className="group flex items-center justify-center gap-3 bg-crmCard/50 backdrop-blur-md border border-crmBorder/50 text-white px-10 py-5 rounded-xl font-bold text-lg hover:border-crmAccent hover:bg-crmCard transition-all hover:-translate-y-1">
