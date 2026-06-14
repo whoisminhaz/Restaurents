@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import { Moon, Sun, ArrowRight, Menu, X, Globe, CheckCircle, Smartphone, Monitor, ChevronDown, ChevronUp, MessageCircle, BarChart3, Clock, Utensils, CalendarDays, Server, Code, BrainCircuit } from 'lucide-react';
+import { logoBase64 } from '../../logoBase64';
 
 const landingTranslations = {
   en: {
@@ -88,6 +89,27 @@ const landingTranslations = {
     faqTitle: "DOT ZERO AI பற்றிய அடிக்கடி கேட்கப்படும் கேள்விகள்",
     founderTitle: "வணிக உரிமையாளர்களிடம் அதிக கட்டணம் வசூலிக்க மறுத்த ஒரு டெவலப்பரால் உருவாக்கப்பட்டது",
     footerTagline: "உணவக தொழில்நுட்பம். இலவசம். என்றென்றும்.",
+  },
+  bn: {
+    heroTitle: "ইন্টেলিজেন্ট টেক সলিউশন দিয়ে আপনার ব্যবসাকে এগিয়ে নিন",
+    heroSub: "আমাদের লাইফটাইম-ফ্রি রেস্টুরেন্ট OS এর অভিজ্ঞতা নিন এবং আপনার জন্য তৈরি প্রিমিয়াম SaaS ও কাস্টম ওয়েব ডেভেলপমেন্ট আবিষ্কার করুন।",
+    tryDemo: "রেস্টুরেন্ট OS ডেমো ব্যবহার করুন",
+    exploreServices: "আমাদের পরিষেবাগুলি অন্বেষণ করুন",
+    proofLive: "রেস্টুরেন্ট লাইভ",
+    proofFree: "সম্পূর্ণ বিনামূল্যে",
+    proofSetup: "গড় সেটআপ সময়",
+    proofStates: "সারা মালয়েশিয়ায়",
+    servicesTitle: "শুধুমাত্র রেস্টুরেন্টের জন্য নয়। আমরা এআই এবং সাস সলিউশন তৈরি করি।",
+    problemTitle: "মালয়েশিয়ার রেস্টুরেন্টগুলি প্রতি রাতে কেন অর্ডার হারাচ্ছে — এর কারণ",
+    featuresTitle: "আপনার রেস্টুরেন্টের যা কিছু প্রয়োজন — একটি সিস্টেম, মাসিক কোনো খরচ নেই",
+    demoTitle: "এখনই সিস্টেমটি ব্যবহার করে দেখুন — কোনো লগইনের প্রয়োজন নেই",
+    videoTitle: "ভিডিও দেখুন: সম্পূর্ণ সিস্টেমের ওভারভিউ",
+    portfolioTitle: "আমাদের ডিজাইন করা রেস্টুরেন্ট ওয়েবসাইট — লাইভ উদাহরণ দেখুন",
+    adTitle: "এক নজরে — DOT ZERO AI আপনার জন্য কী করে",
+    pricingTitle: "কেন মাসিক টাকা দেবেন? DOT ZERO AI রেস্টুরেন্ট OS চিরতরে বিনামূল্যে",
+    faqTitle: "DOT ZERO AI সম্পর্কে প্রায়শই জিজ্ঞাসিত প্রশ্নাবলী",
+    founderTitle: "একজন ডেভেলপারের তৈরি যিনি ব্যবসায়ীদের কাছ থেকে অতিরিক্ত টাকা নিতে অস্বীকার করেছেন",
+    footerTagline: "রেস্টুরেন্ট টেকনোলজি। বিনামূল্যে। চিরতরে।"
   }
 };
 
@@ -317,7 +339,7 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2 cursor-pointer" onClick={() => window.scrollTo(0,0)}>
-              <img src="/assets/dotzeroai/logo 1.png" alt="DOT ZERO AI Logo" className="h-10 w-auto" />
+              <img src={logoBase64} alt="DOT ZERO AI Logo" className="h-10 w-auto" />
               <span className="font-extrabold text-2xl tracking-tight hidden sm:block">DOT ZERO AI</span>
             </div>
             
@@ -366,9 +388,17 @@ const Landing = () => {
                <button onClick={() => setIsDark(!isDark)} className="p-2 rounded-full bg-gray-100 dark:bg-gray-800">
                   {isDark ? <Sun size={20} className="text-yellow-400" /> : <Moon size={20} />}
                 </button>
-                <button onClick={() => changeLanguage(userLang === 'en' ? 'ms' : 'en')} className="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 uppercase text-sm font-bold">
-                  {userLang}
-                </button>
+                <select 
+                  value={userLang} 
+                  onChange={(e) => changeLanguage(e.target.value)} 
+                  className="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 uppercase text-sm font-bold appearance-none outline-none"
+                >
+                  <option value="en">EN</option>
+                  <option value="ms">MS</option>
+                  <option value="zh">ZH</option>
+                  <option value="ta">TA</option>
+                  <option value="bn">BN</option>
+                </select>
             </div>
           </div>
         </div>
@@ -376,7 +406,9 @@ const Landing = () => {
 
       {/* SECTION 1: HERO */}
       <section className="relative pt-32 lg:pt-48 pb-20 overflow-hidden min-h-[90vh] flex items-center">
-        <ParticleNetwork />
+        <div className="hidden md:block">
+          <ParticleNetwork />
+        </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col items-center text-center reveal opacity-0 translate-y-12 transition-all duration-1000 ease-out">
           <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-gradient-to-r from-[#00c8d4]/10 to-transparent border border-[#00c8d4]/30 text-[#00c8d4] font-bold text-sm mb-8 shadow-[0_0_15px_rgba(0,200,212,0.2)] backdrop-blur-sm">
             🇲🇾 Based in Malaysia, Built for the World
@@ -387,13 +419,16 @@ const Landing = () => {
           <p className="text-lg md:text-2xl text-gray-700 dark:text-[#8aa4bc] max-w-3xl mb-10 font-medium">
             {t('heroSub')}
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 w-full sm:w-auto">
             <button onClick={() => document.getElementById('demo').scrollIntoView({behavior: 'smooth'})} className="px-8 py-4 rounded-xl bg-gradient-to-r from-[#00c8d4] to-[#00a3ad] hover:from-[#00b0ba] hover:to-[#008f98] text-white font-bold text-lg transition-transform hover:-translate-y-1 shadow-[0_10px_30px_rgba(0,200,212,0.3)] flex items-center justify-center">
               {t('tryDemo')} <ArrowRight className="ml-2" size={22} />
             </button>
             <button onClick={() => document.getElementById('services').scrollIntoView({behavior: 'smooth'})} className="px-8 py-4 rounded-xl border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-[#141f2e] font-bold text-lg transition-all flex items-center justify-center bg-white/50 dark:bg-transparent backdrop-blur-md">
               {t('exploreServices')}
             </button>
+            <a href="https://wa.me/601124248680" target="_blank" rel="noreferrer" className="px-8 py-4 rounded-xl bg-[#25D366] hover:bg-[#1EBE53] text-white font-bold text-lg transition-transform hover:-translate-y-1 shadow-[0_10px_30px_rgba(37,211,102,0.3)] flex items-center justify-center">
+              Contact Now <MessageCircle className="ml-2" size={22} />
+            </a>
           </div>
           
           <div className="mt-16 flex flex-wrap justify-center gap-6 text-sm md:text-base font-bold text-gray-500 dark:text-gray-400 reveal opacity-0 translate-y-12 transition-all duration-1000 delay-200 ease-out">
@@ -903,7 +938,7 @@ const Landing = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
             <div className="col-span-1 md:col-span-1">
               <div className="flex items-center space-x-2 mb-6 cursor-pointer" onClick={() => window.scrollTo(0,0)}>
-                <img src="/assets/dotzeroai/logo 1.png" alt="DOT ZERO AI Logo" className="h-10 w-auto" />
+                <img src={logoBase64} alt="DOT ZERO AI Logo" className="h-10 w-auto" />
                 <span className="font-extrabold text-xl tracking-tight text-gray-900 dark:text-white">DOT ZERO AI</span>
               </div>
               <p className="text-gray-600 dark:text-[#8aa4bc] font-bold mb-6">{t('footerTagline')}</p>
@@ -941,7 +976,7 @@ const Landing = () => {
                 <li>Email: write.minhaz@gmail.com</li>
                 <li>Location: Alor Setar, Kedah, Malaysia</li>
                 <li className="pt-4">
-                  <a href="https://wa.me/601139414271" target="_blank" rel="noreferrer" className="inline-flex items-center px-6 py-3 bg-[#22c55e] text-white font-bold rounded-xl hover:bg-[#1ea951] transition-all hover:-translate-y-1 shadow-lg shadow-[#22c55e]/30">
+                  <a href="https://wa.me/601124248680" target="_blank" rel="noreferrer" className="inline-flex items-center px-6 py-3 bg-[#22c55e] text-white font-bold rounded-xl hover:bg-[#1ea951] transition-all hover:-translate-y-1 shadow-lg shadow-[#22c55e]/30">
                     WhatsApp Us
                   </a>
                 </li>
