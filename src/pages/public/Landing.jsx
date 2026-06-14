@@ -797,7 +797,7 @@ const Landing = () => {
             ))}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-gray-50 dark:bg-[#141f2e] p-10 rounded-3xl border border-gray-200 dark:border-gray-800 text-center relative overflow-hidden group shadow-xl">
               <div className="absolute inset-0 bg-gradient-to-br from-[#00c8d4]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Experience the Owner Dashboard</h3>
@@ -813,6 +813,14 @@ const Landing = () => {
               <button onClick={() => navigate('/book')} className="px-8 py-4 rounded-xl border-2 border-[#22c55e] text-[#22c55e] hover:bg-[#22c55e] hover:text-white font-bold w-full transition-all hover:-translate-y-1 shadow-lg flex items-center justify-center">
                 Make a Demo Reservation <ArrowRight className="ml-2" size={20} />
               </button>
+            </div>
+            <div className="bg-gray-50 dark:bg-[#141f2e] p-10 rounded-3xl border border-gray-200 dark:border-gray-800 text-center relative overflow-hidden group shadow-xl">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#3b82f6]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Join Live Telegram Group</h3>
+              <p className="text-gray-600 dark:text-[#8aa4bc] mb-8 font-medium">All orders approved from the dashboard go here automatically. Join to check out the system!</p>
+              <a href="https://t.me/dotzeroai" target="_blank" rel="noopener noreferrer" className="px-8 py-4 rounded-xl border-2 border-[#3b82f6] text-[#3b82f6] hover:bg-[#3b82f6] hover:text-white font-bold w-full transition-all hover:-translate-y-1 shadow-lg flex items-center justify-center">
+                Join Telegram Group <ArrowRight className="ml-2" size={20} />
+              </a>
             </div>
           </div>
         </div>
