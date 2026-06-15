@@ -51,7 +51,8 @@ const DashboardLayout = () => {
       if (adminSnap.exists()) {
         const adminData = adminSnap.data();
         const userEmail = auth.currentUser?.email;
-        const isSuper = import.meta.env.VITE_ADMIN_EMAILS ? import.meta.env.VITE_ADMIN_EMAILS.split(',').includes(userEmail) : false;
+        const adminEmails = import.meta.env.VITE_ADMIN_EMAILS ? import.meta.env.VITE_ADMIN_EMAILS.split(',').map(e => e.trim()) : [];
+        const isSuper = adminEmails.includes(userEmail);
         const isOwner = userEmail === adminData.ownerEmail;
         if (isSuper || isOwner) {
           setIsAdmin(true);
@@ -59,7 +60,8 @@ const DashboardLayout = () => {
       } else {
         // Fallback for Super Admin if adminConfig doesn't exist
         const userEmail = auth.currentUser?.email;
-        if (import.meta.env.VITE_ADMIN_EMAILS && import.meta.env.VITE_ADMIN_EMAILS.split(',').includes(userEmail)) {
+        const adminEmails = import.meta.env.VITE_ADMIN_EMAILS ? import.meta.env.VITE_ADMIN_EMAILS.split(',').map(e => e.trim()) : [];
+        if (adminEmails.includes(userEmail)) {
           setIsAdmin(true);
         }
       }
