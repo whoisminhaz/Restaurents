@@ -37,11 +37,9 @@ const auth = getAuth(app);
 const firestoreSettings = {
   experimentalForceLongPolling: true,
 };
-const databaseId = import.meta.env.VITE_FIREBASE_DATABASE_ID;
+const databaseId = import.meta.env.VITE_FIREBASE_DATABASE_ID || "database";
 
-const db = databaseId 
-  ? initializeFirestore(app, firestoreSettings, databaseId)
-  : initializeFirestore(app, firestoreSettings);
+const db = initializeFirestore(app, firestoreSettings, databaseId);
 
 const storage = getStorage(app);
 
