@@ -260,13 +260,45 @@ img {
   inset: 0;
   background: url('images/hero_tandoori.jpg') center/cover no-repeat;
   z-index: 0;
+  filter: brightness(1.15) contrast(1.05);
 }
 
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(10,10,10,0.5) 0%, rgba(10,10,10,0.7) 50%, rgba(10,10,10,0.95) 100%);
+  background: linear-gradient(to bottom, rgba(10,10,10,0.3) 0%, rgba(10,10,10,0.5) 50%, rgba(10,10,10,0.9) 100%);
   z-index: 1;
+}
+
+/* 3.1 Particles Animation */
+.particles-container {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ember-particle {
+  position: absolute;
+  background: var(--ember2);
+  border-radius: 50%;
+  box-shadow: 0 0 10px 2px var(--ember);
+  animation-name: floatEmber;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes floatEmber {
+  0% {
+    transform: translateY(100vh) translateX(0) scale(1);
+  }
+  50% {
+    transform: translateY(40vh) translateX(30px) scale(1.2);
+  }
+  100% {
+    transform: translateY(-20vh) translateX(-15px) scale(0.8);
+  }
 }
 
 .hero-content {

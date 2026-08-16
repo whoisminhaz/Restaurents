@@ -141,12 +141,292 @@ const translations = {
     mb_reserve: "احجز",
     mb_menu: "القائمة",
     wa_tooltip: "تحدث معنا!"
+  },
+  zh: {
+    nav_about: "关于",
+    nav_menu: "菜单",
+    nav_gallery: "画廊",
+    nav_reviews: "评论",
+    nav_location: "位置",
+    hero_rating_text: "谷歌评分 · 1122+ 评论",
+    hero_subtitle: "巴基斯坦 · 印度 · 阿拉伯 · 烧烤及西餐 · 海鲜",
+    hero_desc: "在槟城最佳海滩上品尝正宗清真美食。无味精 · 无防腐剂 · 素食选择。",
+    hero_cta_reserve: "📅 预订餐桌",
+    hero_cta_menu: "查看菜单",
+    trust_halal: "清真认证",
+    trust_msg: "无味精",
+    trust_preserv: "无防腐剂",
+    trust_parking: "免费停车",
+    trust_vegan: "素食选择",
+    prox_beach: "步行3分钟即可到达峇都丁宜海滩",
+    prox_market: "5分钟到达夜市",
+    prox_escape: "靠近ESCAPE和Entopia",
+    about_label: "我们的故事",
+    about_title: "跨越<span>国界</span>的风味",
+    about_p1: "位于著名的峇都丁宜夜市附近的主要旅游区，D'Feringghi Tandoori House为您带来精致的巴基斯坦、印度、阿拉伯和西方融合美食。",
+    about_p2: "10多年来，我们为游客和当地人提供清真、无味精的菜肴，并提供许多素食和无麸质选择。",
+    menu_label: "我们的菜单",
+    menu_title: "探索我们的<span>完整</span>菜单",
+    tab_grill: "🔥 坦都里与烧烤",
+    tab_biryani: "🍚 印度香饭与曼迪",
+    tab_chicken: "🍗 鸡肉",
+    tab_mutton: "🐑 羊肉与牛肉",
+    tab_seafood: "🦐 海鲜",
+    tab_appetizers: "🥗 开胃菜",
+    tab_naan: "🫓 烤饼与面包",
+    tab_veg: "🌱 素食",
+    tab_rice: "🍚 米饭",
+    tab_western: "🍕 西餐",
+    tab_egg: "🥚 鸡蛋",
+    tab_dessert: "🍨 甜点",
+    tab_drinks: "🥤 饮料",
+    menu_note: "💡 请允许20分钟的准备时间。除非另有说明，所有菜肴均为中辣。",
+    gallery_label: "体验",
+    gallery_title: "美食与<span>氛围</span>",
+    reviews_label: "感言",
+    reviews_title: "宾客<span>评论</span>",
+    leave_review: "⭐ 留下谷歌评论",
+    catering_label: "活动与餐饮",
+    catering_title: "优质<span>餐饮</span>服务",
+    catering_desc: "我们为您的所有特殊场合提供优质的餐饮服务。",
+    catering_enquire: "💬 在WhatsApp上咨询",
+    location_label: "找到我们",
+    location_title: "参观<span>D'Feringghi</span>",
+    addr_label: "地址",
+    phone_label: "电话 / WhatsApp",
+    email_label: "电子邮件",
+    hours_label: "营业时间",
+    parking_label: "停车",
+    parking_value: "免费街道和停车场",
+    nearby_title: "📌 附近地标",
+    hours_daily: "每天: 11:00 AM – 12:00 AM",
+    get_directions: "🧭 获取路线",
+    wa_us: "💬 WhatsApp我们",
+    cta_title: "饿了吗？",
+    cta_sub: "加入我们，在槟城最好的海滩享受难忘的用餐体验。",
+    cta_wa: "💬 WhatsApp我们",
+    footer_desc: "峇都丁宜正宗巴基斯坦、印度、阿拉伯和西餐。清真，无味精，每天营业。",
+    footer_nav: "导航",
+    footer_contact: "联系",
+    mb_reserve: "预订",
+    mb_menu: "菜单",
+    wa_tooltip: "和我们聊天！"
+  },
+  ur: {
+    nav_about: "ہمارے بارے میں",
+    nav_menu: "مینو",
+    nav_gallery: "گیلری",
+    nav_reviews: "جائزے",
+    nav_location: "مقام",
+    hero_rating_text: "گوگل ریٹنگ · 1122+ جائزے",
+    hero_subtitle: "پاکستانی · ہندوستانی · عربی · ویسٹرن اور باربی کیو · سمندری غذا",
+    hero_desc: "پینانگ کے بہترین ساحل پر مستند حلال کھانا۔ ایم ایس جی کے بغیر · بغیر پریزرویٹوز · ویگن کے اختیارات۔",
+    hero_cta_reserve: "📅 ٹیبل بک کریں",
+    hero_cta_menu: "مینو دیکھیں",
+    trust_halal: "حلال سرٹیفائیڈ",
+    trust_msg: "ایم ایس جی فری",
+    trust_preserv: "کوئی پریزرویٹوز نہیں",
+    trust_parking: "مفت پارکنگ",
+    trust_vegan: "ویگن آپشنز",
+    prox_beach: "باتو فیرینگی بیچ سے 3 منٹ کی پیدل مسافت",
+    prox_market: "نائٹ مارکیٹ سے 5 منٹ کی مسافت",
+    prox_escape: "ESCAPE اور Entopia کے قریب",
+    about_label: "ہماری کہانی",
+    about_title: "ذائقے جو <span>سرحدوں</span> کو پار کرتے ہیں",
+    about_p1: "مشہور باتو فیرینگی نائٹ مارکیٹ کے قریب سیاحتی پٹی پر واقع ہے۔",
+    about_p2: "10 سال سے زیادہ عرصے سے حلال، ایم ایس جی فری اور ویگن آپشنز کے ساتھ خدمت کر رہے ہیں۔",
+    menu_label: "ہمارا مینو",
+    menu_title: "ہمارا <span>مکمل</span> مینو دریافت کریں",
+    tab_grill: "🔥 تندوری اور گرل",
+    tab_biryani: "🍚 بریانی اور مندی",
+    tab_chicken: "🍗 چکن",
+    tab_mutton: "🐑 مٹن اور بیف",
+    tab_seafood: "🦐 سمندری غذا",
+    tab_appetizers: "🥗 ایپیٹائزرز",
+    tab_naan: "🫓 نان اور روٹی",
+    tab_veg: "🌱 ویجیٹیرین",
+    tab_rice: "🍚 چاول",
+    tab_western: "🍕 ویسٹرن",
+    tab_egg: "🥚 انڈے",
+    tab_dessert: "🍨 میٹھا",
+    tab_drinks: "🥤 مشروبات",
+    menu_note: "💡 براہ کرم 20 منٹ تیاری کا وقت دیں۔",
+    gallery_label: "تجربہ",
+    gallery_title: "کھانا اور <span>ماحول</span>",
+    reviews_label: "تعریفیں",
+    reviews_title: "مہمانوں کے <span>جائزے</span>",
+    leave_review: "⭐ گوگل پر ریویو دیں",
+    catering_label: "تقریبات اور کیٹرنگ",
+    catering_title: "اعلیٰ معیار کی <span>کیٹرنگ</span> سروسز",
+    catering_desc: "ہم آپ کی تمام تقریبات کے لیے بہترین کیٹرنگ فراہم کرتے ہیں۔",
+    catering_enquire: "💬 واٹس ایپ پر دریافت کریں",
+    location_label: "ہمیں تلاش کریں",
+    location_title: "ڈی فیرینگی <span>آئیں</span>",
+    addr_label: "پتہ",
+    phone_label: "فون / واٹس ایپ",
+    email_label: "ای میل",
+    hours_label: "اوقات کار",
+    parking_label: "پارکنگ",
+    parking_value: "مفت سٹریٹ اور لاٹ پارکنگ",
+    nearby_title: "📌 قریبی مقامات",
+    hours_daily: "ہر روز: 11:00 AM – 12:00 AM",
+    get_directions: "🧭 ڈائریکشنز حاصل کریں",
+    wa_us: "💬 واٹس ایپ",
+    cta_title: "کیا آپ بھوکے ہیں؟",
+    cta_sub: "پینانگ کے بہترین ساحل پر ہمارے ساتھ شامل ہوں۔",
+    cta_wa: "💬 واٹس ایپ",
+    footer_desc: "باتو فیرینگی میں مستند پاکستانی، ہندوستانی اور عربی کھانا۔",
+    footer_nav: "نیویگیشن",
+    footer_contact: "رابطہ",
+    mb_reserve: "بک کریں",
+    mb_menu: "مینو",
+    wa_tooltip: "ہمارے ساتھ بات کریں!"
+  },
+  fr: {
+    nav_about: "À propos",
+    nav_menu: "Menu",
+    nav_gallery: "Galerie",
+    nav_reviews: "Avis",
+    nav_location: "Emplacement",
+    hero_rating_text: "Note Google · 1122+ Avis",
+    hero_subtitle: "Pakistanais · Indien · Arabe · Occidental et BBQ · Fruits de mer",
+    hero_desc: "Cuisine halal authentique sur la meilleure plage de Penang. Sans MSG · Sans conservateurs · Options végétaliennes.",
+    hero_cta_reserve: "📅 Réserver",
+    hero_cta_menu: "Voir le Menu",
+    trust_halal: "Certifié Halal",
+    trust_msg: "Sans MSG",
+    trust_preserv: "Sans Conservateurs",
+    trust_parking: "Parking Gratuit",
+    trust_vegan: "Options Végétaliennes",
+    prox_beach: "À 3 min de la plage de Batu Ferringhi",
+    prox_market: "À 5 min du marché nocturne",
+    prox_escape: "Près d'ESCAPE et Entopia",
+    about_label: "Notre Histoire",
+    about_title: "Des Saveurs Qui Traversent <span>Les Frontières</span>",
+    about_p1: "Situé sur la principale avenue touristique de Batu Ferringhi, nous offrons une cuisine fusion authentique.",
+    about_p2: "Plus de 10 ans au service des touristes et des locaux avec des plats halal, sans MSG et végétaliens.",
+    menu_label: "Notre Menu",
+    menu_title: "Explorez Notre Menu <span>Complet</span>",
+    tab_grill: "🔥 Tandoori et Grill",
+    tab_biryani: "🍚 Biryani et Mandi",
+    tab_chicken: "🍗 Poulet",
+    tab_mutton: "🐑 Mouton et Bœuf",
+    tab_seafood: "🦐 Fruits de mer",
+    tab_appetizers: "🥗 Entrées",
+    tab_naan: "🫓 Naan et Pain",
+    tab_veg: "🌱 Végétarien",
+    tab_rice: "🍚 Riz",
+    tab_western: "🍕 Occidental",
+    tab_egg: "🥚 Œufs",
+    tab_dessert: "🍨 Desserts",
+    tab_drinks: "🥤 Boissons",
+    menu_note: "💡 Préparation de 20 min. Tous les plats sont moyennement épicés.",
+    gallery_label: "L'Expérience",
+    gallery_title: "Nourriture et <span>Ambiance</span>",
+    reviews_label: "Témoignages",
+    reviews_title: "Avis <span>des Clients</span>",
+    leave_review: "⭐ Laisser un avis Google",
+    catering_label: "Événements",
+    catering_title: "Services de <span>Traiteur</span>",
+    catering_desc: "Nous offrons des services de traiteur de qualité pour vos occasions.",
+    catering_enquire: "💬 Demande sur WhatsApp",
+    location_label: "Nous Trouver",
+    location_title: "Visitez <span>D'Feringghi</span>",
+    addr_label: "Adresse",
+    phone_label: "Téléphone / WhatsApp",
+    email_label: "E-mail",
+    hours_label: "Heures d'Ouverture",
+    parking_label: "Parking",
+    parking_value: "Stationnement gratuit",
+    nearby_title: "📌 Lieux à proximité",
+    hours_daily: "Tous les jours : 11:00 AM – 12:00 AM",
+    get_directions: "🧭 Itinéraire",
+    wa_us: "💬 WhatsApp",
+    cta_title: "VOUS AVEZ FAIM ?",
+    cta_sub: "Rejoignez-nous pour un repas inoubliable.",
+    cta_wa: "💬 WhatsApp",
+    footer_desc: "Cuisine authentique à Batu Ferringhi. Halal, sans MSG.",
+    footer_nav: "Navigation",
+    footer_contact: "Contact",
+    mb_reserve: "Réserver",
+    mb_menu: "Menu",
+    wa_tooltip: "Discutez avec nous !"
+  },
+  hi: {
+    nav_about: "हमारे बारे में",
+    nav_menu: "मेन्यू",
+    nav_gallery: "गैलरी",
+    nav_reviews: "समीक्षाएं",
+    nav_location: "स्थान",
+    hero_rating_text: "गूगल रेटिंग · 1122+ समीक्षाएं",
+    hero_subtitle: "पाकिस्तानी · भारतीय · अरबी · वेस्टर्न और बीबीक्यू · सीफूड",
+    hero_desc: "पेनांग के बेहतरीन समुद्र तट पर प्रामाणिक हलाल भोजन। बिना MSG · बिना प्रिजर्वेटिव · वीगन विकल्प।",
+    hero_cta_reserve: "📅 टेबल बुक करें",
+    hero_cta_menu: "मेन्यू देखें",
+    trust_halal: "हलाल प्रमाणित",
+    trust_msg: "MSG मुक्त",
+    trust_preserv: "प्रिजर्वेटिव मुक्त",
+    trust_parking: "मुफ्त पार्किंग",
+    trust_vegan: "वीगन विकल्प",
+    prox_beach: "बातू फेरिंगी बीच से 3 मिनट की पैदल दूरी",
+    prox_market: "नाइट मार्केट से 5 मिनट की दूरी",
+    prox_escape: "ESCAPE और Entopia के पास",
+    about_label: "हमारी कहानी",
+    about_title: "स्वाद जो <span>सरहदों</span> को पार करते हैं",
+    about_p1: "प्रसिद्ध बातू फेरिंगी नाइट मार्केट के पास पर्यटन पट्टी पर स्थित।",
+    about_p2: "10 से अधिक वर्षों से हलाल, MSG मुक्त और वीगन विकल्पों के साथ सेवा कर रहे हैं।",
+    menu_label: "हमारा मेन्यू",
+    menu_title: "हमारा <span>पूरा</span> मेन्यू देखें",
+    tab_grill: "🔥 तंदूरी और ग्रिल",
+    tab_biryani: "🍚 बिरयानी और मंडी",
+    tab_chicken: "🍗 चिकन",
+    tab_mutton: "🐑 मटन और बीफ",
+    tab_seafood: "🦐 सीफूड",
+    tab_appetizers: "🥗 ऐपेटाइज़र",
+    tab_naan: "🫓 नान और रोटी",
+    tab_veg: "🌱 शाकाहारी",
+    tab_rice: "🍚 चावल",
+    tab_western: "🍕 वेस्टर्न",
+    tab_egg: "🥚 अंडे",
+    tab_dessert: "🍨 मिठाई",
+    tab_drinks: "🥤 पेय पदार्थ",
+    menu_note: "💡 कृपया 20 मिनट तैयारी का समय दें।",
+    gallery_label: "अनुभव",
+    gallery_title: "भोजन और <span>माहौल</span>",
+    reviews_label: "प्रशंसापत्र",
+    reviews_title: "अतिथि <span>समीक्षाएं</span>",
+    leave_review: "⭐ गूगल समीक्षा दें",
+    catering_label: "कार्यक्रम और कैटरिंग",
+    catering_title: "गुणवत्ता <span>कैटरिंग</span> सेवाएं",
+    catering_desc: "हम आपके सभी विशेष अवसरों के लिए बेहतरीन कैटरिंग प्रदान करते हैं।",
+    catering_enquire: "💬 WhatsApp पर पूछताछ करें",
+    location_label: "हमें खोजें",
+    location_title: "डी फेरिंगी <span>आयें</span>",
+    addr_label: "पता",
+    phone_label: "फोन / WhatsApp",
+    email_label: "ईमेल",
+    hours_label: "खुलने का समय",
+    parking_label: "पार्किंग",
+    parking_value: "मुफ्त स्ट्रीट और लॉट पार्किंग",
+    nearby_title: "📌 आस-पास के स्थल",
+    hours_daily: "प्रतिदिन: 11:00 AM – 12:00 AM",
+    get_directions: "🧭 दिशा-निर्देश प्राप्त करें",
+    wa_us: "💬 WhatsApp",
+    cta_title: "क्या आपको भूख लगी है?",
+    cta_sub: "पेनांग के सबसे अच्छे समुद्र तट पर हमारे साथ शामिल हों।",
+    cta_wa: "💬 WhatsApp",
+    footer_desc: "बातू फेरिंगी में प्रामाणिक पाकिस्तानी, भारतीय और अरबी भोजन।",
+    footer_nav: "नेविगेशन",
+    footer_contact: "संपर्क",
+    mb_reserve: "बुक करें",
+    mb_menu: "मेन्यू",
+    wa_tooltip: "हमसे चैट करें!"
   }
 };
 
 let currentLang = 'en';
-const langOrder = ['en', 'my', 'ar'];
-const langLabels = { en: 'EN', my: 'MY', ar: 'AR' };
+const langOrder = ['en', 'my', 'zh', 'ar', 'ur', 'fr', 'hi'];
+const langLabels = { en: 'EN', my: 'MY', zh: 'ZH', ar: 'AR', ur: 'UR', fr: 'FR', hi: 'HI' };
 
 // Global Functions for inline onclick handlers
 window.setLang = function(lang) {
@@ -192,7 +472,7 @@ function applyLanguage(lang) {
     });
   }
 
-  if (lang === 'ar') {
+  if (lang === 'ar' || lang === 'ur') {
     document.body.dir = 'rtl';
     document.body.classList.add('lang-ar');
   } else {
@@ -335,5 +615,41 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
+  // 9. Particle Animation (Live 3D feel)
+  function initParticles() {
+    const heroSection = document.getElementById('hero');
+    if (!heroSection) return;
+    
+    // Add particle container
+    const particlesContainer = document.createElement('div');
+    particlesContainer.className = 'particles-container';
+    heroSection.appendChild(particlesContainer);
+    
+    // Create particles
+    for (let i = 0; i < 30; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'ember-particle';
+      
+      // Randomize properties
+      const size = Math.random() * 4 + 2; // 2px to 6px
+      const left = Math.random() * 100; // 0% to 100%
+      const animationDuration = Math.random() * 10 + 10; // 10s to 20s
+      const animationDelay = Math.random() * 10; // 0s to 10s
+      const opacity = Math.random() * 0.5 + 0.3; // 0.3 to 0.8
+      
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      particle.style.left = `${left}%`;
+      particle.style.bottom = `-10px`;
+      particle.style.animationDuration = `${animationDuration}s`;
+      particle.style.animationDelay = `${animationDelay}s`;
+      particle.style.opacity = opacity;
+      
+      particlesContainer.appendChild(particle);
+    }
+  }
+  
+  initParticles();
 
 });
