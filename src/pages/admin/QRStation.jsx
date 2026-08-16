@@ -8,6 +8,9 @@ import { t } from '../../utils/translations';
 const QRStation = () => {
   const [tableCount, setTableCount] = useState(10);
   const [baseUrl, setBaseUrl] = useState(window.location.origin);
+  const [googleMapUrl, setGoogleMapUrl] = useState('');
+  const [wifiSsid, setWifiSsid] = useState('');
+  const [wifiPassword, setWifiPassword] = useState('');
   const [loading, setLoading] = useState(true);
   const ownerLang = localStorage.getItem('ownerLang') || 'en';
 
@@ -17,6 +20,9 @@ const QRStation = () => {
       if (snap.exists()) {
         const data = snap.data();
         if (data.tables) setTableCount(parseInt(data.tables));
+        if (data.googleMapUrl) setGoogleMapUrl(data.googleMapUrl);
+        if (data.wifiSsid) setWifiSsid(data.wifiSsid);
+        if (data.wifiPassword) setWifiPassword(data.wifiPassword);
       }
       setLoading(false);
     };
@@ -28,7 +34,14 @@ const QRStation = () => {
     await updateDoc(doc(db, 'settings', 'master'), { tables: val });
   };
 
-  // Generate an array of tables based on the count
+  const handleSettingBlur = async (field, value) => {
+    try {
+      await updateDoc(doc(db, 'settings', 'master'), { [field]: value });
+    } catch (e) {
+      console.error('Failed to save ' + field, e);
+    }
+  };
+
   const handlePrint = () => {
     window.print();
   };
@@ -39,7 +52,7 @@ const QRStation = () => {
   const tables = Array.from({ length: tableCount }, (_, i) => i + 1);
 
   return (
-    <div className="p-6 md:p-10 max-w-6xl mx-auto">
+    <div className="p-6 md:p-10 max-w-6xl mx-auto relative pb-24">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold text-crmText">{t(ownerLang, 'qrStation')}</h1>
@@ -56,6 +69,47 @@ const QRStation = () => {
 
       <div className="bg-crmCard border border-crmBorder rounded-2xl p-6 shadow-xl mb-8 no-print">
         <h2 className="text-xl font-semibold text-crmText mb-6">{t(ownerLang, 'configuration')}</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">Google Map Review Link</label>
+            <input
+              type="text"
+              value={googleMapUrl}
+              onChange={(e) => setGoogleMapUrl(e.target.value)}
+              onBlur={(e) => handleSettingBlur('googleMapUrl', e.target.value)}
+              className="w-full bg-crmDark border border-crmBorder text-crmText px-4 py-3 rounded-xl focus:outline-none focus:border-crmAccent"
+              placeholder="https://g.page/r/.../review"
+            />
+            <p className="text-xs text-gray-500 mt-2">Paste your Google Maps review link to generate a direct review QR code.</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 pb-8 border-b border-crmBorder/50">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Wi-Fi Network Name (SSID)</label>
+            <input
+              type="text"
+              value={wifiSsid}
+              onChange={(e) => setWifiSsid(e.target.value)}
+              onBlur={(e) => handleSettingBlur('wifiSsid', e.target.value)}
+              className="w-full bg-crmDark border border-crmBorder text-crmText px-4 py-3 rounded-xl focus:outline-none focus:border-crmAccent"
+              placeholder="e.g. Guest_WiFi"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Wi-Fi Password</label>
+            <input
+              type="text"
+              value={wifiPassword}
+              onChange={(e) => setWifiPassword(e.target.value)}
+              onBlur={(e) => handleSettingBlur('wifiPassword', e.target.value)}
+              className="w-full bg-crmDark border border-crmBorder text-crmText px-4 py-3 rounded-xl focus:outline-none focus:border-crmAccent"
+              placeholder="e.g. Password123"
+            />
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">{t(ownerLang, 'numberOfTables')}</label>
@@ -83,10 +137,48 @@ const QRStation = () => {
 
       {/* QR Codes Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 print:grid-cols-2 print:gap-10">
+        
+        {/* Google Maps Review Code */}
+        {googleMapUrl && (
+          <div className="bg-white p-6 rounded-2xl border-4 border-crmBorder flex flex-col items-center justify-center text-center print:border-black print:break-inside-avoid">
+            <h3 className="text-2xl font-bold text-black mb-1">Review Us</h3>
+            <p className="text-xs text-gray-600 mb-4 uppercase tracking-wider font-bold">Scan to leave a Google review</p>
+            <div className="bg-white p-2 rounded-xl shadow-sm">
+              <QRCodeSVG 
+                value={googleMapUrl} 
+                size={160}
+                level="H"
+                includeMargin={false}
+                fgColor="#121212"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Wi-Fi Connection Code */}
+        {wifiSsid && (
+          <div className="bg-white p-6 rounded-2xl border-4 border-crmBorder flex flex-col items-center justify-center text-center print:border-black print:break-inside-avoid">
+            <h3 className="text-2xl font-bold text-black mb-1">Free Wi-Fi</h3>
+            <p className="text-xs text-gray-600 mb-4 uppercase tracking-wider font-bold">Scan to connect instantly</p>
+            <div className="bg-white p-2 rounded-xl shadow-sm">
+              <QRCodeSVG 
+                value={`WIFI:T:WPA;S:${wifiSsid};P:${wifiPassword};;`} 
+                size={160}
+                level="H"
+                includeMargin={false}
+                fgColor="#121212"
+              />
+            </div>
+            <div className="mt-4 text-xs font-bold text-gray-500 bg-gray-100 px-3 py-1.5 rounded-lg">
+              <span className="text-black">{wifiSsid}</span>
+            </div>
+          </div>
+        )}
+
         {/* Special Takeaway Code */}
         <div className="bg-white p-6 rounded-2xl border-4 border-crmBorder flex flex-col items-center justify-center text-center print:border-black print:break-inside-avoid">
           <h3 className="text-2xl font-bold text-black mb-1">{t(ownerLang, 'takeaway')}</h3>
-          <p className="text-sm text-gray-600 mb-6 uppercase tracking-wider">{t(ownerLang, 'scanToOrder')}</p>
+          <p className="text-xs text-gray-600 mb-4 uppercase tracking-wider font-bold">{t(ownerLang, 'scanToOrder')}</p>
           <div className="bg-white p-2 rounded-xl shadow-sm">
             <QRCodeSVG 
               value={`${formattedBaseUrl}/order?type=takeaway`} 
@@ -96,16 +188,13 @@ const QRStation = () => {
               fgColor="#121212"
             />
           </div>
-          <div className="mt-6 flex items-center justify-center gap-2 text-crmAccent font-bold no-print cursor-pointer hover:underline">
-            <Download size={16} /> SVG
-          </div>
         </div>
 
         {/* Regular Table Codes */}
         {tables.map(num => (
           <div key={num} className="bg-white p-6 rounded-2xl border-4 border-crmBorder flex flex-col items-center justify-center text-center print:border-black print:break-inside-avoid">
             <h3 className="text-3xl font-bold text-black mb-1">{t(ownerLang, 'table')} {num}</h3>
-            <p className="text-sm text-gray-600 mb-6 uppercase tracking-wider">{t(ownerLang, 'scanToOrder')}</p>
+            <p className="text-xs text-gray-600 mb-4 uppercase tracking-wider font-bold">{t(ownerLang, 'scanToOrder')}</p>
             <div className="bg-white p-2 rounded-xl shadow-sm">
               <QRCodeSVG 
                 value={`${formattedBaseUrl}/order?table=${num}`} 
@@ -114,9 +203,6 @@ const QRStation = () => {
                 includeMargin={false}
                 fgColor="#121212"
               />
-            </div>
-            <div className="mt-6 flex items-center justify-center gap-2 text-crmAccent font-bold no-print cursor-pointer hover:underline">
-              <Download size={16} /> SVG
             </div>
           </div>
         ))}
