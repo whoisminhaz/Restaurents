@@ -79,9 +79,12 @@ const QRStation = () => {
               onChange={(e) => setGoogleMapUrl(e.target.value)}
               onBlur={(e) => handleSettingBlur('googleMapUrl', e.target.value)}
               className="w-full bg-crmDark border border-crmBorder text-crmText px-4 py-3 rounded-xl focus:outline-none focus:border-crmAccent"
-              placeholder="https://g.page/r/.../review"
+              placeholder="e.g. https://g.page/r/.../review"
             />
-            <p className="text-xs text-gray-500 mt-2">Paste your Google Maps review link to generate a direct review QR code.</p>
+            <p className="text-xs text-gray-500 mt-2">
+              <strong>How to get this:</strong> Search your restaurant on Google &rarr; Click <strong>"Ask for reviews"</strong> (on your Business Profile) &rarr; Copy that specific link. 
+              <br/><em>Note: If you paste a regular map share link, customers will just have to manually tap the "Reviews" tab when it opens.</em>
+            </p>
           </div>
         </div>
 
