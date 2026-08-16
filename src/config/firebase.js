@@ -35,7 +35,9 @@ if (typeof window !== 'undefined' && import.meta.env.VITE_RECAPTCHA_SITE_KEY) {
 const auth = getAuth(app);
 
 const firestoreSettings = {};
-const db = getFirestore(app);
+const databaseId = import.meta.env.VITE_FIREBASE_DATABASE_ID || "default";
+
+const db = initializeFirestore(app, firestoreSettings, databaseId);
 
 const storage = getStorage(app);
 
