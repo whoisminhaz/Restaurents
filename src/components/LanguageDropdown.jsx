@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Globe } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Globe, X } from 'lucide-react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
 
@@ -14,7 +14,6 @@ const allLanguages = [
 
 const LanguageDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef(null);
   const currentLang = localStorage.getItem('userLang') || 'en';
   const [availableLangs, setAvailableLangs] = useState(allLanguages);
 
@@ -40,16 +39,6 @@ const LanguageDropdown = () => {
     fetchSettings();
   }, []);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
   const changeLang = (code) => {
     localStorage.setItem('userLang', code);
     window.location.reload();
@@ -58,9 +47,9 @@ const LanguageDropdown = () => {
   if (availableLangs.length <= 1) return null; // No need for dropdown if only 1 language
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <>
       <button 
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setIsOpen(true)}
         className="p-2 text-gray-600 dark:text-gray-300 hover:opacity-70 transition-opacity flex items-center justify-center"
         aria-label="Select Language"
       >
@@ -68,23 +57,33 @@ const LanguageDropdown = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-[#1a1a1a] rounded-xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
-          {availableLangs.map((lang) => (
-            <button
-              key={lang.code}
-              onClick={() => changeLang(lang.code)}
-              className={`w-full text-left px-4 py-3 text-sm transition-colors ${
-                currentLang === lang.code 
-                  ? 'bg-gray-100 dark:bg-white/10 font-bold text-gray-900 dark:text-white' 
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white'
-              }`}
-            >
-              {lang.name}
-            </button>
-          ))}
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl shadow-2xl w-full max-w-xs overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center">
+              <h2 className="font-bold text-lg text-gray-900 dark:text-white">Select Language</h2>
+              <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-2 max-h-[60vh] overflow-y-auto">
+              {availableLangs.map((lang) => (
+                <button
+                  key={lang.code}
+                  onClick={() => changeLang(lang.code)}
+                  className={`w-full text-center px-4 py-3 rounded-xl mb-1 text-sm font-medium transition-colors ${
+                    currentLang === lang.code 
+                      ? 'bg-crmAccent text-white' 
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10'
+                  }`}
+                >
+                  {lang.name}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
