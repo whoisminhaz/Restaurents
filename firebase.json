@@ -14,7 +14,7 @@
     ]
   },
   "firestore": {
-    "database": "database",
+    "database": "(default)",
     "rules": "firestore.rules"
   }
 }

@@ -34,6 +34,6 @@ jobs:
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@master
         with:
-          args: deploy --only hosting --project ${{ secrets.TANDOORI_FIREBASE_PROJECT_ID }}
+          args: deploy --only hosting,firestore:rules --project ${{ secrets.TANDOORI_FIREBASE_PROJECT_ID }}
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
