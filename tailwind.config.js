@@ -19,6 +19,10 @@ export default {
         'gold-light': '#e8a84c',
         ember: '#d4451a',
         ivory: '#f5f0e8',
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        serif: ['Playfair Display', 'serif'],
       }
     },
   },

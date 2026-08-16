@@ -53,7 +53,7 @@ export default function Footer() {
               </li>
             </ul>
             <div className="mt-8">
-              <Link href="/reservations" className="inline-block bg-gold hover:bg-gold-light text-charcoal-dark px-6 py-2 rounded font-semibold transition-colors uppercase tracking-wider text-sm">
+              <Link to="/reservations" className="inline-block bg-gold hover:bg-gold-light text-charcoal-dark px-6 py-2 rounded font-semibold transition-colors uppercase tracking-wider text-sm">
                 Reserve a Table
               </Link>
             </div>

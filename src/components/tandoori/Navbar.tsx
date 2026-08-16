@@ -36,7 +36,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           <div className="flex-shrink-0">
-            <Link href="/" className="font-serif text-2xl font-bold tracking-wider text-ivory">
+            <Link to="/" className="font-serif text-2xl font-bold tracking-wider text-ivory">
               D'FERINGGHI <span className="text-gold">TANDOORI HOUSE</span>
             </Link>
           </div>

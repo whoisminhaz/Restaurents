@@ -131,7 +131,7 @@ export default function Home() {
           </div>
           
           <div className="text-center mt-12">
-            <Link href="/menu" className="inline-flex items-center text-gold hover:text-gold-light uppercase tracking-widest text-sm font-bold group">
+            <Link to="/menu" className="inline-flex items-center text-gold hover:text-gold-light uppercase tracking-widest text-sm font-bold group">
               Explore Full Menu 
               <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
             </Link>
