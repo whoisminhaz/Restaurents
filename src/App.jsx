@@ -31,26 +31,12 @@ const Placeholder = ({ title }) => (
 import Book from './pages/public/Book';
 import Reservations from './pages/admin/Reservations';
 
-import Home from './pages/public/tandoori/Home';
-import About from './pages/public/tandoori/About';
-import Catering from './pages/public/tandoori/Catering';
-import Gallery from './pages/public/tandoori/Gallery';
-import TandooriMenu from './pages/public/tandoori/Menu';
-import TandooriReservations from './pages/public/tandoori/Reservations';
-import TandooriLayout from './components/TandooriLayout';
+
 
 function AppRoutes() {
   return (
     <Routes>
-      {/* Public Tandoori Routes */}
-      <Route element={<TandooriLayout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/catering" element={<Catering />} />
-        <Route path="/gallery" element={<Gallery />} />
-        <Route path="/menu" element={<TandooriMenu />} />
-        <Route path="/reservations" element={<TandooriReservations />} />
-      </Route>
+      <Route path="/" element={<Navigate to="/book" replace />} />
 
       {/* Legacy Public Routes (SaaS / Ordering) */}
       <Route path="/order" element={<MenuOrder />} />

@@ -1,240 +1,339 @@
+// D'Feringghi Tandoori House - Main Script
 
-// ─── TRANSLATIONS ────────────────────────────────────────────────
 const translations = {
-  en: {
-    nav_about: "About", nav_menu: "Menu", nav_gallery: "Gallery",
-    nav_reviews: "Reviews", nav_location: "Location",
-    hero_badge: "★ Kuala Kangsar's Finest ★",
-    hero_subtitle: "Western & Shellout · Kuala Kangsar, Perak",
-    hero_desc: "Where bold flavours meet the royal town. Grilled to perfection. Shellout to remember. Open for dinner – every night but Monday.",
-    hero_cta1: "Explore Menu", hero_cta2: "Order on Foodpanda", scroll: "Scroll",
-    stat1: "Foodpanda Rating", stat2: "Menu Items", stat3: "Happy Customers", stat4: "Menu Categories",
-    about_label: "Our Story",
-    about_title: "Bold Flavours in the <span>Royal Town</span>",
-    about_p1: "Mosty Kitchen is Kuala Kangsar's most talked-about late-night dining destination. Born from a passion for bold, unapologetic flavours, we serve Western grills, dramatic shellout seafood feasts, and hearty Malaysian classics — all under one roof.",
-    about_p2: "Nestled in the heart of Perak's royal town — just minutes from the iconic Ubudiah Mosque and Istana Kenangan — we're the spot where families, food bloggers, and late-night crews come together. Always packed. Always alive. 🖤",
-    badge1: "✦ Halal Certified", badge2: "✦ Malay Owned", badge3: "✦ Dine-in & Delivery",
-    badge4: "✦ Food Blogger Favourite", badge5: "✦ Open Late Nights",
-    menu_label: "What We Serve", menu_title: "Our <span>Signature</span> Menu",
-    tab_western: "Western", tab_shellout: "Shell Out", tab_pasta: "Pasta Mania",
-    tab_moza: "Mozacheese", tab_nasi: "Nasi Goreng", tab_nasiputih: "Set Nasi Putih",
-    tab_malaysian: "Malaysian", tab_sup: "Sup",
-    bestseller: "Best Seller", popular: "Popular", signature: "Signature",
-    trending: "Trending", special: "Special",
-    lamb_desc: "Tender grilled lamb with house sauce, served with sides",
-    grill_chk_desc: "Juicy grilled chicken with pepper sauce & sides",
-    fried_chk_desc: "Crispy golden fried chicken chop with sauce & sides",
-    combo_desc: "Lamb & chicken combo platter – the ultimate feast",
-    shell_desc: "Epic shellout for 2–3 pax. Prawns, mussels, clams, corn, sausage & 2 cups rice",
-    carb_desc: "Creamy classic carbonara with bacon & parmesan",
-    aglio_desc: "Classic garlic olive oil pasta with herbs",
-    bolo_desc: "Rich slow-cooked beef bolognese sauce",
-    sfaglio_desc: "Garlic pasta loaded with fresh seafood",
-    tomyam_desc: "Spicy creamy tomyam pasta with seafood",
-    crkcarb_desc: "Carbonara topped with crispy chicken bits",
-    napo_desc: "Classic tomato-based Napolitana pasta",
-    rpop_desc: "Korean-style popcorn chicken with ramen & mozz cheese pull",
-    kchk_desc: "Korean fried chicken with mozzarella cheese (no ramen)",
-    rmcw_desc: "Ultimate combo: ramen, meatball & chicken wings in mozz sauce",
-    ngsotong_desc: "Wok-fired squid fried rice",
-    ngudang_desc: "Wok-fired prawn fried rice",
-    ngdaging_desc: "Wok-fired beef fried rice",
-    ngkampung_desc: "Traditional village-style fried rice",
-    sdm_desc: "Steamed rice with spicy red beef",
-    snus_desc: "Rice with special prawn dish",
-    sak_desc: "Rice with turmeric chicken",
-    spa_desc: "Rice with stir-fried chicken paprik",
-    ikan_desc: "Whole sea bass in three-flavour sauce — sweet, sour & spicy",
-    kt_desc: "Wok-fired flat rice noodles with special mix",
-    sup_premium: "Sup Premium",
-    supP_desc: "Rich, hearty premium bone soup",
-    supM_desc: "Classic comforting Madani soup",
-    gallery_label: "Food & Vibes", gallery_title: "The <span>Experience</span>",
-    reviews_label: "What They Say", reviews_title: "Guest <span>Reviews</span>",
-    location_label: "Find Us", location_title: "Visit <span>Mosty Kitchen</span>",
-    addr_label: "Address", phone_label: "Phone", email_label: "Email",
-    hours_label: "Opening Hours", delivery_label: "Delivery",
-    monday: "Monday", closed: "Closed", tues_sun: "Tuesday – Sunday",
-    kk_note: "📍 Located in Kuala Kangsar – Perak's Royal Town, just 25km from Ipoh",
-    cta_title: "READY TO DIG IN?",
-    cta_sub: "Come hungry. Leave happy. Reserve a table or order online — we've got you covered.",
-    cta_call: "📞 Call to Reserve", cta_food: "🛵 Order on Foodpanda", cta_wa: "💬 WhatsApp Us",
-    social_label: "Follow Us", social_title: "Stay <span>Connected</span>",
-    social_desc: "Follow our journey on social media for daily specials, behind-the-scenes, and more 🖤",
-    footer_desc: "Western dan Shellout terbaik di Kuala Kangsar, Perak. Halal. Malay-owned. Open for dinner Tuesday to Sunday. 🖤",
-    footer_explore: "Explore", footer_contact: "Contact",
-    footer_copy: "© 2025 Mosty Kitchen. All rights reserved. · 5E, Jalan Daeng Selili, Kuala Kangsar, Perak",
-    halal_text: "Certified Halal · Malay Owned",
-    wa_tooltip: "Chat with us!",
-  },
+  en: {}, // Will be populated on load with default HTML text
   my: {
-    nav_about: "Tentang Kami", nav_menu: "Menu", nav_gallery: "Galeri",
-    nav_reviews: "Ulasan", nav_location: "Lokasi",
-    hero_badge: "★ Pilihan Terbaik Kuala Kangsar ★",
-    hero_subtitle: "Western & Shellout · Kuala Kangsar, Perak",
-    hero_desc: "Di mana rasa yang berani bertemu kota diraja. Dibakar sempurna. Shellout yang tak terlupakan. Buka setiap malam kecuali Isnin.",
-    hero_cta1: "Lihat Menu", hero_cta2: "Pesan di Foodpanda", scroll: "Tatal",
-    stat1: "Rating Foodpanda", stat2: "Item Menu", stat3: "Pelanggan Gembira", stat4: "Kategori Menu",
+    nav_about: "Tentang",
+    nav_menu: "Menu",
+    nav_gallery: "Galeri",
+    nav_reviews: "Ulasan",
+    nav_location: "Lokasi",
+    hero_rating_text: "Penilaian Google · 1122+ Ulasan",
+    hero_subtitle: "Pakistan · India · Arab · Barat & BBQ · Makanan Laut",
+    hero_desc: "Masakan halal asli di pantai terbaik Pulau Pinang. Tanpa MSG · Tanpa pengawet · Pilihan vegan.",
+    hero_cta_reserve: "📅 Tempah Meja",
+    hero_cta_menu: "Lihat Menu",
+    trust_halal: "Sijil Halal",
+    trust_msg: "Tanpa MSG",
+    trust_preserv: "Tanpa Pengawet",
+    trust_parking: "Parkir Percuma",
+    trust_vegan: "Pilihan Vegan",
+    prox_beach: "3 minit berjalan dari Pantai Batu Ferringhi",
+    prox_market: "5 minit dari Pasar Malam",
+    prox_escape: "Berhampiran ESCAPE & Entopia",
     about_label: "Kisah Kami",
-    about_title: "Rasa Berani di <span>Kota Diraja</span>",
-    about_p1: "Mosty Kitchen adalah destinasi makan malam paling popular di Kuala Kangsar. Lahir dari semangat untuk rasa yang berani dan autentik, kami menyajikan gril Western, jamuan shellout seafood yang dramatik, dan hidangan Malaysia yang menyelerakan — semuanya di bawah satu bumbung.",
-    about_p2: "Terletak di jantung kota diraja Perak — beberapa minit dari Masjid Ubudiah yang ikonik dan Istana Kenangan — kami adalah tempat berkumpul keluarga, blogger makanan, dan pengunjung malam lewat. Sentiasa penuh. Sentiasa hidup. 🖤",
-    badge1: "✦ Halal Bersijil", badge2: "✦ Milik Melayu", badge3: "✦ Makan Sini & Penghantaran",
-    badge4: "✦ Kegemaran Blogger Makanan", badge5: "✦ Buka Malam Lewat",
-    menu_label: "Apa Yang Kami Hidangkan", menu_title: "Menu <span>Signature</span> Kami",
-    tab_western: "Western", tab_shellout: "Shell Out", tab_pasta: "Pasta Mania",
-    tab_moza: "Mozacheese", tab_nasi: "Nasi Goreng", tab_nasiputih: "Set Nasi Putih",
-    tab_malaysian: "Malaysia", tab_sup: "Sup",
-    bestseller: "Terlaris", popular: "Popular", signature: "Signature",
-    trending: "Trending", special: "Istimewa",
-    lamb_desc: "Kambing bakar lembut dengan sos istimewa, dihidangkan dengan lauk sampingan",
-    grill_chk_desc: "Ayam bakar berair dengan sos lada & lauk sampingan",
-    fried_chk_desc: "Ayam goreng rangup keemasan dengan sos & lauk sampingan",
-    combo_desc: "Piring combo kambing & ayam – hidangan terbaik untuk semua",
-    shell_desc: "Shellout epik untuk 2–3 orang. Udang, kupang, kerang, jagung, sosej & 2 cawan nasi",
-    carb_desc: "Carbonara klasik berkrim dengan bacon & parmesan",
-    aglio_desc: "Pasta bawang putih minyak zaitun klasik dengan herba",
-    bolo_desc: "Sos bolognese daging lembu yang kaya & dimasak perlahan",
-    sfaglio_desc: "Pasta bawang putih dengan makanan laut segar yang banyak",
-    tomyam_desc: "Pasta tomyam berkrim pedas dengan makanan laut",
-    crkcarb_desc: "Carbonara dengan kepingan ayam rangup di atasnya",
-    napo_desc: "Pasta Napolitana berasaskan tomato klasik",
-    rpop_desc: "Ayam popcorn gaya Korea dengan ramen & tarik mozarella",
-    kchk_desc: "Ayam goreng Korea dengan keju mozzarella (tanpa ramen)",
-    rmcw_desc: "Kombo terbaik: ramen, bebola daging & sayap ayam dalam sos mozarella",
-    ngsotong_desc: "Nasi goreng sotong wok-api",
-    ngudang_desc: "Nasi goreng udang wok-api",
-    ngdaging_desc: "Nasi goreng daging wok-api",
-    ngkampung_desc: "Nasi goreng kampung tradisional",
-    sdm_desc: "Nasi putih dengan daging merah pedas",
-    snus_desc: "Nasi dengan hidangan udang istimewa",
-    sak_desc: "Nasi dengan ayam kunyit",
-    spa_desc: "Nasi dengan ayam paprik tumis",
-    ikan_desc: "Ikan siakap utuh dalam sos tiga rasa — manis, masam & pedas",
-    kt_desc: "Kuey teow goreng wok-api dengan campuran istimewa",
-    sup_premium: "Sup Premium",
-    supP_desc: "Sup tulang premium yang kaya & mengenyangkan",
-    supM_desc: "Sup Madani klasik yang menenangkan",
-    gallery_label: "Makanan & Suasana", gallery_title: "Pengalaman <span>Kami</span>",
-    reviews_label: "Kata Mereka", reviews_title: "Ulasan <span>Pelanggan</span>",
-    location_label: "Cari Kami", location_title: "Lawati <span>Mosty Kitchen</span>",
-    addr_label: "Alamat", phone_label: "Telefon", email_label: "E-mel",
-    hours_label: "Waktu Operasi", delivery_label: "Penghantaran",
-    monday: "Isnin", closed: "Tutup", tues_sun: "Selasa – Ahad",
-    kk_note: "📍 Terletak di Kuala Kangsar – Kota Diraja Perak, hanya 25km dari Ipoh",
-    cta_title: "BERSEDIA UNTUK MAKAN?",
-    cta_sub: "Datang lapar. Balik kenyang. Tempah meja atau pesan dalam talian — kami sedia melayan.",
-    cta_call: "📞 Hubungi Untuk Tempahan", cta_food: "🛵 Pesan di Foodpanda", cta_wa: "💬 WhatsApp Kami",
-    social_label: "Ikuti Kami", social_title: "Kekal <span>Berhubung</span>",
-    social_desc: "Ikuti perjalanan kami di media sosial untuk promosi harian, di sebalik tabir, dan lebih banyak lagi 🖤",
-    footer_desc: "Western dan Shellout terbaik di Kuala Kangsar, Perak. Halal. Milik Melayu. Buka untuk makan malam Selasa hingga Ahad. 🖤",
-    footer_explore: "Terokai", footer_contact: "Hubungi",
-    footer_copy: "© 2025 Mosty Kitchen. Hak cipta terpelihara. · 5E, Jalan Daeng Selili, Kuala Kangsar, Perak",
-    halal_text: "Halal Bersijil · Milik Melayu",
-    wa_tooltip: "Chat bersama kami!",
+    about_title: "Perisa Merentasi <span>Sempadan</span>",
+    about_p1: "Terletak di jalur pelancong utama berhampiran Pasar Malam Batu Ferringhi yang terkenal, D'Feringghi Tandoori House membawakan anda gabungan masakan Pakistan, India, Arab, dan Barat yang istimewa.",
+    about_p2: "Lebih 10 tahun berkhidmat untuk pelancong dan penduduk tempatan dengan hidangan Halal, tanpa MSG serta banyak pilihan vegan dan bebas gluten.",
+    menu_label: "Menu Kami",
+    menu_title: "Teroka Menu <span>Penuh</span> Kami",
+    tab_grill: "🔥 Tandoori & Grill",
+    tab_biryani: "🍚 Briyani & Mandi",
+    tab_chicken: "🍗 Ayam",
+    tab_mutton: "🐑 Kambing & Daging",
+    tab_seafood: "🦐 Makanan Laut",
+    tab_appetizers: "🥗 Pembuka Selera",
+    tab_naan: "🫓 Naan & Roti",
+    tab_veg: "🌱 Vegetarian",
+    tab_rice: "🍚 Nasi",
+    tab_western: "🍕 Barat",
+    tab_egg: "🥚 Telur",
+    tab_dessert: "🍨 Pencuci Mulut",
+    tab_drinks: "🥤 Minuman",
+    menu_note: "💡 Sila benarkan 20 minit penyediaan. Semua hidangan pedas sederhana melainkan ditandakan.",
+    gallery_label: "Pengalaman",
+    gallery_title: "Makanan & <span>Suasana</span>",
+    reviews_label: "Testimoni",
+    reviews_title: "Ulasan <span>Tetamu</span>",
+    leave_review: "⭐ Beri Ulasan Google",
+    catering_label: "Acara & Katering",
+    catering_title: "Khidmat <span>Katering</span> Berkualiti",
+    catering_desc: "Kami menyediakan khidmat katering berkualiti untuk semua majlis istimewa anda.",
+    catering_enquire: "💬 Tanya di WhatsApp",
+    location_label: "Cari Kami",
+    location_title: "Lawati <span>D'Feringghi</span>",
+    addr_label: "Alamat",
+    phone_label: "Telefon / WhatsApp",
+    email_label: "E-mel",
+    hours_label: "Waktu Operasi",
+    parking_label: "Tempat Letak Kereta",
+    parking_value: "Parkir percuma di jalan & lot",
+    nearby_title: "📌 Mercu Tanda Berdekatan",
+    hours_daily: "Setiap Hari: 11:00 PG – 12:00 TN",
+    get_directions: "🧭 Dapatkan Arah",
+    wa_us: "💬 WhatsApp Kami",
+    cta_title: "SUDAH LAPAR?",
+    cta_sub: "Jom makan! Pengalaman makan malam tak terlupakan di pantai terbaik Pulau Pinang.",
+    cta_wa: "💬 WhatsApp Kami",
+    footer_desc: "Masakan Pakistan, India, Arab & Barat asli di Batu Ferringhi, Pulau Pinang. Halal, tanpa MSG, buka setiap hari.",
+    footer_nav: "Navigasi",
+    footer_contact: "Hubungi",
+    mb_reserve: "Tempah",
+    mb_menu: "Menu",
+    wa_tooltip: "Sembang dengan kami!"
+  },
+  ar: {
+    nav_about: "حولنا",
+    nav_menu: "القائمة",
+    nav_gallery: "معرض",
+    nav_reviews: "التقييمات",
+    nav_location: "الموقع",
+    hero_rating_text: "تقييم جوجل · ٦٦٧+ تقييم",
+    hero_subtitle: "باكستاني · هندي · عربي · غربي وشواء · مأكولات بحرية",
+    hero_desc: "مأكولات حلال أصيلة على أفضل شاطئ في بينانج. بدون MSG · بدون مواد حافظة · خيارات نباتية.",
+    hero_cta_reserve: "📅 احجز طاولة",
+    hero_cta_menu: "عرض القائمة",
+    trust_halal: "شهادة حلال",
+    trust_msg: "بدون MSG",
+    trust_preserv: "بدون مواد حافظة",
+    trust_parking: "موقف مجاني",
+    trust_vegan: "خيارات نباتية",
+    prox_beach: "٣ دقائق من شاطئ باتو فيرينغي",
+    prox_market: "٥ دقائق من السوق الليلي",
+    prox_escape: "بالقرب من ESCAPE وEntopia",
+    about_label: "قصتنا",
+    about_title: "نكهات تعبر <span>الحدود</span>",
+    about_p1: "يقع على الشريط السياحي الرئيسي بالقرب من سوق باتو فيرينغي الليلي الشهير.",
+    about_p2: "أكثر من ١٠ سنوات في خدمة السياح والسكان المحليين بأطباق حلال خالية من MSG.",
+    menu_label: "قائمتنا",
+    menu_title: "استكشف قائمتنا <span>الكاملة</span>",
+    tab_grill: "🔥 تندوري وشواء",
+    tab_biryani: "🍚 برياني ومندي",
+    tab_chicken: "🍗 دجاج",
+    tab_mutton: "🐑 لحم ضأن ولحم",
+    tab_seafood: "🦐 مأكولات بحرية",
+    tab_appetizers: "🥗 مقبلات",
+    tab_naan: "🫓 نان وخبز",
+    tab_veg: "🌱 نباتي",
+    tab_rice: "🍚 أرز",
+    tab_western: "🍕 غربي",
+    tab_egg: "🥚 بيض",
+    tab_dessert: "🍨 حلويات",
+    tab_drinks: "🥤 مشروبات",
+    menu_note: "💡 يرجى السماح بـ ٢٠ دقيقة للتحضير.",
+    gallery_label: "التجربة",
+    gallery_title: "طعام و <span>أجواء</span>",
+    reviews_label: "شهادات",
+    reviews_title: "تقييمات <span>الضيوف</span>",
+    leave_review: "⭐ اترك تقييم جوجل",
+    catering_label: "فعاليات وتموين",
+    catering_title: "خدمات <span>تموين</span> عالية الجودة",
+    catering_desc: "نقدم خدمات تموين عالية الجودة لجميع مناسباتكم الخاصة.",
+    catering_enquire: "💬 استفسر عبر واتساب",
+    location_label: "موقعنا",
+    location_title: "زوروا <span>دي فيرينغي</span>",
+    addr_label: "العنوان",
+    phone_label: "الهاتف / واتساب",
+    email_label: "البريد الإلكتروني",
+    hours_label: "ساعات العمل",
+    parking_label: "موقف السيارات",
+    parking_value: "موقف مجاني في الشارع والساحة",
+    nearby_title: "📌 معالم قريبة",
+    hours_daily: "كل يوم: ١١:٠٠ ص – ١٢:٠٠ م",
+    get_directions: "🧭 احصل على الاتجاهات",
+    wa_us: "💬 واتساب",
+    cta_title: "هل أنت جائع؟",
+    cta_sub: "انضم إلينا لتجربة طعام لا تُنسى على أفضل شاطئ في بينانج.",
+    cta_wa: "💬 واتساب",
+    footer_desc: "مأكولات باكستانية وهندية وعربية وغربية أصيلة في باتو فيرينغي، بينانج. حلال، بدون MSG.",
+    footer_nav: "التنقل",
+    footer_contact: "اتصل بنا",
+    mb_reserve: "احجز",
+    mb_menu: "القائمة",
+    wa_tooltip: "تحدث معنا!"
   }
 };
 
-// ─── LANGUAGE SYSTEM ─────────────────────────────────────────────
-let currentLang = localStorage.getItem('mosty_lang') || null;
+let currentLang = 'en';
+const langOrder = ['en', 'my', 'ar'];
+const langLabels = { en: 'EN', my: 'MY', ar: 'AR' };
 
-function applyLang(lang) {
+// Global Functions for inline onclick handlers
+window.setLang = function(lang) {
   currentLang = lang;
-  localStorage.setItem('mosty_lang', lang);
-  document.documentElement.lang = lang === 'my' ? 'ms' : 'en';
-  const t = translations[lang];
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    if (t[key] !== undefined) el.innerHTML = t[key];
-  });
-  const btn = document.getElementById('nav-lang-toggle');
-  if (btn) btn.textContent = lang === 'en' ? 'BM' : 'EN';
-}
-
-function setLang(lang) {
-  applyLang(lang);
+  localStorage.setItem('dferingghi_lang', lang);
+  applyLanguage(lang);
+  
   const splash = document.getElementById('lang-splash');
-  splash.classList.add('hidden');
-  setTimeout(() => { splash.style.display = 'none'; }, 900);
-}
-
-function toggleLang() {
-  setLang(currentLang === 'en' ? 'my' : 'en');
-}
-
-// ─── INIT ─────────────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', () => {
-  const splash = document.getElementById('lang-splash');
-  if (currentLang) {
-    // Already chose a language before — skip splash
-    applyLang(currentLang);
-    splash.style.display = 'none';
-  } else {
-    // Show splash — update prompt text based on default
-    splash.style.display = 'flex';
+  if (splash && !splash.classList.contains('hidden')) {
+    splash.classList.add('hidden');
+    setTimeout(() => {
+      splash.style.display = 'none';
+      const mobileBar = document.getElementById('mobile-bar');
+      if (mobileBar) mobileBar.style.display = 'flex';
+    }, 800);
   }
+};
 
-  initNavbar();
-  initMenuTabs();
-  initScrollReveal();
-  initHamburger();
-  // Trigger stats visibility immediately
-  setTimeout(() => {
-    document.querySelectorAll('#stats .reveal').forEach(el => el.classList.add('visible'));
-    // Trigger active menu panel
-    document.querySelectorAll('#panel-western .reveal').forEach(el => el.classList.add('visible'));
-  }, 600);
-});
+window.toggleLang = function() {
+  const currentIndex = langOrder.indexOf(currentLang);
+  const nextIndex = (currentIndex + 1) % langOrder.length;
+  window.setLang(langOrder[nextIndex]);
+};
 
-// ─── NAVBAR ───────────────────────────────────────────────────────
-function initNavbar() {
-  const nav = document.getElementById('navbar');
-  window.addEventListener('scroll', () => {
-    nav.classList.toggle('scrolled', window.scrollY > 50);
-  });
-}
+window.toggleMenu = function() {
+  const navLinks = document.getElementById('nav-links');
+  const hamburger = document.getElementById('hamburger');
+  navLinks.classList.toggle('open');
+  hamburger.classList.toggle('active');
+};
 
-// ─── HAMBURGER ────────────────────────────────────────────────────
-function toggleMenu() {
-  const links = document.getElementById('nav-links');
-  links.classList.toggle('open');
-}
-
-// ─── MENU TABS ────────────────────────────────────────────────────
-function initMenuTabs() {
-  const tabs = document.querySelectorAll('.menu-tab');
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.menu-panel').forEach(p => p.classList.remove('active'));
-      tab.classList.add('active');
-      const panel = document.getElementById('panel-' + tab.dataset.tab);
-      if (panel) {
-        panel.classList.add('active');
-        panel.querySelectorAll('.reveal').forEach(el => {
-          el.classList.remove('visible');
-          setTimeout(() => el.classList.add('visible'), 80);
-        });
+function applyLanguage(lang) {
+  const toggleBtn = document.getElementById('nav-lang-toggle');
+  if (toggleBtn) toggleBtn.innerText = langLabels[lang];
+  
+  const dict = translations[lang];
+  if (dict) {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (dict[key]) {
+        el.innerHTML = dict[key];
       }
     });
-  });
+  }
+
+  if (lang === 'ar') {
+    document.body.dir = 'rtl';
+    document.body.classList.add('lang-ar');
+  } else {
+    document.body.dir = 'ltr';
+    document.body.classList.remove('lang-ar');
+  }
 }
 
-// ─── SCROLL REVEAL ────────────────────────────────────────────────
-function initScrollReveal() {
-  const observer = new IntersectionObserver((entries) => {
+document.addEventListener('DOMContentLoaded', () => {
+  // 1. Initialize i18n English dictionary with default HTML texts
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    translations.en[el.getAttribute('data-i18n')] = el.innerHTML;
+  });
+
+  // 2. Handle Splash Screen & Saved Language
+  const savedLang = localStorage.getItem('dferingghi_lang');
+  const splash = document.getElementById('lang-splash');
+  const mobileBar = document.getElementById('mobile-bar');
+  
+  if (mobileBar) {
+    // Hide mobile bar initially if splash is visible
+    mobileBar.style.display = 'none';
+  }
+
+  if (savedLang) {
+    if (splash) splash.style.display = 'none';
+    currentLang = savedLang;
+    applyLanguage(currentLang);
+    if (mobileBar) mobileBar.style.display = 'flex';
+  }
+
+  // 3. Navbar scroll effect
+  window.addEventListener('scroll', () => {
+    const navbar = document.getElementById('navbar');
+    if (window.scrollY > 50) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+  });
+
+  // 4. Close mobile menu on link click
+  document.querySelectorAll('#nav-links a').forEach(link => {
+    link.addEventListener('click', () => {
+      document.getElementById('nav-links').classList.remove('open');
+      document.getElementById('hamburger').classList.remove('active');
+    });
+  });
+
+  // 5. Menu Jump Nav as Tabs
+  const jumpBtns = document.querySelectorAll('.menu-jump-btn');
+  const menuCategories = document.querySelectorAll('.menu-category');
+
+  // Set the first category as active by default if none is
+  if (menuCategories.length > 0) {
+    menuCategories[0].classList.add('active');
+  }
+
+  jumpBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.getAttribute('data-cat');
+      
+      // Update buttons
+      jumpBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Update categories
+      menuCategories.forEach(cat => {
+        if (cat.id === targetId) {
+          cat.classList.add('active');
+        } else {
+          cat.classList.remove('active');
+        }
+      });
+      
+      // Ensure active button scrolls into view within the nav
+      btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    });
+  });
+
+  // 6. Scroll Reveal animation
+  const revealElements = document.querySelectorAll('.reveal');
+  const revealObserver = new IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.12 });
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-}
+  }, { threshold: 0.15 });
 
-// ─── SMOOTH CLOSE NAV ON LINK CLICK ──────────────────────────────
-document.querySelectorAll('.nav-links a').forEach(link => {
-  link.addEventListener('click', () => {
-    document.getElementById('nav-links').classList.remove('open');
+  revealElements.forEach(el => revealObserver.observe(el));
+
+  // 7. Gallery Lightbox
+  const galleryImgs = document.querySelectorAll('.gallery-item img');
+  const lightbox = document.createElement('div');
+  lightbox.className = 'lightbox';
+  lightbox.innerHTML = '<img>';
+  document.body.appendChild(lightbox);
+  
+  const lightboxImg = lightbox.querySelector('img');
+
+  galleryImgs.forEach(img => {
+    img.addEventListener('click', () => {
+      lightboxImg.src = img.src;
+      lightbox.classList.add('active');
+    });
   });
+
+  // Close lightbox on click outside
+  lightbox.addEventListener('click', (e) => {
+    if (e.target !== lightboxImg) {
+      lightbox.classList.remove('active');
+    }
+  });
+
+  // Close lightbox on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+      lightbox.classList.remove('active');
+    }
+  });
+
+  // 8. Smooth Scrolling for all internal links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      const href = this.getAttribute('href');
+      // Skip if only '#' or targeting specific non-scroll elements
+      if (href !== '#') {
+        const target = document.querySelector(href);
+        if (target) {
+          e.preventDefault();
+          const offset = 70; // Adjust for fixed navbar height
+          const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
+          window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }
+    });
+  });
+
 });
